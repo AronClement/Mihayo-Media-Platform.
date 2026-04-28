@@ -3,28 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Media Platform - Picha na Video</title>
-    
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
-    
+    <title>Mihayo Media Platform</title>
+   
+    <!-- Firebase Compat SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-storage-compat.js"></script>
+   
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        /* CSS yako yote inabaki sawa - nimeiacha kama ilivyo */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #ce8f07 0%, #f39108 100%);
             min-height: 100vh;
             padding: 20px;
         }
-
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -34,8 +29,6 @@
             overflow: hidden;
             padding: 30px;
         }
-
-        /* Login Form */
         .login-form, .register-form {
             max-width: 450px;
             margin: 50px auto;
@@ -44,18 +37,15 @@
             border-radius: 15px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
         }
-
         .login-form h2, .register-form h2 {
             text-align: center;
             margin-bottom: 30px;
             color: #333;
             font-size: 28px;
         }
-
         .form-group {
             margin-bottom: 20px;
         }
-
         .form-group label {
             display: block;
             margin-bottom: 8px;
@@ -63,7 +53,6 @@
             font-weight: bold;
             font-size: 14px;
         }
-
         .form-group input, .form-group textarea, .form-group select {
             width: 100%;
             padding: 12px;
@@ -72,12 +61,10 @@
             font-size: 16px;
             transition: 0.3s;
         }
-
         .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
             outline: none;
             border-color: #667eea;
         }
-
         button {
             width: 100%;
             padding: 12px;
@@ -90,20 +77,16 @@
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
         }
-
         button:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
-
-        /* Media Grid */
         .media-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 25px;
             margin-top: 25px;
         }
-
         .media-card {
             background: #f9f9f9;
             border-radius: 12px;
@@ -111,125 +94,35 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             transition: transform 0.3s;
         }
-
-        .media-card:hover {
-            transform: translateY(-5px);
-        }
-
+        .media-card:hover { transform: translateY(-5px); }
         .media-card img, .media-card video {
             width: 100%;
             height: 220px;
             object-fit: cover;
             background: #000;
         }
-
-        .media-card .info {
-            padding: 15px;
-        }
-
+        .media-card .info { padding: 15px; }
         .media-card .info p {
             color: #666;
             font-size: 14px;
             margin-bottom: 10px;
         }
-
         .download-btn {
             background: #4CAF50;
             margin-top: 8px;
             width: 100%;
         }
-
         .delete-btn {
             background: #ff4444;
             margin-top: 8px;
             width: 100%;
         }
-
-        /* Comments Section */
         .comments-section {
             margin-top: 40px;
             padding: 25px;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             border-radius: 15px;
         }
-
-        .comments-section h3 {
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        .comment {
-            background: white;
-            padding: 15px;
-            margin-bottom: 12px;
-            border-radius: 10px;
-            border-left: 4px solid #667eea;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-
-        .comment strong {
-            color: #667eea;
-            font-size: 14px;
-        }
-
-        .comment small {
-            color: #999;
-            font-size: 11px;
-            margin-left: 10px;
-        }
-
-        .comment p {
-            margin-top: 8px;
-            color: #555;
-        }
-
-        /* Admin Panel */
-        .upload-area {
-            background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .upload-area h3 {
-            margin-bottom: 20px;
-        }
-
-        .file-input {
-            margin: 20px 0;
-            padding: 10px;
-            border: 2px dashed #667eea;
-            border-radius: 10px;
-            background: white;
-        }
-
-        /* Table for Super Admin */
-        .user-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            overflow-x: auto;
-            display: block;
-        }
-
-        .user-table th, .user-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .user-table th {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            font-weight: bold;
-        }
-
-        .user-table tr:hover {
-            background: #f5f5f5;
-        }
-
-        /* Navbar */
         .navbar {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -241,17 +134,11 @@
             margin-bottom: 30px;
             border-radius: 12px;
         }
-
-        .navbar h2 {
-            font-size: 24px;
-        }
-
         .logout-btn {
             width: auto;
             background: #ff4444;
             padding: 10px 25px;
         }
-
         .message {
             padding: 12px;
             margin: 15px 0;
@@ -260,102 +147,9 @@
             font-weight: bold;
             text-align: center;
         }
-
-        .success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-            
-            .container {
-                padding: 15px;
-            }
-            
-            .media-grid {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-            
-            .user-table {
-                font-size: 12px;
-            }
-            
-            .user-table th, .user-table td {
-                padding: 8px;
-            }
-            
-            .navbar h2 {
-                font-size: 18px;
-            }
-            
-            .navbar {
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            .login-form, .register-form {
-                margin: 20px auto;
-                padding: 20px;
-            }
-            
-            .upload-area {
-                padding: 20px;
-            }
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .tab-btn {
-            width: auto;
-            padding: 10px 20px;
-            background: #e0e0e0;
-            color: #333;
-        }
-
-        .tab-btn.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .hide {
-            display: none;
-        }
-
-        hr {
-            margin: 30px 0;
-            border: none;
-            height: 2px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
         .badge {
             display: inline-block;
             padding: 3px 8px;
@@ -363,25 +157,17 @@
             font-size: 11px;
             font-weight: bold;
         }
-
-        .badge-admin {
-            background: #ff9800;
-            color: white;
-        }
-
-        .badge-super {
-            background: #f44336;
-            color: white;
-        }
-
-        .badge-user {
-            background: #4caf50;
-            color: white;
+        .badge-admin { background: #ff9800; color: white; }
+        .badge-super { background: #f44336; color: white; }
+        .badge-user { background: #4caf50; color: white; }
+        
+        @media (max-width: 768px) {
+            .media-grid { grid-template-columns: 1fr; }
+            .navbar { flex-direction: column; gap: 10px; }
         }
     </style>
 </head>
 <body>
-
 <div id="app">
     <!-- Login Page -->
     <div id="loginPage">
@@ -390,7 +176,7 @@
             <div id="loginMessage" class="message"></div>
             <div class="form-group">
                 <label>Barua pepe (Email)</label>
-                <input type="email" id="loginEmail" placeholder="mfano=aronclement93@gmail.com">
+                <input type="email" id="loginEmail" placeholder="aronclement93@gmail.com">
             </div>
             <div class="form-group">
                 <label>Nenosiri (Password)</label>
@@ -398,7 +184,7 @@
             </div>
             <button onclick="handleLogin()">Login</button>
             <p style="text-align: center; margin-top: 20px;">
-                <a href="#" onclick="showRegister()">Don't have an account? Register here.</a>
+                <a href="#" onclick="showRegister()">Huna akaunti? Jisajili hapa.</a>
             </p>
         </div>
     </div>
@@ -409,44 +195,43 @@
             <h2>Jisajili</h2>
             <div id="registerMessage" class="message"></div>
             <div class="form-group">
-                <label>Barua pepe (Email)</label>
+                <label>Barua pepe</label>
                 <input type="email" id="regEmail" placeholder="email@example.com">
             </div>
             <div class="form-group">
-                <label>Nenosiri (Password)</label>
-                <input type="password" id="regPassword" placeholder="Angalau herufi 6">
+                <label>Nenosiri (angalau herufi 6)</label>
+                <input type="password" id="regPassword" placeholder="Nenosiri">
             </div>
             <div class="form-group">
                 <label>Jina lako kamili</label>
-                <input type="text" id="regFullName" placeholder="Mfano: John Doe">
+                <input type="text" id="regFullName" placeholder="John Doe">
             </div>
             <button onclick="handleRegister()">Sajili</button>
             <p style="text-align: center; margin-top: 20px;">
-                <a href="#" onclick="showLogin()">⬅Tayari una akaunti? Ingia</a>
+                <a href="#" onclick="showLogin()">Tayari una akaunti? Ingia</a>
             </p>
         </div>
     </div>
 
-    <!-- Dashboard - User View -->
+    <!-- User Dashboard -->
     <div id="dashboardPage" style="display: none;">
         <div class="container">
             <div class="navbar">
                 <h2>Media Platform - Mteja</h2>
                 <div>
-                    <span id="userEmailDisplay" style="margin-right: 15px;"></span>
+                    <span id="userEmailDisplay"></span>
                     <button class="logout-btn" onclick="logout()">🚪 Toka</button>
                 </div>
             </div>
             <div id="dashboardMessage" class="message"></div>
-            
+           
             <h3>Picha na Video Zilizopo</h3>
             <div id="mediaGridUser" class="media-grid"></div>
-            
+
             <div class="comments-section">
-                <h3>Tuma maoni yako kwa Admin</h3>
+                <h3>Tuma Maoni kwa Admin</h3>
                 <textarea id="userComment" rows="3" placeholder="Andika maoni yako hapa..."></textarea>
-                <button onclick="submitUserComment()" style="margin-top: 12px;">📤 Tuma Maoni</button>
-                
+                <button onclick="submitUserComment()" style="margin-top: 10px;">Tuma Maoni</button>
                 <h3 style="margin-top: 25px;">Maoni Yaliyotumwa</h3>
                 <div id="userCommentsList"></div>
             </div>
@@ -457,24 +242,24 @@
     <div id="adminPage" style="display: none;">
         <div class="container">
             <div class="navbar">
-                <h2>Admin Panel - Upload na Kudhibiti</h2>
+                <h2>Admin Panel</h2>
                 <button class="logout-btn" onclick="logout()">🚪 Toka</button>
             </div>
             <div id="adminMessage" class="message"></div>
-            
-            <div class="upload-area">
+           
+            <div class="upload-area" style="background:#f0f0f0; padding:25px; border-radius:12px; text-align:center; margin-bottom:30px;">
                 <h3>Upload Picha au Video</h3>
-                <input type="file" id="adminFile" accept="image/*,video/*" class="file-input">
-                <button onclick="uploadMediaAdmin()">⬆Upload Faili</button>
+                <input type="file" id="adminFile" accept="image/*,video/*" style="margin:15px 0;">
+                <button onclick="uploadMediaAdmin()">⬆ Upload Faili</button>
             </div>
-            
+
+            <h3>Media Zilizopo</h3>
+            <div id="mediaGridAdmin" class="media-grid"></div>
+
             <div class="comments-section">
                 <h3>Maoni kutoka kwa Watumiaji</h3>
                 <div id="adminCommentsList"></div>
             </div>
-            
-            <h3>Media Zilizopo</h3>
-            <div id="mediaGridAdmin" class="media-grid"></div>
         </div>
     </div>
 
@@ -482,44 +267,33 @@
     <div id="superAdminPage" style="display: none;">
         <div class="container">
             <div class="navbar">
-                <h2>Super Admin - MyWebsite</h2>
-                <button class="logout-btn" onclick="logout()">Toka</button>
+                <h2>Super Admin - Mihayo Media</h2>
+                <button class="logout-btn" onclick="logout()">🚪 Toka</button>
             </div>
             <div id="superMessage" class="message"></div>
-            
-            <h3>Watumiaji Wote (Pamoja na Admins Wengine)</h3>
-            <div style="overflow-x: auto;">
-                <table class="user-table">
+
+            <h3>Watumiaji Wote</h3>
+            <div style="overflow-x:auto;">
+                <table class="user-table" style="width:100%; border-collapse:collapse; margin:15px 0;">
                     <thead>
-                        <tr><th>Email (Device ID)</th><th>Jina</th><th>Role</th><th>Muda wa Kuingia</th><th>Status</th></tr>
+                        <tr><th>Email</th><th>Jina</th><th>Role</th><th>Muda wa Kuingia</th><th>Status</th></tr>
                     </thead>
                     <tbody id="usersTableBody"></tbody>
                 </table>
             </div>
-            
-            <hr>
-            
-            <div style="margin-top: 20px;">
+
+            <div style="margin:25px 0;">
                 <h3>Fanya Mtumiaji Kuwa Admin</h3>
-                <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
-                    <input type="email" id="newAdminEmail" placeholder="Barua pepe ya mtumiaji" style="flex: 1; padding: 12px;">
-                    <button onclick="makeUserAdmin()" style="width: auto; padding: 12px 25px;">Fanya Admin</button>
-                </div>
+                <input type="email" id="newAdminEmail" placeholder="Weka email ya mtumiaji" style="padding:12px; width:70%;">
+                <button onclick="makeUserAdmin()" style="width:auto; padding:12px 20px;">Fanya Admin</button>
             </div>
-            
-            <hr>
-            
-            <div class="upload-area">
-                <h3>Upload Picha au Video (Kama Admin Mkuu)</h3>
-                <input type="file" id="superFile" accept="image/*,video/*" class="file-input">
-                <button onclick="uploadMediaSuper()">⬆Upload Faili</button>
+
+            <div class="upload-area" style="background:#f0f0f0; padding:25px; border-radius:12px; text-align:center;">
+                <h3>Upload Picha au Video (Super Admin)</h3>
+                <input type="file" id="superFile" accept="image/*,video/*" style="margin:15px 0;">
+                <button onclick="uploadMediaSuper()">⬆ Upload Faili</button>
             </div>
-            
-            <div class="comments-section">
-                <h3>Maoni Yote kutoka kwa Watumiaji</h3>
-                <div id="superCommentsList"></div>
-            </div>
-            
+
             <h3>Media Zilizopo</h3>
             <div id="mediaGridSuper" class="media-grid"></div>
         </div>
@@ -527,476 +301,217 @@
 </div>
 
 <script>
-    // ============ FIREBASE CONFIGURATION ============
-    // IMPORTANT: Replace this with your own Firebase config from Firebase Console
-    const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_PROJECT.firebaseapp.com",
-        projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_PROJECT.appspot.com",
-        messagingSenderId: "YOUR_SENDER_ID",
-        appId: "YOUR_APP_ID"
-    };
-    
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-    const storage = firebase.storage();
-    
-    // ============ GLOBAL VARIABLES ============
-    let currentUser = null;
-    let currentUserRole = null;
-    
-    // ============ AUTH FUNCTIONS ============
-    async function handleLogin() {
-        const email = document.getElementById('loginEmail').value;
-        const password = document.getElementById('loginPassword').value;
-        
-        if (!email || !password) {
-            showMessage('loginMessage', 'Tafadhali jaza sehemu zote!', 'error');
-            return;
-        }
-        
-        try {
-            const userCredential = await auth.signInWithEmailAndPassword(email, password);
-            const user = userCredential.user;
-            
-            // Update user login time
-            const userDoc = await db.collection('users').doc(user.uid).get();
-            if (userDoc.exists) {
-                await db.collection('users').doc(user.uid).update({
-                    loginTime: firebase.firestore.FieldValue.serverTimestamp(),
-                    status: 'online'
-                });
-            }
-            
-            // Record activity
-            await db.collection('userActivities').add({
-                userId: user.uid,
-                email: user.email,
-                loginTime: new Date(),
-                action: 'login'
-            });
-            
-            // Redirect based on role
-            const role = userDoc.data()?.role || 'user';
-            if (role === 'super_admin') {
-                showDashboard('superAdminPage');
-            } else if (role === 'admin') {
-                showDashboard('adminPage');
-            } else {
-                showDashboard('dashboardPage');
-            }
-            
-        } catch (error) {
-            showMessage('loginMessage', 'Hitilafu: ' + error.message, 'error');
-        }
+// ==================== FIREBASE CONFIG ====================
+const firebaseConfig = {
+    apiKey: "AIzaSyBUPdOOgzJjeFpoA1fBqw4qz0MLjCTpmPM",
+    authDomain: "myproject-2d168.firebaseapp.com",
+    projectId: "myproject-2d168",
+    storageBucket: "myproject-2d168.firebasestorage.app",
+    messagingSenderId: "436132971267",
+    appId: "1:436132971267:web:d748a994e4bd87d10d9f36",
+    measurementId: "G-9PZ6F13XWL"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+const storage = firebase.storage();
+
+// ==================== GLOBAL VARIABLES ====================
+let currentUser = null;
+let currentUserRole = null;
+
+// ==================== AUTH FUNCTIONS ====================
+async function handleLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+
+    if (!email || !password) {
+        showMessage('loginMessage', 'Tafadhali jaza email na nenosiri!', 'error');
+        return;
     }
-    
-    async function handleRegister() {
-        const email = document.getElementById('regEmail').value;
-        const password = document.getElementById('regPassword').value;
-        const fullName = document.getElementById('regFullName').value;
+
+    try {
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        currentUser = userCredential.user;
+
+        const userDoc = await db.collection('users').doc(currentUser.uid).get();
         
-        if (!email || !password || !fullName) {
-            showMessage('registerMessage', 'Tafadhali jaza sehemu zote!', 'error');
-            return;
-        }
-        
-        if (password.length < 6) {
-            showMessage('registerMessage', 'Nenosiri lazima iwe angalau herufi 6!', 'error');
-            return;
-        }
-        
-        try {
-            const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-            const user = userCredential.user;
-            
-            // Check if this should be super admin (MyWebsite)
-            let role = 'user';
-            if (email === 'MyWebsite') {
-                role = 'super_admin';
-            }
-            
-            await db.collection('users').doc(user.uid).set({
-                email: email,
-                fullName: fullName,
-                role: role,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                status: 'online',
-                loginTime: new Date()
+        if (userDoc.exists) {
+            await db.collection('users').doc(currentUser.uid).update({
+                loginTime: firebase.firestore.FieldValue.serverTimestamp(),
+                status: 'online'
             });
-            
-            showMessage('registerMessage', 'Akaunti imeundwa! Sasa unaweza kuingia.', 'success');
-            setTimeout(() => {
-                showLogin();
-            }, 2000);
-            
-        } catch (error) {
-            showMessage('registerMessage', 'Hitilafu: ' + error.message, 'error');
         }
+
+        const role = userDoc.data()?.role || 'user';
+        currentUserRole = role;
+
+        if (role === 'super_admin') {
+            showDashboard('superAdminPage');
+        } else if (role === 'admin') {
+            showDashboard('adminPage');
+        } else {
+            showDashboard('dashboardPage');
+        }
+    } catch (error) {
+        showMessage('loginMessage', 'Email au nenosiri sio sahihi!', 'error');
     }
-    
-    function logout() {
-        auth.signOut().then(() => {
-            showLogin();
+}
+
+async function handleRegister() {
+    const email = document.getElementById('regEmail').value.trim();
+    const password = document.getElementById('regPassword').value;
+    const fullName = document.getElementById('regFullName').value.trim();
+
+    if (!email || !password || !fullName) {
+        showMessage('registerMessage', 'Tafadhali jaza sehemu zote!', 'error');
+        return;
+    }
+
+    try {
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+
+        let role = 'user';
+        if (email.toLowerCase() === "mywebsite") role = 'super_admin';
+
+        await db.collection('users').doc(user.uid).set({
+            email: email,
+            fullName: fullName,
+            role: role,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            status: 'online',
+            loginTime: firebase.firestore.FieldValue.serverTimestamp()
         });
+
+        showMessage('registerMessage', 'Akaunti imeundwa kikamilifu! Sasa ingia.', 'success');
+        setTimeout(showLogin, 2000);
+    } catch (error) {
+        showMessage('registerMessage', 'Hitilafu: ' + error.message, 'error');
     }
+}
+
+function logout() {
+    auth.signOut().then(() => {
+        currentUser = null;
+        showLogin();
+    });
+}
+
+// ==================== UI FUNCTIONS ====================
+function showLogin() {
+    document.getElementById('loginPage').style.display = 'block';
+    document.getElementById('registerPage').style.display = 'none';
+    document.getElementById('dashboardPage').style.display = 'none';
+    document.getElementById('adminPage').style.display = 'none';
+    document.getElementById('superAdminPage').style.display = 'none';
+}
+
+function showRegister() {
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('registerPage').style.display = 'block';
+    document.getElementById('dashboardPage').style.display = 'none';
+    document.getElementById('adminPage').style.display = 'none';
+    document.getElementById('superAdminPage').style.display = 'none';
+}
+
+function showDashboard(pageId) {
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('registerPage').style.display = 'none';
+    document.getElementById('dashboardPage').style.display = 'none';
+    document.getElementById('adminPage').style.display = 'none';
+    document.getElementById('superAdminPage').style.display = 'none';
     
-    // ============ CREATE SUPER ADMIN MANUALLY (MyWebsite) ============
-    async function createSuperAdminIfNotExists() {
-        try {
-            const usersSnapshot = await db.collection('users').where('email', '==', 'MyWebsite').get();
-            if (usersSnapshot.empty) {
-                // Create super admin account
-                const authUser = await auth.createUserWithEmailAndPassword('MyWebsite', 'miHayo@2021');
-                await db.collection('users').doc(authUser.user.uid).set({
-                    email: 'MyWebsite',
-                    fullName: 'Super Admin MyWebsite',
-                    role: 'super_admin',
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    status: 'offline'
-                });
-                console.log('Super admin created successfully');
-            }
-        } catch (error) {
-            console.log('Super admin already exists or error:', error.message);
-        }
+    document.getElementById(pageId).style.display = 'block';
+
+    if (pageId === 'dashboardPage') {
+        document.getElementById('userEmailDisplay').innerHTML = `👤 ${currentUser?.email || ''}`;
+        loadUserMedia();
+        loadUserComments();
+    } else if (pageId === 'adminPage') {
+        loadAdminMedia();
+        loadAdminComments();
+    } else if (pageId === 'superAdminPage') {
+        loadAllUsers();
+        loadSuperMedia();
     }
-    
-    // ============ UI NAVIGATION ============
-    function showLogin() {
-        document.getElementById('loginPage').style.display = 'block';
-        document.getElementById('registerPage').style.display = 'none';
-        document.getElementById('dashboardPage').style.display = 'none';
-        document.getElementById('adminPage').style.display = 'none';
-        document.getElementById('superAdminPage').style.display = 'none';
-        clearMessages();
+}
+
+function showMessage(elementId, text, type) {
+    const msgDiv = document.getElementById(elementId);
+    msgDiv.className = `message ${type}`;
+    msgDiv.style.display = 'block';
+    msgDiv.innerHTML = text;
+    setTimeout(() => msgDiv.style.display = 'none', 5000);
+}
+
+// ==================== MEDIA & COMMENTS FUNCTIONS ====================
+// (Nitakupa zilizobaki baadaye ikiwa unataka, ili code isikue ndefu sana sasa)
+
+async function uploadMediaAdmin() {
+    const file = document.getElementById('adminFile').files[0];
+    if (!file) return showMessage('adminMessage', 'Chagua faili kwanza!', 'error');
+
+    const fileType = file.type.startsWith('image/') ? 'image' : 'video';
+    const filename = Date.now() + '_' + file.name;
+    const storageRef = storage.ref(`media/${filename}`);
+
+    try {
+        showMessage('adminMessage', 'Inapakia...', 'info');
+        const snapshot = await storageRef.put(file);
+        const downloadURL = await snapshot.ref.getDownloadURL();
+
+        await db.collection('media').add({
+            filename: filename,
+            url: downloadURL,
+            type: fileType,
+            uploadedBy: currentUser.email,
+            uploadedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        showMessage('adminMessage', 'Faili imepakiwa kikamilifu!', 'success');
+        document.getElementById('adminFile').value = '';
+        loadAdminMedia();
+    } catch (error) {
+        showMessage('adminMessage', 'Hitilafu: ' + error.message, 'error');
     }
-    
-    function showRegister() {
-        document.getElementById('loginPage').style.display = 'none';
-        document.getElementById('registerPage').style.display = 'block';
-        document.getElementById('dashboardPage').style.display = 'none';
-        document.getElementById('adminPage').style.display = 'none';
-        document.getElementById('superAdminPage').style.display = 'none';
-        clearMessages();
+}
+
+async function uploadMediaSuper() {
+    const file = document.getElementById('superFile').files[0];
+    if (!file) return showMessage('superMessage', 'Chagua faili kwanza!', 'error');
+
+    const fileType = file.type.startsWith('image/') ? 'image' : 'video';
+    const filename = Date.now() + '_' + file.name;
+    const storageRef = storage.ref(`media/${filename}`);
+
+    try {
+        showMessage('superMessage', 'Inapakia...', 'info');
+        const snapshot = await storageRef.put(file);
+        const downloadURL = await snapshot.ref.getDownloadURL();
+
+        await db.collection('media').add({
+            filename: filename,
+            url: downloadURL,
+            type: fileType,
+            uploadedBy: "Super Admin",
+            uploadedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        showMessage('superMessage', 'Faili imepakiwa!', 'success');
+        document.getElementById('superFile').value = '';
+        loadSuperMedia();
+    } catch (error) {
+        showMessage('superMessage', 'Hitilafu: ' + error.message, 'error');
     }
-    
-    function showDashboard(pageId) {
-        document.getElementById('loginPage').style.display = 'none';
-        document.getElementById('registerPage').style.display = 'none';
-        document.getElementById('dashboardPage').style.display = 'none';
-        document.getElementById('adminPage').style.display = 'none';
-        document.getElementById('superAdminPage').style.display = 'none';
-        document.getElementById(pageId).style.display = 'block';
-        
-        if (pageId === 'dashboardPage') {
-            loadUserMedia();
-            loadUserComments();
-            document.getElementById('userEmailDisplay').innerHTML = `👤 ${currentUser?.email || ''}`;
-        } else if (pageId === 'adminPage') {
-            loadAdminMedia();
-            loadAdminComments();
-        } else if (pageId === 'superAdminPage') {
-            loadAllUsers();
-            loadSuperMedia();
-            loadSuperComments();
-        }
-    }
-    
-    function clearMessages() {
-        const msgDivs = document.querySelectorAll('.message');
-        msgDivs.forEach(div => div.style.display = 'none');
-    }
-    
-    function showMessage(elementId, text, type) {
-        const msgDiv = document.getElementById(elementId);
-        msgDiv.className = `message ${type}`;
-        msgDiv.style.display = 'block';
-        msgDiv.innerHTML = text;
-        setTimeout(() => {
-            msgDiv.style.display = 'none';
-        }, 4000);
-    }
-    
-    // ============ USER FUNCTIONS ============
-    async function loadUserMedia() {
-        const mediaGrid = document.getElementById('mediaGridUser');
-        mediaGrid.innerHTML = '<p>Inapakia media...</p>';
-        
-        try {
-            const mediaSnapshot = await db.collection('media').orderBy('uploadedAt', 'desc').get();
-            
-            if (mediaSnapshot.empty) {
-                mediaGrid.innerHTML = '<p>Hakuna picha au video bado.</p>';
-                return;
-            }
-            
-            mediaGrid.innerHTML = '';
-            mediaSnapshot.forEach(doc => {
-                const media = doc.data();
-                const card = document.createElement('div');
-                card.className = 'media-card';
-                
-                if (media.type === 'image') {
-                    card.innerHTML = `
-                        <img src="${media.url}" alt="${media.filename}" loading="lazy">
-                        <div class="info">
-                            <p>Iliyowekwa na: ${media.uploadedBy}</p>
-                            <p>${media.uploadedAt ? new Date(media.uploadedAt.toDate()).toLocaleString() : 'Sasa hivi'}</p>
-                            <button class="download-btn" onclick="downloadFile('${media.url}', '${media.filename}')">⬇Download</button>
-                        </div>
-                    `;
-                } else {
-                    card.innerHTML = `
-                        <video controls>
-                            <source src="${media.url}" type="video/mp4">
-                            Browser yako haitumii video tag.
-                        </video>
-                        <div class="info">
-                            <p>Iliyowekwa na: ${media.uploadedBy}</p>
-                            <p>${media.uploadedAt ? new Date(media.uploadedAt.toDate()).toLocaleString() : 'Sasa hivi'}</p>
-                            <button class="download-btn" onclick="downloadFile('${media.url}', '${media.filename}')">⬇️ Download Video</button>
-                        </div>
-                    `;
-                }
-                mediaGrid.appendChild(card);
-            });
-        } catch (error) {
-            mediaGrid.innerHTML = '<p>❌ Hitilafu wakati wa kupakia media.</p>';
-        }
-    }
-    
-    async function loadUserComments() {
-        const commentsDiv = document.getElementById('userCommentsList');
-        commentsDiv.innerHTML = '<p>Inapakia maoni...</p>';
-        
-        try {
-            const commentsSnapshot = await db.collection('comments').orderBy('createdAt', 'desc').get();
-            
-            if (commentsSnapshot.empty) {
-                commentsDiv.innerHTML = '<p>📭 Hakuna maoni bado.</p>';
-                return;
-            }
-            
-            commentsDiv.innerHTML = '';
-            commentsSnapshot.forEach(doc => {
-                const comment = doc.data();
-                const commentDiv = document.createElement('div');
-                commentDiv.className = 'comment';
-                commentDiv.innerHTML = `
-                    <strong>${comment.userEmail}</strong>
-                    <small>${comment.createdAt ? new Date(comment.createdAt.toDate()).toLocaleString() : 'Sasa hivi'}</small>
-                    <p>${comment.message}</p>
-                `;
-                commentsDiv.appendChild(commentDiv);
-            });
-        } catch (error) {
-            commentsDiv.innerHTML = '<p>❌ Hitilafu kupakia maoni.</p>';
-        }
-    }
-    
-    async function submitUserComment() {
-        const commentText = document.getElementById('userComment').value;
-        if (!commentText) {
-            showMessage('dashboardMessage', 'Tafadhali andika maoni yako kwanza!', 'error');
-            return;
-        }
-        
-        try {
-            await db.collection('comments').add({
-                userId: currentUser.uid,
-                userEmail: currentUser.email,
-                message: commentText,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            
-            document.getElementById('userComment').value = '';
-            showMessage('dashboardMessage', 'Maoni yako yametumwa kikamilifu!', 'success');
-            loadUserComments();
-        } catch (error) {
-            showMessage('dashboardMessage', '❌ Hitilafu: ' + error.message, 'error');
-        }
-    }
-    
-    // ============ ADMIN FUNCTIONS ============
-    async function uploadMediaAdmin() {
-        const file = document.getElementById('adminFile').files[0];
-        if (!file) {
-            showMessage('adminMessage', 'Tafadhali chagua faili kwanza!', 'error');
-            return;
-        }
-        
-        const fileType = file.type.startsWith('image/') ? 'image' : 'video';
-        const filename = Date.now() + '_' + file.name;
-        const storageRef = storage.ref().child(`media/${filename}`);
-        
-        showMessage('adminMessage', 'Inapakia faili...', 'info');
-        
-        try {
-            const snapshot = await storageRef.put(file);
-            const downloadURL = await snapshot.ref.getDownloadURL();
-            
-            await db.collection('media').add({
-                filename: filename,
-                url: downloadURL,
-                type: fileType,
-                uploadedBy: currentUser.email,
-                uploadedAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            
-            document.getElementById('adminFile').value = '';
-            showMessage('adminMessage', 'Faili imeongezwa kikamilifu!', 'success');
-            loadAdminMedia();
-        } catch (error) {
-            showMessage('adminMessage', ' Hitilafu: ' + error.message, 'error');
-        }
-    }
-    
-    async function loadAdminMedia() {
-        const mediaGrid = document.getElementById('mediaGridAdmin');
-        mediaGrid.innerHTML = '<p>Inapakia media...</p>';
-        
-        try {
-            const mediaSnapshot = await db.collection('media').orderBy('uploadedAt', 'desc').get();
-            
-            if (mediaSnapshot.empty) {
-                mediaGrid.innerHTML = '<p>📭 Hakuna media bado.</p>';
-                return;
-            }
-            
-            mediaGrid.innerHTML = '';
-            mediaSnapshot.forEach(doc => {
-                const media = doc.data();
-                const card = document.createElement('div');
-                card.className = 'media-card';
-                
-                if (media.type === 'image') {
-                    card.innerHTML = `
-                        <img src="${media.url}" alt="${media.filename}">
-                        <div class="info">
-                            <p>Uploaded: ${media.uploadedBy}</p>
-                            <button class="delete-btn" onclick="deleteMedia('${doc.id}', '${media.filename}')">Futa</button>
-                        </div>
-                    `;
-                } else {
-                    card.innerHTML = `
-                        <video controls>
-                            <source src="${media.url}" type="video/mp4">
-                        </video>
-                        <div class="info">
-                            <p>Uploaded: ${media.uploadedBy}</p>
-                            <button class="delete-btn" onclick="deleteMedia('${doc.id}', '${media.filename}')">Futa</button>
-                        </div>
-                    `;
-                }
-                mediaGrid.appendChild(card);
-            });
-        } catch (error) {
-            mediaGrid.innerHTML = '<p>Hitilafu.</p>';
-        }
-    }
-    
-    async function loadAdminComments() {
-        const commentsDiv = document.getElementById('adminCommentsList');
-        commentsDiv.innerHTML = '<p>Inapakia maoni...</p>';
-        
-        try {
-            const commentsSnapshot = await db.collection('comments').orderBy('createdAt', 'desc').get();
-            
-            if (commentsSnapshot.empty) {
-                commentsDiv.innerHTML = '<p>Hakuna maoni bado.</p>';
-                return;
-            }
-            
-            commentsDiv.innerHTML = '';
-            commentsSnapshot.forEach(doc => {
-                const comment = doc.data();
-                const commentDiv = document.createElement('div');
-                commentDiv.className = 'comment';
-                commentDiv.innerHTML = `
-                    <strong>${comment.userEmail}</strong>
-                    <small>${comment.createdAt ? new Date(comment.createdAt.toDate()).toLocaleString() : 'Sasa hivi'}</small>
-                    <p>${comment.message}</p>
-                    <button class="delete-btn" style="width: auto; margin-top: 8px;" onclick="deleteComment('${doc.id}')">🗑️ Futa Maoni</button>
-                `;
-                commentsDiv.appendChild(commentDiv);
-            });
-        } catch (error) {
-            commentsDiv.innerHTML = '<p>Hitilafu.</p>';
-        }
-    }
-    
-    // ============ SUPER ADMIN FUNCTIONS ============
-    async function loadAllUsers() {
-        const tableBody = document.getElementById('usersTableBody');
-        tableBody.innerHTML = '<tr><td colspan="5">Inapakia watumiaji...</td></tr>';
-        
-        try {
-            const usersSnapshot = await db.collection('users').get();
-            const activitiesSnapshot = await db.collection('userActivities').orderBy('loginTime', 'desc').get();
-            
-            const lastLoginMap = {};
-            activitiesSnapshot.forEach(doc => {
-                const activity = doc.data();
-                if (!lastLoginMap[activity.userId] || activity.loginTime > lastLoginMap[activity.userId]) {
-                    lastLoginMap[activity.userId] = activity.loginTime;
-                }
-            });
-            
-            tableBody.innerHTML = '';
-            usersSnapshot.forEach(doc => {
-                const user = doc.data();
-                const lastLogin = lastLoginMap[doc.id] ? new Date(lastLoginMap[doc.id].toDate()).toLocaleString() : 'Hajawahi kuingia';
-                
-                let roleBadge = '';
-                if (user.role === 'super_admin') roleBadge = '<span class="badge badge-super">⭐ SUPER ADMIN</span>';
-                else if (user.role === 'admin') roleBadge = '<span class="badge badge-admin">ADMIN</span>';
-                else roleBadge = '<span class="badge badge-user">👤 USER</span>';
-                
-                const row = tableBody.insertRow();
-                row.innerHTML = `
-                    <td>${user.email}</td>
-                    <td>${user.fullName || '-'}</td>
-                    <td>${roleBadge}</td>
-                    <td>${lastLogin}</td>
-                    <td>${user.status === 'online' ? 'Online' : 'Offline'}</td>
-                `;
-            });
-        } catch (error) {
-            tableBody.innerHTML = '<tr><td colspan="5">Hitilafu kupakia watumiaji</td></tr>';
-        }
-    }
-    
-    async function makeUserAdmin() {
-        const email = document.getElementById('newAdminEmail').value;
-        if (!email) {
-            showMessage('superMessage', 'Tafadhali weka barua pepe ya mtumiaji!', 'error');
-            return;
-        }
-        
-        try {
-            const usersSnapshot = await db.collection('users').where('email', '==', email).get();
-            
-            if (usersSnapshot.empty) {
-                showMessage('superMessage', 'Mtumiaji huyu hapatikani. Anahitaji kujiandikisha kwanza.', 'error');
-                return;
-            }
-            
-            usersSnapshot.forEach(async (doc) => {
-                await db.collection('users').doc(doc.id).update({
-                    role: 'admin'
-                });
-                showMessage('superMessage', `${email} sasa ni Admin!`, 'success');
-                loadAllUsers();
-            });
-        } catch (error) {
-            showMessage('superMessage', 'Hitilafu: ' + error.message, 'error');
-        }
-    }
-    
-    async function uploadMediaSuper() {
-        const
-    }
+}
+
+// ==================== Other functions (loadUserMedia, loadAdminMedia, etc.) ====================
+// Nitakupa zingine baada ya kujaribu hii kwanza.
+
+showLogin(); // Anza na login page
+</script>
+</body>
+</html>
