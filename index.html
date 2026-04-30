@@ -5,14 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mihayo Media Platform</title>
   
-    <!-- Firebase Compat SDKs -->
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-storage-compat.js"></script>
 
     <style>
-        /* CSS yako inabaki sawa - nimeiacha kama ilivyo */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -20,33 +19,84 @@
             min-height: 100vh;
             padding: 20px;
         }
-        .container { max-width: 1400px; margin: 0 auto; background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; padding: 30px; }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            padding: 30px;
+        }
         .login-form, .register-form {
-            max-width: 450px; margin: 50px auto; background: white; padding: 35px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            max-width: 450px;
+            margin: 50px auto;
+            background: white;
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
         }
-        .login-form h2, .register-form h2 { text-align: center; margin-bottom: 30px; color: #333; font-size: 28px; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; color: #555; font-weight: bold; font-size: 14px; }
-        .form-group input, .form-group textarea, .form-group select {
-            width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px; transition: 0.3s;
+        .login-form h2, .register-form h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+            font-size: 28px;
         }
-        .form-group input:focus { outline: none; border-color: #667eea; }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
         button {
-            width: 100%; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer;
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
         }
-        button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.4); }
-        .logout-btn { width: auto; background: #ff4444; padding: 10px 25px; }
-        .message { padding: 12px; margin: 15px 0; border-radius: 8px; display: none; font-weight: bold; text-align: center; }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        .logout-btn {
+            width: auto;
+            background: #ff4444;
+            padding: 10px 25px;
+        }
+        .message {
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 8px;
+            display: none;
+            font-weight: bold;
+            text-align: center;
+        }
         .success { background: #d4edda; color: #155724; }
         .error { background: #f8d7da; color: #721c24; }
         .info { background: #d1ecf1; color: #0c5460; }
-        @media (max-width: 768px) {
-            .media-grid { grid-template-columns: 1fr; }
-        }
     </style>
 </head>
 <body>
+
 <div id="app">
     <!-- Login Page -->
     <div id="loginPage">
@@ -55,11 +105,11 @@
             <div id="loginMessage" class="message"></div>
             <div class="form-group">
                 <label>Jina la Mtumiaji (Username)</label>
-                <input type="text" id="loginUsername" placeholder="aron123" required>
+                <input type="text" id="loginUsername" placeholder="aron123">
             </div>
             <div class="form-group">
                 <label>Nenosiri</label>
-                <input type="password" id="loginPassword" placeholder="Nenosiri lako" required>
+                <input type="password" id="loginPassword" placeholder="Nenosiri lako">
             </div>
             <button onclick="handleLogin()">Ingia</button>
             <p style="text-align: center; margin-top: 20px;">
@@ -75,15 +125,15 @@
             <div id="registerMessage" class="message"></div>
             <div class="form-group">
                 <label>Jina la Mtumiaji (Username)</label>
-                <input type="text" id="regUsername" placeholder="aron123" required>
+                <input type="text" id="regUsername" placeholder="aron123">
             </div>
             <div class="form-group">
                 <label>Nenosiri (angalau herufi 6)</label>
-                <input type="password" id="regPassword" placeholder="Nenosiri" required>
+                <input type="password" id="regPassword" placeholder="Nenosiri">
             </div>
             <div class="form-group">
                 <label>Jina lako kamili</label>
-                <input type="text" id="regFullName" placeholder="Aron Clement" required>
+                <input type="text" id="regFullName" placeholder="Aron Clement">
             </div>
             <button onclick="handleRegister()">Sajili Akaunti</button>
             <p style="text-align: center; margin-top: 20px;">
@@ -92,9 +142,20 @@
         </div>
     </div>
 
-    <!-- Dashboard na kurasa zingine zimebaki sawa (nimeziacha kwa ufupi) -->
-    <!-- Unaweza kuweka dashboardPage, adminPage, superAdminPage kama zilivyokuwa -->
-
+    <!-- Dashboard Page (Mfano - unaweza kuongeza mengine baadaye) -->
+    <div id="dashboardPage" style="display: none;">
+        <div class="container">
+            <div class="navbar" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+                <h2>Media Platform</h2>
+                <div>
+                    <span id="userEmailDisplay"></span>
+                    <button class="logout-btn" onclick="logout()">🚪 Toka</button>
+                </div>
+            </div>
+            <h3 style="margin: 20px 0;">Karibu, <span id="welcomeName"></span></h3>
+            <p>Sehemu ya Media itaongezwa hapa baadaye...</p>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -113,16 +174,59 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 const storage = firebase.storage();
 
-// Global variables
+// ==================== GLOBAL VARIABLES ====================
 let currentUser = null;
 let currentUserRole = null;
 
-// Helper: Badilisha username kuwa fake email
+// ==================== HELPER ====================
 function usernameToEmail(username) {
     return username.trim().toLowerCase() + "@mihayo.local";
 }
 
-// ==================== AUTH FUNCTIONS ====================
+// ==================== REGISTER ====================
+async function handleRegister() {
+    const username = document.getElementById('regUsername').value.trim();
+    const password = document.getElementById('regPassword').value;
+    const fullName = document.getElementById('regFullName').value.trim();
+
+    if (!username || !password || !fullName) {
+        showMessage('registerMessage', 'Tafadhali jaza sehemu zote!', 'error');
+        return;
+    }
+    if (password.length < 6) {
+        showMessage('registerMessage', 'Nenosiri lazima liwe na angalau herufi 6!', 'error');
+        return;
+    }
+
+    const email = usernameToEmail(username);
+
+    try {
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+
+        let role = 'user';
+        if (username.toLowerCase() === "superadmin") role = 'super_admin';
+
+        await db.collection('users').doc(user.uid).set({
+            username: username,
+            fullName: fullName,
+            email: email,
+            role: role,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            status: 'online',
+            loginTime: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        showMessage('registerMessage', '✅ Akaunti imeundwa kikamilifu!<br>Sasa ingia.', 'success');
+        setTimeout(showLogin, 2000);
+
+    } catch (error) {
+        console.error(error);
+        showMessage('registerMessage', 'Hitilafu: ' + error.message, 'error');
+    }
+}
+
+// ==================== LOGIN ====================
 async function handleLogin() {
     const username = document.getElementById('loginUsername').value.trim();
     const password = document.getElementById('loginPassword').value;
@@ -138,86 +242,28 @@ async function handleLogin() {
         const userCredential = await auth.signInWithEmailAndPassword(email, password);
         currentUser = userCredential.user;
 
+        await db.collection('users').doc(currentUser.uid).update({
+            loginTime: firebase.firestore.FieldValue.serverTimestamp(),
+            status: 'online'
+        }).catch(() => {});
+
         const userDoc = await db.collection('users').doc(currentUser.uid).get();
-
-        if (userDoc.exists) {
-            await db.collection('users').doc(currentUser.uid).update({
-                loginTime: firebase.firestore.FieldValue.serverTimestamp(),
-                status: 'online'
-            });
-        }
-
-        const role = userDoc.data()?.role || 'user';
+        const role = userDoc.exists ? (userDoc.data().role || 'user') : 'user';
         currentUserRole = role;
+
+        showMessage('loginMessage', '✅ Login umefanikiwa!', 'success');
 
         if (role === 'super_admin') showDashboard('superAdminPage');
         else if (role === 'admin') showDashboard('adminPage');
         else showDashboard('dashboardPage');
 
     } catch (error) {
+        console.error(error);
         showMessage('loginMessage', 'Jina la mtumiaji au nenosiri si sahihi!', 'error');
-        console.error(error);
     }
 }
 
-async function handleRegister() {
-    const username = document.getElementById('regUsername').value.trim();
-    const password = document.getElementById('regPassword').value;
-    const fullName = document.getElementById('regFullName').value.trim();
-
-    if (!username || !password || !fullName) {
-        showMessage('registerMessage', 'Tafadhali jaza sehemu zote!', 'error');
-        return;
-    }
-    if (password.length < 6) {
-        showMessage('registerMessage', 'Nenosiri lazima liwe na herufi 6 au zaidi!', 'error');
-        return;
-    }
-
-    const email = usernameToEmail(username);
-
-    try {
-        // Angalia kama username tayari inatumika
-        const usernameCheck = await db.collection('users').where('username', '==', username).get();
-        if (!usernameCheck.empty) {
-            showMessage('registerMessage', 'Jina la mtumiaji tayari linatumika. Chagua jingine!', 'error');
-            return;
-        }
-
-        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-        const user = userCredential.user;
-
-        let role = 'user';
-        if (username.toLowerCase() === "superadmin" || email === "mywebsite@mihayo.local") role = 'super_admin';
-
-        await db.collection('users').doc(user.uid).set({
-            username: username,
-            fullName: fullName,
-            email: email,           // tunaweka fake email
-            role: role,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            status: 'online',
-            loginTime: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-        showMessage('registerMessage', 'Akaunti imeundwa kikamilifu! Sasa ingia.', 'success');
-        setTimeout(showLogin, 2000);
-
-    } catch (error) {
-        console.error(error);
-        showMessage('registerMessage', 'Hitilafu: ' + error.message, 'error');
-    }
-}
-
-function logout() {
-    auth.signOut().then(() => {
-        currentUser = null;
-        currentUserRole = null;
-        showLogin();
-    });
-}
-
-// UI Functions (zimeboreshwa kidogo)
+// ==================== UI FUNCTIONS ====================
 function showLogin() {
     hideAllPages();
     document.getElementById('loginPage').style.display = 'block';
@@ -229,7 +275,10 @@ function showRegister() {
 }
 
 function hideAllPages() {
-    document.querySelectorAll('#app > div').forEach(div => div.style.display = 'none');
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('registerPage').style.display = 'none';
+    document.getElementById('dashboardPage').style.display = 'none';
+    // Ongeza admin na superAdmin pages hapa baadaye
 }
 
 function showDashboard(pageId) {
@@ -237,21 +286,31 @@ function showDashboard(pageId) {
     document.getElementById(pageId).style.display = 'block';
 
     if (pageId === 'dashboardPage' && currentUser) {
-        document.getElementById('userEmailDisplay').innerHTML = `👤 ${currentUser.email ? currentUser.email.split('@')[0] : ''}`;
-        // loadUserMedia(); loadUserComments();  // weka hapa kama ulizokuwa nazo
+        const username = currentUser.email ? currentUser.email.split('@')[0] : 'Mteja';
+        document.getElementById('userEmailDisplay').innerHTML = `👤 ${username}`;
+        document.getElementById('welcomeName').innerHTML = username;
     }
 }
 
 function showMessage(elementId, text, type) {
-    const msg = document.getElementById(elementId);
-    msg.className = `message ${type}`;
-    msg.style.display = 'block';
-    msg.innerHTML = text;
-    setTimeout(() => msg.style.display = 'none', 6000);
+    const msgDiv = document.getElementById(elementId);
+    msgDiv.className = `message ${type}`;
+    msgDiv.style.display = 'block';
+    msgDiv.innerHTML = text;
+    setTimeout(() => msgDiv.style.display = 'none', 6000);
 }
 
-// On load
+function logout() {
+    auth.signOut().then(() => {
+        currentUser = null;
+        currentUserRole = null;
+        showLogin();
+    });
+}
+
+// Anza na Login Page
 showLogin();
 </script>
+
 </body>
 </html>
