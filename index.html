@@ -5,106 +5,73 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mihayo Media Platform</title>
   
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #ce8f07, #f39108);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .login-form, .register-form {
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #ce8f07, #f39108); min-height: 100vh; padding: 20px; }
+        .form-container {
             max-width: 450px;
-            margin: 60px auto;
+            margin: 80px auto;
             background: white;
             padding: 40px;
             border-radius: 15px;
-            box-shadow: 0 15px 50px rgba(0,0,0,0.25);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.25);
         }
-        h2 { text-align: center; margin-bottom: 30px; color: #333; }
+        h2 { text-align: center; margin-bottom: 30px; }
         .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #555; }
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-        }
-        button {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 17px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .message {
-            padding: 14px;
-            margin: 15px 0;
-            border-radius: 8px;
-            display: none;
-            font-weight: bold;
-            text-align: center;
-        }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; }
+        .form-group input { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; }
+        button { width: 100%; padding: 14px; background: #667eea; color: white; border: none; border-radius: 8px; font-size: 17px; cursor: pointer; }
+        .message { padding: 14px; margin: 15px 0; border-radius: 8px; display: none; font-weight: bold; text-align: center; }
         .success { background: #d4edda; color: #155724; }
         .error { background: #f8d7da; color: #721c24; }
     </style>
 </head>
 <body>
 
-<div id="loginPage">
-    <div class="login-form">
-        <h2>Mihayo Media Platform</h2>
-        <div id="loginMessage" class="message"></div>
-        <div class="form-group">
-            <label>Jina la Mtumiaji (Username)</label>
-            <input type="text" id="loginUsername" placeholder="aron123">
-        </div>
-        <div class="form-group">
-            <label>Nenosiri</label>
-            <input type="password" id="loginPassword">
-        </div>
-        <button onclick="handleLogin()">Ingia</button>
-        <p style="text-align:center; margin-top:25px;">
-            Huna akaunti? <a href="#" onclick="showRegister()">Jisajili hapa</a>
-        </p>
+<div class="form-container" id="loginPage">
+    <h2>Mihayo Media Platform</h2>
+    <div id="loginMessage" class="message"></div>
+    <div class="form-group">
+        <label>Jina la Mtumiaji (Username)</label>
+        <input type="text" id="loginUsername" placeholder="superadmin au aron123">
     </div>
+    <div class="form-group">
+        <label>Nenosiri</label>
+        <input type="password" id="loginPassword">
+    </div>
+    <button onclick="handleLogin()">Ingia</button>
+    <p style="text-align:center; margin-top:20px;">
+        Huna akaunti? <a href="#" onclick="showRegister()">Jisajili</a>
+    </p>
 </div>
 
-<div id="registerPage" style="display:none;">
-    <div class="register-form">
-        <h2>Jisajili</h2>
-        <div id="registerMessage" class="message"></div>
-        <div class="form-group">
-            <label>Jina la Mtumiaji (Username)</label>
-            <input type="text" id="regUsername" placeholder="superadmin">
-        </div>
-        <div class="form-group">
-            <label>Nenosiri (angalau herufi 6)</label>
-            <input type="password" id="regPassword">
-        </div>
-        <div class="form-group">
-            <label>Jina lako kamili</label>
-            <input type="text" id="regFullName" placeholder="Aron Clement">
-        </div>
-        <button onclick="handleRegister()">Sajili Akaunti</button>
-        <p style="text-align:center; margin-top:25px;">
-            Tayari una akaunti? <a href="#" onclick="showLogin()">Ingia hapa</a>
-        </p>
+<div class="form-container" id="registerPage" style="display:none;">
+    <h2>Jisajili</h2>
+    <div id="registerMessage" class="message"></div>
+    <div class="form-group">
+        <label>Jina la Mtumiaji (Username)</label>
+        <input type="text" id="regUsername" placeholder="superadmin">
     </div>
+    <div class="form-group">
+        <label>Nenosiri (herufi 6+)</label>
+        <input type="password" id="regPassword">
+    </div>
+    <div class="form-group">
+        <label>Jina Kamili</label>
+        <input type="text" id="regFullName" placeholder="Aron Clement">
+    </div>
+    <button onclick="handleRegister()">Sajili</button>
+    <p style="text-align:center; margin-top:20px;">
+        Una akaunti? <a href="#" onclick="showLogin()">Ingia</a>
+    </p>
 </div>
 
 <script>
-// ====================== FIREBASE INITIALIZATION ======================
+// All code is inside one script - this helps avoid initialization issues
 const firebaseConfig = {
   apiKey: "AIzaSyD0rTfNVPAjtPFRQxT5SEhJaLBX40Z8q4g",
   authDomain: "mihayo-media-platform.firebaseapp.com",
@@ -114,26 +81,22 @@ const firebaseConfig = {
   appId: "1:973572154003:web:837f3abb7689c0706ce366"
 };
 
-// **Muhimu**: Initialize Firebase kwanza
 firebase.initializeApp(firebaseConfig);
 
-// Kisha tunaunda auth na db
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// ====================== HELPER ======================
 function usernameToEmail(username) {
     return username.trim().toLowerCase() + "@mihayo.local";
 }
 
-// ====================== REGISTER ======================
 async function handleRegister() {
     const username = document.getElementById('regUsername').value.trim();
     const password = document.getElementById('regPassword').value;
     const fullName = document.getElementById('regFullName').value.trim();
 
     if (!username || !password || !fullName) {
-        showMessage('registerMessage', 'Tafadhali jaza sehemu zote!', 'error');
+        showMessage('registerMessage', 'Jaza sehemu zote!', 'error');
         return;
     }
     if (password.length < 6) {
@@ -141,10 +104,9 @@ async function handleRegister() {
         return;
     }
 
-    const email = usernameToEmail(username);
-
     try {
         showMessage('registerMessage', 'Inasajili...', 'info');
+        const email = usernameToEmail(username);
 
         const userCredential = await auth.createUserWithEmailAndPassword(email, password);
         const user = userCredential.user;
@@ -157,7 +119,7 @@ async function handleRegister() {
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        showMessage('registerMessage', '✅ Akaunti imeundwa kikamilifu!<br>Sasa ingia.', 'success');
+        showMessage('registerMessage', '✅ Akaunti imeundwa! Sasa ingia.', 'success');
         setTimeout(showLogin, 2000);
 
     } catch (error) {
@@ -166,7 +128,6 @@ async function handleRegister() {
     }
 }
 
-// ====================== LOGIN ======================
 async function handleLogin() {
     const username = document.getElementById('loginUsername').value.trim();
     const password = document.getElementById('loginPassword').value;
@@ -176,22 +137,19 @@ async function handleLogin() {
         return;
     }
 
-    const email = usernameToEmail(username);
-
     try {
         showMessage('loginMessage', 'Inaingia...', 'info');
+        const email = usernameToEmail(username);
         await auth.signInWithEmailAndPassword(email, password);
         alert("✅ Login umefanikiwa!");
-        
     } catch (error) {
         console.error(error);
         showMessage('loginMessage', 'Hitilafu: ' + error.message, 'error');
     }
 }
 
-// ====================== UI FUNCTIONS ======================
-function showMessage(elementId, text, type) {
-    const el = document.getElementById(elementId);
+function showMessage(id, text, type) {
+    const el = document.getElementById(id);
     el.className = `message ${type}`;
     el.style.display = 'block';
     el.innerHTML = text;
@@ -208,9 +166,7 @@ function showRegister() {
     document.getElementById('registerPage').style.display = 'block';
 }
 
-// Anza na Login
 showLogin();
 </script>
-
 </body>
 </html>
