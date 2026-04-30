@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mihayo Media Platform</title>
   
+    <!-- Firebase Scripts -->
     <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
 
@@ -27,14 +28,32 @@
         h2 { text-align: center; margin-bottom: 30px; color: #333; }
         .form-group { margin-bottom: 18px; }
         .form-group label { display: block; margin-bottom: 6px; font-weight: bold; color: #444; }
-        .form-group input, .form-group select {
-            width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;
+        .form-group input { 
+            width: 100%; 
+            padding: 12px; 
+            border: 2px solid #ddd; 
+            border-radius: 8px; 
+            font-size: 16px; 
         }
-        button {
-            width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white; border: none; border-radius: 8px; font-size: 17px; font-weight: bold; cursor: pointer;
+        button { 
+            width: 100%; 
+            padding: 14px; 
+            background: linear-gradient(135deg, #667eea, #764ba2); 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            font-size: 17px; 
+            font-weight: bold; 
+            cursor: pointer; 
         }
-        .message { padding: 14px; margin: 15px 0; border-radius: 8px; display: none; font-weight: bold; text-align: center; }
+        .message { 
+            padding: 14px; 
+            margin: 15px 0; 
+            border-radius: 8px; 
+            display: none; 
+            font-weight: bold; 
+            text-align: center; 
+        }
         .success { background: #d4edda; color: #155724; }
         .error { background: #f8d7da; color: #721c24; }
     </style>
@@ -46,7 +65,7 @@
     <div id="loginMessage" class="message"></div>
     
     <div class="form-group">
-        <label>Jina la Mtumiaji (Username)</label>
+        <label>Jina la Mtumiaji</label>
         <input type="text" id="loginUsername" placeholder="superadmin">
     </div>
     <div class="form-group">
@@ -60,7 +79,6 @@
     </p>
 </div>
 
-<!-- Register Page - Kwa watumiaji wa kawaida -->
 <div class="form-container" id="registerPage" style="display:none;">
     <h2>Jisajili (Mara Moja Tu)</h2>
     <div id="registerMessage" class="message"></div>
@@ -74,7 +92,7 @@
         <input type="tel" id="regPhone" placeholder="0712345678">
     </div>
     <div class="form-group">
-        <label>Mwaka Uliomaliza Shule/Chuo</label>
+        <label>Mwaka Uliomaliza</label>
         <input type="number" id="regYear" placeholder="2024" min="1990" max="2026">
     </div>
     <button onclick="handleRegister()">Sajili na Ingia</button>
@@ -85,118 +103,123 @@
 </div>
 
 <script>
-// Firebase
-const firebaseConfig = {
-  apiKey: "AIzaSyD0rTfNVPAjtPFRQxT5SEhJaLBX40Z8q4g",
-  authDomain: "mihayo-media-platform.firebaseapp.com",
-  projectId: "mihayo-media-platform",
-  storageBucket: "mihayo-media-platform.firebasestorage.app",
-  messagingSenderId: "973572154003",
-  appId: "1:973572154003:web:837f3abb7689c0706ce366"
+// Subiri Firebase i-load kabla ya kutumia
+window.onload = function() {
+    if (typeof firebase === "undefined") {
+        alert("Hitilafu: Firebase haijaload vizuri. Refresh ukurasa.");
+        return;
+    }
+
+    // Initialize Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyD0rTfNVPAjtPFRQxT5SEhJaLBX40Z8q4g",
+      authDomain: "mihayo-media-platform.firebaseapp.com",
+      projectId: "mihayo-media-platform",
+      storageBucket: "mihayo-media-platform.firebasestorage.app",
+      messagingSenderId: "973572154003",
+      appId: "1:973572154003:web:837f3abb7689c0706ce366"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Super Admin
+    const SUPER_ADMIN = { username: "superadmin", password: "MIhayo@2021" };
+
+    // ====================== LOGIN ======================
+    window.handleLogin = async function() {
+        const username = document.getElementById('loginUsername').value.trim().toLowerCase();
+        const password = document.getElementById('loginPassword').value;
+
+        if (!username || !password) {
+            showMessage('loginMessage', 'Jaza username na nenosiri!', 'error');
+            return;
+        }
+
+        // Super Admin Login
+        if (username === SUPER_ADMIN.username && password === SUPER_ADMIN.password) {
+            showMessage('loginMessage', '✅ Karibu Super Admin!', 'success');
+            localStorage.setItem('currentUser', JSON.stringify({role: 'super_admin', name: 'Super Admin'}));
+            setTimeout(() => {
+                alert("Karibu Super Admin!\n\nDashboard itaongezwa hivi karibuni.");
+            }, 800);
+            return;
+        }
+
+        // Normal User Login
+        const savedUser = localStorage.getItem('currentUser');
+        if (savedUser) {
+            const user = JSON.parse(savedUser);
+            alert(`Karibu tena, ${user.name || 'Mwanachama'}!`);
+        } else {
+            showMessage('loginMessage', 'Huja sajili bado. Tafadhali jisajili kwanza.', 'error');
+        }
+    };
+
+    // ====================== REGISTER ======================
+    window.handleRegister = async function() {
+        const fullName = document.getElementById('regFullName').value.trim();
+        const phone = document.getElementById('regPhone').value.trim();
+        const year = document.getElementById('regYear').value;
+
+        if (!fullName || !phone || !year) {
+            showMessage('registerMessage', 'Tafadhali jaza sehemu zote!', 'error');
+            return;
+        }
+
+        try {
+            showMessage('registerMessage', 'Inasajili...', 'info');
+
+            const userData = {
+                fullName: fullName,
+                phone: phone,
+                graduationYear: parseInt(year),
+                role: "user",
+                registeredAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            await db.collection('users').add(userData);
+
+            // Save to localStorage
+            localStorage.setItem('currentUser', JSON.stringify({
+                name: fullName,
+                phone: phone,
+                role: "user"
+            }));
+
+            showMessage('registerMessage', '✅ Usajili umefanikiwa!', 'success');
+            
+            setTimeout(() => {
+                alert(`Karibu ${fullName}!\nSasa unaweza kuona maudhui ya website.`);
+            }, 1500);
+
+        } catch (error) {
+            console.error(error);
+            showMessage('registerMessage', 'Hitilafu: ' + error.message, 'error');
+        }
+    };
+
+    function showMessage(id, text, type) {
+        const el = document.getElementById(id);
+        el.className = `message ${type}`;
+        el.style.display = 'block';
+        el.innerHTML = text;
+        setTimeout(() => el.style.display = 'none', 6000);
+    }
+
+    function showLogin() {
+        document.getElementById('registerPage').style.display = 'none';
+        document.getElementById('loginPage').style.display = 'block';
+    }
+
+    function showRegister() {
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('registerPage').style.display = 'block';
+    }
+
+    // Start app
+    showLogin();
 };
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-// Super Admin
-const SUPER_ADMIN = { username: "superadmin", password: "MIhayo@2021" };
-
-// Handle Login
-async function handleLogin() {
-    const username = document.getElementById('loginUsername').value.trim().toLowerCase();
-    const password = document.getElementById('loginPassword').value;
-
-    if (!username || !password) {
-        showMessage('loginMessage', 'Jaza username na nenosiri!', 'error');
-        return;
-    }
-
-    // Super Admin Login
-    if (username === SUPER_ADMIN.username && password === SUPER_ADMIN.password) {
-        showMessage('loginMessage', '✅ Karibu Super Admin!', 'success');
-        localStorage.setItem('currentUser', JSON.stringify({role: 'super_admin', name: 'Super Admin'}));
-        setTimeout(() => alert("Super Admin Panel itaongezwa hivi karibuni"), 1000);
-        return;
-    }
-
-    // Normal User Login (Check if already registered)
-    showMessage('loginMessage', 'Inaangalia...', 'info');
-    
-    // Kwa sasa tunaangalia tu kwenye localStorage
-    const savedUser = localStorage.getItem('currentUser');
-    if (savedUser) {
-        const user = JSON.parse(savedUser);
-        alert(`Karibu tena ${user.name || 'Mwanachama'}!`);
-    } else {
-        showMessage('loginMessage', 'Huja sajili bado. Tafadhali jisajili kwanza.', 'error');
-    }
-}
-
-// Handle Registration (Mara moja tu)
-async function handleRegister() {
-    const fullName = document.getElementById('regFullName').value.trim();
-    const phone = document.getElementById('regPhone').value.trim();
-    const year = document.getElementById('regYear').value;
-
-    if (!fullName || !phone || !year) {
-        showMessage('registerMessage', 'Tafadhali jaza sehemu zote!', 'error');
-        return;
-    }
-
-    try {
-        showMessage('registerMessage', 'Inasajili...', 'info');
-
-        const userData = {
-            fullName: fullName,
-            phone: phone,
-            graduationYear: parseInt(year),
-            role: "user",
-            registeredAt: firebase.firestore.FieldValue.serverTimestamp()
-        };
-
-        // Save to Firestore
-        await db.collection('users').add(userData);
-
-        // Save to localStorage ili asijaze tena
-        localStorage.setItem('currentUser', JSON.stringify({
-            name: fullName,
-            phone: phone,
-            role: "user"
-        }));
-
-        showMessage('registerMessage', '✅ Usajili umefanikiwa! Karibu kwenye platform.', 'success');
-        
-        setTimeout(() => {
-            alert(`Karibu ${fullName}! Unaweza sasa kuona maudhui.`);
-            // Hapa baadaye utaelekeza kwenye main dashboard
-        }, 1500);
-
-    } catch (error) {
-        console.error(error);
-        showMessage('registerMessage', 'Hitilafu: ' + error.message, 'error');
-    }
-}
-
-function showMessage(id, text, type) {
-    const el = document.getElementById(id);
-    el.className = `message ${type}`;
-    el.style.display = 'block';
-    el.innerHTML = text;
-    setTimeout(() => el.style.display = 'none', 6000);
-}
-
-function showLogin() {
-    document.getElementById('registerPage').style.display = 'none';
-    document.getElementById('loginPage').style.display = 'block';
-}
-
-function showRegister() {
-    document.getElementById('loginPage').style.display = 'none';
-    document.getElementById('registerPage').style.display = 'block';
-}
-
-// Start the app
-showLogin();
 </script>
 </body>
 </html>
