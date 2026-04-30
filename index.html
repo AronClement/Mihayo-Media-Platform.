@@ -13,38 +13,51 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #ce8f07, #f39108);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ce8f07 0%, #f39108 100%);
             min-height: 100vh;
             padding: 20px;
         }
         .login-form, .register-form {
             max-width: 450px;
-            margin: 50px auto;
+            margin: 60px auto;
             background: white;
-            padding: 35px;
+            padding: 40px;
             border-radius: 15px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
         }
         h2 { text-align: center; margin-bottom: 30px; color: #333; }
         .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #555; }
+        .form-group label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-weight: bold; 
+            color: #555; 
+        }
         .form-group input {
             width: 100%;
             padding: 12px;
-            border: 2px solid #ddd;
+            border: 2px solid #e0e0e0;
             border-radius: 8px;
             font-size: 16px;
         }
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
         button {
             width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 13px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
             border-radius: 8px;
             font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
+        }
+        button:hover {
+            transform: translateY(-2px);
         }
         .message {
             padding: 12px;
@@ -60,10 +73,12 @@
 </head>
 <body>
 
+<!-- Login Page -->
 <div id="loginPage">
     <div class="login-form">
         <h2>Mihayo Media Platform</h2>
         <div id="loginMessage" class="message"></div>
+        
         <div class="form-group">
             <label>Jina la Mtumiaji (Username)</label>
             <input type="text" id="loginUsername" placeholder="aron123">
@@ -73,19 +88,22 @@
             <input type="password" id="loginPassword">
         </div>
         <button onclick="handleLogin()">Ingia</button>
+        
         <p style="text-align: center; margin-top: 20px;">
-            <a href="#" onclick="showRegister()">Huna akaunti? Jisajili hapa</a>
+            Huna akaunti? <a href="#" onclick="showRegister()">Jisajili hapa</a>
         </p>
     </div>
 </div>
 
+<!-- Register Page -->
 <div id="registerPage" style="display: none;">
     <div class="register-form">
         <h2>Jisajili</h2>
         <div id="registerMessage" class="message"></div>
+        
         <div class="form-group">
             <label>Jina la Mtumiaji (Username)</label>
-            <input type="text" id="regUsername" placeholder="aron123">
+            <input type="text" id="regUsername" placeholder="superadmin">
         </div>
         <div class="form-group">
             <label>Nenosiri (angalau herufi 6)</label>
@@ -96,14 +114,15 @@
             <input type="text" id="regFullName" placeholder="Aron Clement">
         </div>
         <button onclick="handleRegister()">Sajili Akaunti</button>
+        
         <p style="text-align: center; margin-top: 20px;">
-            <a href="#" onclick="showLogin()">Tayari una akaunti? Ingia</a>
+            Tayari una akaunti? <a href="#" onclick="showLogin()">Ingia hapa</a>
         </p>
     </div>
 </div>
 
 <script>
-// ====================== FIREBASE SETUP ======================
+// ====================== FIREBASE INITIALIZATION ======================
 const firebaseConfig = {
   apiKey: "AIzaSyD0rTfNVPAjtPFRQxT5SEhJaLBX40Z8q4g",
   authDomain: "mihayo-media-platform.firebaseapp.com",
@@ -113,19 +132,19 @@ const firebaseConfig = {
   appId: "1:973572154003:web:837f3abb7689c0706ce366"
 };
 
-// Initialize Firebase first
+// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
-// Initialize services baada ya app
+// Initialize Auth na Firestore
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// ====================== HELPER FUNCTION ======================
+// ====================== HELPER ======================
 function usernameToEmail(username) {
     return username.trim().toLowerCase() + "@mihayo.local";
 }
 
-// ====================== REGISTER FUNCTION ======================
+// ====================== REGISTER ======================
 async function handleRegister() {
     const username = document.getElementById('regUsername').value.trim();
     const password = document.getElementById('regPassword').value;
@@ -156,16 +175,16 @@ async function handleRegister() {
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        showMessage('registerMessage', '✅ Akaunti imeundwa kikamilifu!<br>Sasa unaweza kuingia.', 'success');
-        setTimeout(showLogin, 2500);
+        showMessage('registerMessage', '✅ Akaunti imeundwa kikamilifu!<br>Sasa ingia na username yako.', 'success');
+        setTimeout(showLogin, 2200);
 
     } catch (error) {
-        console.error(error);
+        console.error("Register Error:", error);
         showMessage('registerMessage', 'Hitilafu: ' + error.message, 'error');
     }
 }
 
-// ====================== LOGIN FUNCTION ======================
+// ====================== LOGIN ======================
 async function handleLogin() {
     const username = document.getElementById('loginUsername').value.trim();
     const password = document.getElementById('loginPassword').value;
@@ -178,31 +197,26 @@ async function handleLogin() {
     const email = usernameToEmail(username);
 
     try {
-        showMessage('loginMessage', 'Inajaribu kuingia...', 'info');
+        showMessage('loginMessage', 'Inaingia...', 'info');
 
         const userCredential = await auth.signInWithEmailAndPassword(email, password);
         
-        console.log("✅ Login successful for user:", userCredential.user.uid);
-        alert("✅ Login umefanikiwa!\n\nSasa unaweza kuendelea.");
-
-        // Baadaye tunaweza kuongeza kupeleka dashboard
+        console.log("Login successful:", userCredential.user.uid);
+        alert("✅ Login umefanikiwa!\n\nUnaweza kuendelea.");
 
     } catch (error) {
-        console.error(error);
+        console.error("Login Error:", error);
         showMessage('loginMessage', 'Hitilafu: ' + error.message, 'error');
     }
 }
 
-// ====================== UI HELPER FUNCTIONS ======================
+// ====================== UI FUNCTIONS ======================
 function showMessage(elementId, text, type) {
     const msg = document.getElementById(elementId);
     msg.className = `message ${type}`;
     msg.style.display = 'block';
     msg.innerHTML = text;
-
-    setTimeout(() => {
-        msg.style.display = 'none';
-    }, 6000);
+    setTimeout(() => { msg.style.display = 'none'; }, 6000);
 }
 
 function showLogin() {
@@ -215,8 +229,9 @@ function showRegister() {
     document.getElementById('registerPage').style.display = 'block';
 }
 
-// Start the app
+// Anza na Login Page
 showLogin();
 </script>
+
 </body>
 </html>
