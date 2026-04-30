@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mihayo Media Platform</title>
   
-    <!-- Firebase Scripts -->
+    <!-- Firebase Scripts - Zimewekwa juu -->
     <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
 
@@ -19,18 +19,18 @@
         }
         .form-container {
             max-width: 480px;
-            margin: 60px auto;
+            margin: 80px auto;
             background: white;
             padding: 40px;
             border-radius: 16px;
             box-shadow: 0 15px 50px rgba(0,0,0,0.3);
         }
         h2 { text-align: center; margin-bottom: 30px; color: #333; }
-        .form-group { margin-bottom: 18px; }
-        .form-group label { display: block; margin-bottom: 6px; font-weight: bold; color: #444; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #444; }
         .form-group input { 
             width: 100%; 
-            padding: 12px; 
+            padding: 13px; 
             border: 2px solid #ddd; 
             border-radius: 8px; 
             font-size: 16px; 
@@ -70,7 +70,7 @@
     </div>
     <div class="form-group">
         <label>Nenosiri</label>
-        <input type="password" id="loginPassword">
+        <input type="password" id="loginPassword" placeholder="MIhayo@2021">
     </div>
     <button onclick="handleLogin()">Ingia</button>
     
@@ -103,10 +103,11 @@
 </div>
 
 <script>
-// Subiri Firebase i-load kabla ya kutumia
-window.onload = function() {
+// Subiri Firebase ipakie
+document.addEventListener("DOMContentLoaded", function() {
+    
     if (typeof firebase === "undefined") {
-        alert("Hitilafu: Firebase haijaload vizuri. Refresh ukurasa.");
+        alert("Firebase haijaload vizuri. Tafadhali refresh ukurasa au angalia mtandao.");
         return;
     }
 
@@ -123,11 +124,14 @@ window.onload = function() {
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // Super Admin
-    const SUPER_ADMIN = { username: "superadmin", password: "MIhayo@2021" };
+    // Super Admin Credentials
+    const SUPER_ADMIN = {
+        username: "superadmin",
+        password: "MIhayo@2021"
+    };
 
     // ====================== LOGIN ======================
-    window.handleLogin = async function() {
+    window.handleLogin = function() {
         const username = document.getElementById('loginUsername').value.trim().toLowerCase();
         const password = document.getElementById('loginPassword').value;
 
@@ -136,17 +140,14 @@ window.onload = function() {
             return;
         }
 
-        // Super Admin Login
         if (username === SUPER_ADMIN.username && password === SUPER_ADMIN.password) {
             showMessage('loginMessage', '✅ Karibu Super Admin!', 'success');
             localStorage.setItem('currentUser', JSON.stringify({role: 'super_admin', name: 'Super Admin'}));
-            setTimeout(() => {
-                alert("Karibu Super Admin!\n\nDashboard itaongezwa hivi karibuni.");
-            }, 800);
+            setTimeout(() => alert("Karibu Super Admin!"), 1000);
             return;
         }
 
-        // Normal User Login
+        // Normal user login
         const savedUser = localStorage.getItem('currentUser');
         if (savedUser) {
             const user = JSON.parse(savedUser);
@@ -170,27 +171,20 @@ window.onload = function() {
         try {
             showMessage('registerMessage', 'Inasajili...', 'info');
 
-            const userData = {
+            await db.collection('users').add({
                 fullName: fullName,
                 phone: phone,
                 graduationYear: parseInt(year),
                 role: "user",
                 registeredAt: firebase.firestore.FieldValue.serverTimestamp()
-            };
+            });
 
-            await db.collection('users').add(userData);
-
-            // Save to localStorage
-            localStorage.setItem('currentUser', JSON.stringify({
-                name: fullName,
-                phone: phone,
-                role: "user"
-            }));
+            localStorage.setItem('currentUser', JSON.stringify({name: fullName, role: "user"}));
 
             showMessage('registerMessage', '✅ Usajili umefanikiwa!', 'success');
             
             setTimeout(() => {
-                alert(`Karibu ${fullName}!\nSasa unaweza kuona maudhui ya website.`);
+                alert(`Karibu ${fullName}! Sasa unaweza kuona maudhui.`);
             }, 1500);
 
         } catch (error) {
@@ -217,9 +211,9 @@ window.onload = function() {
         document.getElementById('registerPage').style.display = 'block';
     }
 
-    // Start app
+    // Anza na login page
     showLogin();
-};
+});
 </script>
 </body>
 </html>
