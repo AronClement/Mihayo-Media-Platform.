@@ -67,20 +67,36 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.9);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 9999;
             color: white;
             font-size: 20px;
+            flex-direction: column;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #f39108;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
 
 <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
     <div>Inaandaa platform... Tafadhali subiri</div>
+    <div id="errorDetail" style="font-size: 14px; margin-top: 20px; color: #ff6b6b;"></div>
 </div>
 
 <div class="form-container" id="loginPage" style="display:none;">
@@ -122,11 +138,6 @@
 </div>
 
 <script>
-// ====================== GLOBAL VARIABLES ======================
-let auth = null;
-let db = null;
-let firebaseInitialized = false;
-
 // ====================== FIREBASE CONFIG ======================
 const firebaseConfig = {
     apiKey: "AIzaSyD0rTfNVPAjtPFRQxT5SEhJaLBX40Z8q4g",
@@ -137,30 +148,42 @@ const firebaseConfig = {
     appId: "1:973572154003:web:837f3abb7689c0706ce366"
 };
 
-// ====================== INITIALIZE FIREBASE ======================
-function initializeFirebase() {
-    return new Promise((resolve, reject) => {
-        try {
-            if (typeof firebase === 'undefined') {
-                reject(new Error('Firebase haijaload vizuri'));
-                return;
-            }
-            
-            if (!firebase.apps.length) {
-                firebase.initializeApp(firebaseConfig);
-            }
-            
-            auth = firebase.auth();
-            db = firebase.firestore();
-            firebaseInitialized = true;
-            
-            console.log("Firebase imeanzishwa kikamilifu");
-            resolve();
-        } catch (error) {
-            console.error("Error initializing Firebase:", error);
-            reject(error);
+// ====================== GLOBAL VARIABLES ======================
+let auth = null;
+let db = null;
+let appInitialized = false;
+
+// ====================== FIREBASE INITIALIZATION ======================
+function initFirebase() {
+    try {
+        console.log("Checking Firebase...");
+        console.log("Firebase available:", typeof firebase !== 'undefined');
+        
+        if (typeof firebase === 'undefined') {
+            throw new Error("Firebase SDK haijaload. Angalia connection yako ya internet.");
         }
-    });
+        
+        // Initialize Firebase if not already initialized
+        if (!firebase.apps.length) {
+            console.log("Initializing Firebase...");
+            firebase.initializeApp(firebaseConfig);
+            console.log("Firebase initialized successfully");
+        } else {
+            console.log("Firebase already initialized");
+        }
+        
+        auth = firebase.auth();
+        db = firebase.firestore();
+        appInitialized = true;
+        
+        console.log("Auth and Firestore ready");
+        return true;
+        
+    } catch (error) {
+        console.error("Firebase initialization error:", error);
+        document.getElementById('errorDetail').innerHTML = "Error: " + error.message;
+        return false;
+    }
 }
 
 // ====================== HELPER FUNCTIONS ======================
@@ -186,9 +209,8 @@ function disableButton(btnId, disabled) {
 
 // ====================== REGISTER FUNCTION ======================
 async function handleRegister() {
-    // Check if Firebase is ready
-    if (!firebaseInitialized || !auth) {
-        showMessage('registerMessage', 'Tafadhali subiri, mfumo unaandaliwa...', 'error');
+    if (!appInitialized || !auth) {
+        showMessage('registerMessage', 'Mfumo unaanza, tafadhali subiri sekunde chache...', 'error');
         return;
     }
     
@@ -220,7 +242,7 @@ async function handleRegister() {
             fullName: fullName,
             email: email,
             role: username.toLowerCase() === "superadmin" ? "super_admin" : "user",
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            createdAt: new Date()
         });
 
         showMessage('registerMessage', '✅ Akaunti imeundwa kikamilifu! Sasa unaweza kuingia.', 'success');
@@ -237,9 +259,9 @@ async function handleRegister() {
         
         let errorMessage = "Hitilafu wakati wa kusajili: ";
         if (error.code === 'auth/email-already-in-use') {
-            errorMessage += "Jina la mtumiaji tayari lipo. Tafadhali tumia jina tofauti.";
+            errorMessage += "Jina la mtumiaji tayari lipo. Tumia jina tofauti.";
         } else if (error.code === 'auth/invalid-email') {
-            errorMessage += "Barua pepe si sahihi. Tafadhali jaribu tena.";
+            errorMessage += "Barua pepe si sahihi.";
         } else if (error.code === 'auth/weak-password') {
             errorMessage += "Nenosiri dhaifu. Tumia herufi 6 au zaidi.";
         } else {
@@ -254,9 +276,8 @@ async function handleRegister() {
 
 // ====================== LOGIN FUNCTION ======================
 async function handleLogin() {
-    // Check if Firebase is ready
-    if (!firebaseInitialized || !auth) {
-        showMessage('loginMessage', 'Tafadhali subiri, mfumo unaandaliwa...', 'error');
+    if (!appInitialized || !auth) {
+        showMessage('loginMessage', 'Mfumo unaanza, tafadhali subiri sekunde chache...', 'error');
         return;
     }
     
@@ -279,7 +300,7 @@ async function handleLogin() {
         
         if (userDoc.exists) {
             const userData = userDoc.data();
-            showMessage('loginMessage', `✅ Karibu ${userData.fullName || username}! Unaingizwa...`, 'success');
+            showMessage('loginMessage', `✅ Karibu ${userData.fullName || username}!`, 'success');
             
             setTimeout(() => {
                 alert(`Karibu sana ${userData.fullName || username} kwenye Mihayo Media Platform!`);
@@ -293,13 +314,13 @@ async function handleLogin() {
         
         let errorMessage = "Hitilafu wakati wa kuingia: ";
         if (error.code === 'auth/user-not-found') {
-            errorMessage += "Jina la mtumiaji au nenosiri si sahihi. Jaribu tena.";
+            errorMessage += "Username au nenosiri si sahihi.";
         } else if (error.code === 'auth/wrong-password') {
-            errorMessage += "Nenosiri si sahihi. Jaribu tena.";
+            errorMessage += "Nenosiri si sahihi.";
         } else if (error.code === 'auth/invalid-email') {
             errorMessage += "Barua pepe si sahihi.";
         } else if (error.code === 'auth/too-many-requests') {
-            errorMessage += "Majaribio mengi sana. Tafadhali jaribu baadaye.";
+            errorMessage += "Majaribio mengi. Jaribu baadaye.";
         } else {
             errorMessage += error.message;
         }
@@ -310,7 +331,7 @@ async function handleLogin() {
     }
 }
 
-// ====================== UI NAVIGATION FUNCTIONS ======================
+// ====================== UI NAVIGATION ======================
 function showLogin() {
     document.getElementById('registerPage').style.display = 'none';
     document.getElementById('loginPage').style.display = 'block';
@@ -326,35 +347,35 @@ function showRegister() {
 }
 
 // ====================== START APPLICATION ======================
-async function startApp() {
-    try {
-        // Initialize Firebase first
-        await initializeFirebase();
-        
-        // Hide loading overlay
-        document.getElementById('loadingOverlay').style.display = 'none';
-        
-        // Show login page
-        document.getElementById('loginPage').style.display = 'block';
-        
-        // Check if user is already logged in
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                console.log("User already logged in:", user.email);
+function startApplication() {
+    console.log("Starting application...");
+    
+    // Initialize Firebase
+    const success = initFirebase();
+    
+    if (success) {
+        // Hide loading overlay after 1 second
+        setTimeout(() => {
+            document.getElementById('loadingOverlay').style.display = 'none';
+            document.getElementById('loginPage').style.display = 'block';
+            
+            // Check if user is already logged in
+            if (auth && auth.onAuthStateChanged) {
+                auth.onAuthStateChanged((user) => {
+                    if (user) {
+                        console.log("User already logged in:", user.email);
+                    }
+                });
             }
-        });
-        
-        console.log("Application imeanza vizuri!");
-        
-    } catch (error) {
-        console.error("Failed to start app:", error);
-        document.getElementById('loadingOverlay').innerHTML = 
-            '<div style="color: red;">Hitilafu: Mfumo haukuanza vizuri. Tafadhali refresh ukurasa.</div>';
+        }, 1000);
+    } else {
+        // Show error but keep loading overlay visible with error message
+        document.getElementById('errorDetail').innerHTML = 'Jaribu ku refresh ukurasa. Kama tatizo linaendelea, angalia internet connection.';
     }
 }
 
-// Start the application when page loads
-window.addEventListener('load', startApp);
+// Start when page loads
+window.addEventListener('load', startApplication);
 </script>
 </body>
 </html>
