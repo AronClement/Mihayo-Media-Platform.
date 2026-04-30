@@ -5,17 +5,127 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mihayo Media Platform</title>
   
-    <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
+    <!-- Firebase Modular SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.24.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.24.0/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore.js";
+
+        // Firebase Config
+        const firebaseConfig = {
+          apiKey: "AIzaSyD0rTfNVPAjtPFRQxT5SEhJaLBX40Z8q4g",
+          authDomain: "mihayo-media-platform.firebaseapp.com",
+          projectId: "mihayo-media-platform",
+          storageBucket: "mihayo-media-platform.firebasestorage.app",
+          messagingSenderId: "973572154003",
+          appId: "1:973572154003:web:837f3abb7689c0706ce366"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Helper function
+        function usernameToEmail(username) {
+            return username.trim().toLowerCase() + "@mihayo.local";
+        }
+
+        // ====================== REGISTER ======================
+        window.handleRegister = async function() {
+            const username = document.getElementById('regUsername').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const fullName = document.getElementById('regFullName').value.trim();
+
+            if (!username || !password || !fullName) {
+                showMessage('registerMessage', 'Tafadhali jaza sehemu zote!', 'error');
+                return;
+            }
+            if (password.length < 6) {
+                showMessage('registerMessage', 'Nenosiri lazima liwe na angalau herufi 6!', 'error');
+                return;
+            }
+
+            try {
+                showMessage('registerMessage', 'Inasajili akaunti...', 'info');
+
+                const email = usernameToEmail(username);
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                await setDoc(doc(db, "users", user.uid), {
+                    username: username,
+                    fullName: fullName,
+                    email: email,
+                    role: username.toLowerCase() === "superadmin" ? "super_admin" : "user",
+                    createdAt: serverTimestamp()
+                });
+
+                showMessage('registerMessage', '✅ Akaunti imeundwa kikamilifu!<br>Sasa ingia na username yako.', 'success');
+                setTimeout(showLogin, 2200);
+
+            } catch (error) {
+                console.error(error);
+                showMessage('registerMessage', 'Hitilafu: ' + error.message, 'error');
+            }
+        };
+
+        // ====================== LOGIN ======================
+        window.handleLogin = async function() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            if (!username || !password) {
+                showMessage('loginMessage', 'Tafadhali jaza username na nenosiri!', 'error');
+                return;
+            }
+
+            try {
+                showMessage('loginMessage', 'Inaingia...', 'info');
+
+                const email = usernameToEmail(username);
+                await signInWithEmailAndPassword(auth, email, password);
+
+                alert("✅ Login umefanikiwa! Karibu sana.");
+
+            } catch (error) {
+                console.error(error);
+                showMessage('loginMessage', 'Hitilafu: ' + error.message, 'error');
+            }
+        };
+
+        // UI Functions
+        function showMessage(elementId, text, type) {
+            const msg = document.getElementById(elementId);
+            msg.className = `message ${type}`;
+            msg.style.display = 'block';
+            msg.innerHTML = text;
+            setTimeout(() => msg.style.display = 'none', 6000);
+        }
+
+        function showLogin() {
+            document.getElementById('registerPage').style.display = 'none';
+            document.getElementById('loginPage').style.display = 'block';
+        }
+
+        function showRegister() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('registerPage').style.display = 'block';
+        }
+
+        // Start with login page
+        window.onload = () => {
+            showLogin();
+        };
+    </script>
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Segoe UI', sans-serif; 
-            background: linear-gradient(135deg, #ce8f07, #f39108); 
-            min-height: 100vh; 
-            padding: 20px; 
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #ce8f07, #f39108);
+            min-height: 100vh;
+            padding: 20px;
         }
         .form-container {
             max-width: 460px;
@@ -98,97 +208,5 @@
     </p>
 </div>
 
-<script>
-// ====================== FIREBASE SETUP ======================
-const firebaseConfig = {
-  apiKey: "AIzaSyD0rTfNVPAjtPFRQxT5SEhJaLBX40Z8q4g",
-  authDomain: "mihayo-media-platform.firebaseapp.com",
-  projectId: "mihayo-media-platform",
-  storageBucket: "mihayo-media-platform.firebasestorage.app",
-  messagingSenderId: "973572154003",
-  appId: "1:973572154003:web:837f3abb7689c0706ce366"
-};
-
-firebase.initializeApp(firebaseConfig);
-
-const auth = firebase.auth();
-const db = firebase.firestore();
-
-// ====================== HELPER ======================
-function usernameToEmail(username) {
-    return username.trim().toLowerCase() + "@mihayo.local";
-}
-
-// ====================== REGISTER ======================
-async function handleRegister() {
-    const username = document.getElementById('regUsername').value.trim();
-    const password = document.getElementById('regPassword').value;
-    const fullName = document.getElementById('regFullName').value.trim();
-
-    if (!username || !password || !fullName) return showMessage('registerMessage', 'Jaza sehemu zote!', 'error');
-    if (password.length < 6) return showMessage('registerMessage', 'Nenosiri lazima liwe na herufi 6+', 'error');
-
-    try {
-        showMessage('registerMessage', 'Inasajili...', 'info');
-        const email = usernameToEmail(username);
-
-        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-        const user = userCredential.user;
-
-        await db.collection('users').doc(user.uid).set({
-            username: username,
-            fullName: fullName,
-            email: email,
-            role: username.toLowerCase() === "superadmin" ? "super_admin" : "user",
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-        showMessage('registerMessage', '✅ Akaunti imeundwa! Sasa ingia.', 'success');
-        setTimeout(showLogin, 2000);
-
-    } catch (error) {
-        console.error(error);
-        showMessage('registerMessage', 'Hitilafu: ' + error.message, 'error');
-    }
-}
-
-// ====================== LOGIN ======================
-async function handleLogin() {
-    const username = document.getElementById('loginUsername').value.trim();
-    const password = document.getElementById('loginPassword').value;
-
-    if (!username || !password) return showMessage('loginMessage', 'Jaza username na nenosiri!', 'error');
-
-    try {
-        showMessage('loginMessage', 'Inaingia...', 'info');
-        const email = usernameToEmail(username);
-        await auth.signInWithEmailAndPassword(email, password);
-        alert("✅ Login umefanikiwa! Karibu.");
-    } catch (error) {
-        console.error(error);
-        showMessage('loginMessage', 'Hitilafu: ' + error.message, 'error');
-    }
-}
-
-function showMessage(id, text, type) {
-    const el = document.getElementById(id);
-    el.className = `message ${type}`;
-    el.style.display = 'block';
-    el.innerHTML = text;
-    setTimeout(() => el.style.display = 'none', 6000);
-}
-
-function showLogin() {
-    document.getElementById('registerPage').style.display = 'none';
-    document.getElementById('loginPage').style.display = 'block';
-}
-
-function showRegister() {
-    document.getElementById('loginPage').style.display = 'none';
-    document.getElementById('registerPage').style.display = 'block';
-}
-
-showLogin();
-</script>
 </body>
 </html>
