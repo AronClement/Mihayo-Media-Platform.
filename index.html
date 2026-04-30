@@ -76,9 +76,9 @@
         <label>Nenosiri</label>
         <input type="password" id="loginPassword">
     </div>
-    <button onclick="handleLogin()" id="loginBtn">Ingia</button>
+    <button onclick="window.handleLogin()" id="loginBtn">Ingia</button>
     <p style="text-align:center; margin-top:25px;">
-        Huna akaunti? <a href="#" onclick="showRegister()">Jisajili hapa</a>
+        Huna akaunti? <a href="#" onclick="window.showRegister()">Jisajili hapa</a>
     </p>
 </div>
 
@@ -97,205 +97,197 @@
         <label>Jina Kamili</label>
         <input type="text" id="regFullName" placeholder="Aron Clement">
     </div>
-    <button onclick="handleRegister()" id="registerBtn">Sajili Akaunti</button>
+    <button onclick="window.handleRegister()" id="registerBtn">Sajili Akaunti</button>
     <p style="text-align:center; margin-top:25px;">
-        Una akaunti? <a href="#" onclick="showLogin()">Ingia</a>
+        Una akaunti? <a href="#" onclick="window.showLogin()">Ingia</a>
     </p>
 </div>
 
 <script>
-// ====================== FIREBASE SETUP ======================
-const firebaseConfig = {
-  apiKey: "AIzaSyD0rTfNVPAjtPFRQxT5SEhJaLBX40Z8q4g",
-  authDomain: "mihayo-media-platform.firebaseapp.com",
-  projectId: "mihayo-media-platform",
-  storageBucket: "mihayo-media-platform.firebasestorage.app",
-  messagingSenderId: "973572154003",
-  appId: "1:973572154003:web:837f3abb7689c0706ce366"
-};
+// Kila kitu kimewekwa ndani ya DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function() {
+    // ====================== FIREBASE CONFIG ======================
+    const firebaseConfig = {
+        apiKey: "AIzaSyD0rTfNVPAjtPFRQxT5SEhJaLBX40Z8q4g",
+        authDomain: "mihayo-media-platform.firebaseapp.com",
+        projectId: "mihayo-media-platform",
+        storageBucket: "mihayo-media-platform.firebasestorage.app",
+        messagingSenderId: "973572154003",
+        appId: "1:973572154003:web:837f3abb7689c0706ce366"
+    };
 
-// Initialize Firebase BEFORE using auth
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
-
-const auth = firebase.auth();
-const db = firebase.firestore();
-
-// ====================== HELPER FUNCTIONS ======================
-function usernameToEmail(username) {
-    // Tumia email halisi ya kawaida yenye @gmail.com au domain yoyote halisi
-    // Usitumie .local kwa sababu Firebase haikubali
-    return username.trim().toLowerCase() + "@mihayomedia.example.com";
-}
-
-function showMessage(id, text, type) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.className = `message ${type}`;
-    el.style.display = 'block';
-    el.innerHTML = text;
-    setTimeout(() => {
-        if (el) el.style.display = 'none';
-    }, 6000);
-}
-
-function disableButton(btnId, disabled) {
-    const btn = document.getElementById(btnId);
-    if (btn) btn.disabled = disabled;
-}
-
-// ====================== REGISTER ======================
-async function handleRegister() {
-    const username = document.getElementById('regUsername').value.trim();
-    const password = document.getElementById('regPassword').value;
-    const fullName = document.getElementById('regFullName').value.trim();
-
-    // Validation
-    if (!username || !password || !fullName) {
-        return showMessage('registerMessage', 'Jaza sehemu zote!', 'error');
+    // Initialize Firebase (kama haijaanzishwa)
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
     }
-    if (password.length < 6) {
-        return showMessage('registerMessage', 'Nenosiri lazima liwe na herufi 6 au zaidi!', 'error');
-    }
-    if (username.length < 3) {
-        return showMessage('registerMessage', 'Jina la mtumiaji lazima liwe na herufi 3 au zaidi!', 'error');
+    
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // ====================== HELPER FUNCTIONS ======================
+    function usernameToEmail(username) {
+        return username.trim().toLowerCase() + "@mihayomedia.example.com";
     }
 
-    try {
-        disableButton('registerBtn', true);
-        showMessage('registerMessage', 'Inasajili... Tafadhali subiri', 'info');
-        
-        const email = usernameToEmail(username);
-        
-        // Create user with email and password
-        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-        const user = userCredential.user;
-
-        // Store user data in Firestore
-        await db.collection('users').doc(user.uid).set({
-            username: username,
-            fullName: fullName,
-            email: email,
-            role: username.toLowerCase() === "superadmin" ? "super_admin" : "user",
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-        showMessage('registerMessage', '✅ Akaunti imeundwa kikamilifu! Sasa unaweza kuingia.', 'success');
-        
-        // Auto redirect to login after 2 seconds
+    function showMessage(id, text, type) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.className = `message ${type}`;
+        el.style.display = 'block';
+        el.innerHTML = text;
         setTimeout(() => {
-            showLogin();
-            // Clear register form
-            document.getElementById('regUsername').value = '';
-            document.getElementById('regPassword').value = '';
-            document.getElementById('regFullName').value = '';
-        }, 2000);
+            if (el) el.style.display = 'none';
+        }, 6000);
+    }
 
-    } catch (error) {
-        console.error("Registration error:", error);
-        
-        let errorMessage = "Hitilafu wakati wa kusajili: ";
-        if (error.code === 'auth/email-already-in-use') {
-            errorMessage += "Jina la mtumiaji tayari lipo. Tafadhali tumia jina tofauti.";
-        } else if (error.code === 'auth/invalid-email') {
-            errorMessage += "Barua pepe si sahihi. Tafadhali jaribu tena.";
-        } else if (error.code === 'auth/weak-password') {
-            errorMessage += "Nenosiri dhaifu. Tumia herufi 6 au zaidi.";
-        } else {
-            errorMessage += error.message;
+    function disableButton(btnId, disabled) {
+        const btn = document.getElementById(btnId);
+        if (btn) btn.disabled = disabled;
+    }
+
+    // ====================== REGISTER FUNCTION ======================
+    window.handleRegister = async function() {
+        const username = document.getElementById('regUsername').value.trim();
+        const password = document.getElementById('regPassword').value;
+        const fullName = document.getElementById('regFullName').value.trim();
+
+        if (!username || !password || !fullName) {
+            return showMessage('registerMessage', 'Jaza sehemu zote!', 'error');
         }
-        
-        showMessage('registerMessage', errorMessage, 'error');
-    } finally {
-        disableButton('registerBtn', false);
-    }
-}
+        if (password.length < 6) {
+            return showMessage('registerMessage', 'Nenosiri lazima liwe na herufi 6 au zaidi!', 'error');
+        }
+        if (username.length < 3) {
+            return showMessage('registerMessage', 'Jina la mtumiaji lazima liwe na herufi 3 au zaidi!', 'error');
+        }
 
-// ====================== LOGIN ======================
-async function handleLogin() {
-    const username = document.getElementById('loginUsername').value.trim();
-    const password = document.getElementById('loginPassword').value;
-
-    if (!username || !password) {
-        return showMessage('loginMessage', 'Tafadhali jaza username na nenosiri!', 'error');
-    }
-
-    try {
-        disableButton('loginBtn', true);
-        showMessage('loginMessage', 'Inaingia... Tafadhali subiri', 'info');
-        
-        const email = usernameToEmail(username);
-        
-        const userCredential = await auth.signInWithEmailAndPassword(email, password);
-        
-        // Check if user exists in Firestore
-        const userDoc = await db.collection('users').doc(userCredential.user.uid).get();
-        
-        if (userDoc.exists) {
-            const userData = userDoc.data();
-            showMessage('loginMessage', `✅ Karibu ${userData.fullName || username}! Unaingizwa...`, 'success');
+        try {
+            disableButton('registerBtn', true);
+            showMessage('registerMessage', 'Inasajili... Tafadhali subiri', 'info');
             
-            // Redirect or show success
+            const email = usernameToEmail(username);
+            
+            const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+            const user = userCredential.user;
+
+            await db.collection('users').doc(user.uid).set({
+                username: username,
+                fullName: fullName,
+                email: email,
+                role: username.toLowerCase() === "superadmin" ? "super_admin" : "user",
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            showMessage('registerMessage', '✅ Akaunti imeundwa kikamilifu! Sasa unaweza kuingia.', 'success');
+            
             setTimeout(() => {
-                alert(`Karibu sana ${userData.fullName || username} kwenye Mihayo Media Platform!`);
-                // Hapa unaweza redirect kwenye dashboard yako
-                // window.location.href = "dashboard.html";
-            }, 1000);
-        } else {
-            showMessage('loginMessage', '⚠️ Akaunti iko lakini data haipo. Wasiliana na msimamizi.', 'error');
+                window.showLogin();
+                document.getElementById('regUsername').value = '';
+                document.getElementById('regPassword').value = '';
+                document.getElementById('regFullName').value = '';
+            }, 2000);
+
+        } catch (error) {
+            console.error("Registration error:", error);
+            
+            let errorMessage = "Hitilafu wakati wa kusajili: ";
+            if (error.code === 'auth/email-already-in-use') {
+                errorMessage += "Jina la mtumiaji tayari lipo. Tafadhali tumia jina tofauti.";
+            } else if (error.code === 'auth/invalid-email') {
+                errorMessage += "Barua pepe si sahihi. Tafadhali jaribu tena.";
+            } else if (error.code === 'auth/weak-password') {
+                errorMessage += "Nenosiri dhaifu. Tumia herufi 6 au zaidi.";
+            } else {
+                errorMessage += error.message;
+            }
+            
+            showMessage('registerMessage', errorMessage, 'error');
+        } finally {
+            disableButton('registerBtn', false);
         }
-        
-    } catch (error) {
-        console.error("Login error:", error);
-        
-        let errorMessage = "Hitilafu wakati wa kuingia: ";
-        if (error.code === 'auth/user-not-found') {
-            errorMessage += "Jina la mtumiaji au nenosiri si sahihi. Jaribu tena.";
-        } else if (error.code === 'auth/wrong-password') {
-            errorMessage += "Nenosiri si sahihi. Jaribu tena.";
-        } else if (error.code === 'auth/invalid-email') {
-            errorMessage += "Barua pepe si sahihi.";
-        } else if (error.code === 'auth/too-many-requests') {
-            errorMessage += "Majaribio mengi sana. Tafadhali jaribu baadaye.";
-        } else {
-            errorMessage += error.message;
+    };
+
+    // ====================== LOGIN FUNCTION ======================
+    window.handleLogin = async function() {
+        const username = document.getElementById('loginUsername').value.trim();
+        const password = document.getElementById('loginPassword').value;
+
+        if (!username || !password) {
+            return showMessage('loginMessage', 'Tafadhali jaza username na nenosiri!', 'error');
         }
-        
-        showMessage('loginMessage', errorMessage, 'error');
-    } finally {
-        disableButton('loginBtn', false);
-    }
-}
 
-// ====================== UI NAVIGATION ======================
-function showLogin() {
-    document.getElementById('registerPage').style.display = 'none';
-    document.getElementById('loginPage').style.display = 'block';
-    // Clear messages
-    const loginMsg = document.getElementById('loginMessage');
-    if (loginMsg) loginMsg.style.display = 'none';
-}
+        try {
+            disableButton('loginBtn', true);
+            showMessage('loginMessage', 'Inaingia... Tafadhali subiri', 'info');
+            
+            const email = usernameToEmail(username);
+            
+            const userCredential = await auth.signInWithEmailAndPassword(email, password);
+            
+            const userDoc = await db.collection('users').doc(userCredential.user.uid).get();
+            
+            if (userDoc.exists) {
+                const userData = userDoc.data();
+                showMessage('loginMessage', `✅ Karibu ${userData.fullName || username}! Unaingizwa...`, 'success');
+                
+                setTimeout(() => {
+                    alert(`Karibu sana ${userData.fullName || username} kwenye Mihayo Media Platform!`);
+                    // Hapa unaweza redirect kwenye dashboard yako
+                    // window.location.href = "dashboard.html";
+                }, 1000);
+            } else {
+                showMessage('loginMessage', '⚠️ Akaunti iko lakini data haipo. Wasiliana na msimamizi.', 'error');
+            }
+            
+        } catch (error) {
+            console.error("Login error:", error);
+            
+            let errorMessage = "Hitilafu wakati wa kuingia: ";
+            if (error.code === 'auth/user-not-found') {
+                errorMessage += "Jina la mtumiaji au nenosiri si sahihi. Jaribu tena.";
+            } else if (error.code === 'auth/wrong-password') {
+                errorMessage += "Nenosiri si sahihi. Jaribu tena.";
+            } else if (error.code === 'auth/invalid-email') {
+                errorMessage += "Barua pepe si sahihi.";
+            } else if (error.code === 'auth/too-many-requests') {
+                errorMessage += "Majaribio mengi sana. Tafadhali jaribu baadaye.";
+            } else {
+                errorMessage += error.message;
+            }
+            
+            showMessage('loginMessage', errorMessage, 'error');
+        } finally {
+            disableButton('loginBtn', false);
+        }
+    };
 
-function showRegister() {
-    document.getElementById('loginPage').style.display = 'none';
-    document.getElementById('registerPage').style.display = 'block';
-    // Clear messages
-    const regMsg = document.getElementById('registerMessage');
-    if (regMsg) regMsg.style.display = 'none';
-}
+    // ====================== UI NAVIGATION FUNCTIONS ======================
+    window.showLogin = function() {
+        document.getElementById('registerPage').style.display = 'none';
+        document.getElementById('loginPage').style.display = 'block';
+        const loginMsg = document.getElementById('loginMessage');
+        if (loginMsg) loginMsg.style.display = 'none';
+    };
 
-// Check if user is already logged in
-auth.onAuthStateChanged((user) => {
-    if (user) {
-        console.log("User already logged in:", user.email);
-        // Optional: Auto redirect to dashboard
-        // window.location.href = "dashboard.html";
-    }
+    window.showRegister = function() {
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('registerPage').style.display = 'block';
+        const regMsg = document.getElementById('registerMessage');
+        if (regMsg) regMsg.style.display = 'none';
+    };
+
+    // ====================== CHECK IF USER IS ALREADY LOGGED IN ======================
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            console.log("User already logged in:", user.email);
+            // Optional: Auto redirect to dashboard
+            // window.location.href = "dashboard.html";
+        }
+    });
+
+    // ====================== INITIALIZE WITH LOGIN PAGE ======================
+    window.showLogin();
 });
-
-// Initialize with login page
-showLogin();
 </script>
 </body>
 </html>
