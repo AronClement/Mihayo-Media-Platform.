@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mihayo Media Platform</title>
   
-    <!-- Firebase Scripts - Zimewekwa juu sana -->
+    <!-- Firebase Scripts -->
     <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
 
@@ -103,18 +103,19 @@
 </div>
 
 <script>
-console.log("Script imeanza...");
+console.log("App inaanza...");
 
+// Subiri kila kitu kipakie
 window.onload = function() {
-    console.log("Window loaded");
+    console.log("Window loaded - Checking Firebase...");
 
     if (typeof firebase === "undefined") {
-        console.error("Firebase not loaded");
-        alert("Hitilafu kubwa: Firebase haijaload. Tafadhali refresh ukurasa au angalia mtandao wako.");
+        console.error("Firebase haijapakuliwa");
+        alert("Firebase haijaload vizuri.\n\nTafadhali:\n1. Angalia mtandao wako\n2. Refresh ukurasa (Ctrl + Shift + R)");
         return;
     }
 
-    console.log("Firebase imepatikana!");
+    console.log("✅ Firebase imepatikana!");
 
     const firebaseConfig = {
       apiKey: "AIzaSyD0rTfNVPAjtPFRQxT5SEhJaLBX40Z8q4g",
@@ -125,12 +126,16 @@ window.onload = function() {
       appId: "1:973572154003:web:837f3abb7689c0706ce366"
     };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+    try {
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        console.log("✅ Firebase initialized successfully");
+    } catch (e) {
+        console.error("Firebase initialization failed", e);
+    }
 
     const SUPER_ADMIN = { username: "superadmin", password: "MIhayo@2021" };
 
-    // Login Function
     window.handleLogin = function() {
         const username = document.getElementById('loginUsername').value.trim().toLowerCase();
         const password = document.getElementById('loginPassword').value;
@@ -142,15 +147,14 @@ window.onload = function() {
 
         if (username === SUPER_ADMIN.username && password === SUPER_ADMIN.password) {
             showMessage('loginMessage', '✅ Karibu Super Admin!', 'success');
-            localStorage.setItem('currentUser', JSON.stringify({role: 'super_admin'}));
-            setTimeout(() => alert("Karibu Super Admin!"), 1000);
+            localStorage.setItem('currentUser', JSON.stringify({role: 'super_admin', name: 'Super Admin'}));
+            setTimeout(() => alert("Karibu Super Admin!"), 800);
             return;
         }
 
-        showMessage('loginMessage', 'Huja sajili bado au credentials si sahihi.', 'error');
+        showMessage('loginMessage', 'Huja sajili au credentials si sahihi.', 'error');
     };
 
-    // Register Function
     window.handleRegister = async function() {
         const fullName = document.getElementById('regFullName').value.trim();
         const phone = document.getElementById('regPhone').value.trim();
@@ -161,26 +165,15 @@ window.onload = function() {
             return;
         }
 
-        try {
-            showMessage('registerMessage', 'Inasajili...', 'info');
+        showMessage('registerMessage', 'Inasajili...', 'info');
 
-            await db.collection('users').add({
-                fullName,
-                phone,
-                graduationYear: parseInt(year),
-                role: "user",
-                registeredAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
+        // Hapa tutaweka tu localStorage kwa sasa (Firestore itaongezwa baadaye)
+        localStorage.setItem('currentUser', JSON.stringify({name: fullName, role: "user"}));
 
-            localStorage.setItem('currentUser', JSON.stringify({name: fullName, role: "user"}));
-
-            showMessage('registerMessage', '✅ Usajili umefanikiwa!', 'success');
-            setTimeout(() => alert(`Karibu ${fullName}!`), 1500);
-
-        } catch (error) {
-            console.error(error);
-            showMessage('registerMessage', 'Hitilafu: ' + error.message, 'error');
-        }
+        showMessage('registerMessage', '✅ Usajili umefanikiwa!', 'success');
+        setTimeout(() => {
+            alert(`Karibu ${fullName}!\nSasa unaweza kuona maudhui ya website.`);
+        }, 1200);
     };
 
     function showMessage(id, text, type) {
@@ -188,7 +181,7 @@ window.onload = function() {
         el.className = `message ${type}`;
         el.style.display = 'block';
         el.innerHTML = text;
-        setTimeout(() => el.style.display = 'none', 6000);
+        setTimeout(() => el.style.display = 'none', 5000);
     }
 
     function showLogin() {
@@ -202,7 +195,7 @@ window.onload = function() {
     }
 
     showLogin();
-    console.log("App imeanza vizuri");
+    console.log("✅ App imeanza vizuri");
 };
 </script>
 </body>
