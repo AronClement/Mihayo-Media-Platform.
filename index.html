@@ -15,10 +15,11 @@
         .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; margin-top: 20px; }
         .media-card { border: 1px solid #ddd; border-radius: 8px; overflow: hidden; position: relative; }
         .media-card img, .media-card video { width: 100%; height: 180px; object-fit: cover; }
-        .download-btn { position: absolute; bottom: 8px; left: 8px; background: #4CAF50; }
-        .delete-btn { position: absolute; top: 8px; right: 8px; background: #ff4444; }
+        .download-btn { position: absolute; bottom: 8px; left: 8px; background: #4CAF50; padding: 5px 10px; color: white; text-decoration: none; }
+        .delete-btn { position: absolute; top: 8px; right: 8px; background: #ff4444; padding: 5px 10px; }
         table { width: 100%; border-collapse: collapse; margin: 15px 0; }
         th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+        .comment { border: 1px solid #ddd; padding: 12px; margin: 12px 0; border-radius: 8px; }
         .message { padding: 12px; margin: 15px 0; border-radius: 8px; display: none; font-weight: bold; text-align: center; }
         .success { background: #d4edda; color: #155724; }
         .error { background: #f8d7da; color: #721c24; }
@@ -38,7 +39,7 @@
 
 <!-- Register Page -->
 <div class="container" id="registerPage" style="display:none;">
-    <h2>Jisajili (Mara Moja Tu)</h2>
+    <h2>Jisajili</h2>
     <div id="registerMessage" class="message"></div>
     <div class="form-group"><label>Jina Kamili</label><input type="text" id="regFullName"></div>
     <div class="form-group"><label>Namba ya Simu</label><input type="tel" id="regPhone"></div>
@@ -147,13 +148,12 @@ function logout() {
     document.getElementById('loginPage').style.display = 'block';
 }
 
-// Media Functions
+// Media
 function uploadMedia() {
     const file = document.getElementById('uploadFile').files[0];
     if (!file) return alert("Chagua faili");
-
     const url = URL.createObjectURL(file);
-    mediaList.push({id: Date.now(), url: url, type: file.type.startsWith('image') ? 'image' : 'video', name: file.name});
+    mediaList.push({id: Date.now(), url, type: file.type.startsWith('image') ? 'image' : 'video', name: file.name});
     localStorage.setItem('mediaList', JSON.stringify(mediaList));
     loadMedia();
     alert("✅ Imepakiwa!");
@@ -167,7 +167,7 @@ function loadMedia() {
         div.className = 'media-card';
         div.innerHTML = `
             ${m.type === 'image' ? `<img src="${m.url}">` : `<video src="${m.url}" controls></video>`}
-            <a href="${m.url}" download="${m.name}" class="download-btn" style="position:absolute;bottom:8px;left:8px;background:#4CAF50;padding:5px 10px;color:white;">⬇ Download</a>
+            <a href="${m.url}" download="${m.name}" class="download-btn">⬇ Download</a>
             <button onclick="deleteMedia(${m.id})" class="delete-btn">🗑</button>
         `;
         grid.appendChild(div);
@@ -175,7 +175,7 @@ function loadMedia() {
 }
 
 function deleteMedia(id) {
-    if (confirm("Unataka kufuta?")) {
+    if (confirm("Unataka kufuta media hii?")) {
         mediaList = mediaList.filter(m => m.id !== id);
         localStorage.setItem('mediaList', JSON.stringify(mediaList));
         loadMedia();
@@ -194,9 +194,10 @@ function loadUserMedia() {
     });
 }
 
-// Users Table
+// Users
 function loadUsersTable() {
-    const tbody = document.querySelector('#usersTable tbody');
+    const tbody = document.querySelector('#usersTable tbody') || document.createElement('tbody');
+    if (!document.getElementById('usersTable')) return;
     tbody.innerHTML = '';
     usersList.forEach(u => {
         const tr = document.createElement('tr');
@@ -205,14 +206,15 @@ function loadUsersTable() {
     });
 }
 
-// Comments
+// Comments with Reply
 function submitComment() {
     const text = document.getElementById('userComment').value.trim();
     if (!text) return alert("Andika maoni");
-    commentsList.push({text: text, from: "User", time: new Date().toLocaleString(), reply: ""});
+    commentsList.push({id: Date.now(), text: text, from: "User", time: new Date().toLocaleString(), reply: ""});
     localStorage.setItem('commentsList', JSON.stringify(commentsList));
     document.getElementById('userComment').value = '';
     alert("✅ Maoni yametumwa!");
+    if (document.getElementById('superDashboard').style.display !== 'none') loadComments();
 }
 
 function loadComments() {
@@ -220,24 +222,31 @@ function loadComments() {
     container.innerHTML = '';
     commentsList.forEach((c, index) => {
         const div = document.createElement('div');
-        div.style.border = "1px solid #ddd";
-        div.style.padding = "10px";
-        div.style.margin = "10px 0";
+        div.className = 'comment';
         div.innerHTML = `
-            <p><strong>Maoni:</strong> ${c.text}</p>
-            <small>${c.time}</small><br>
-            <textarea placeholder="Jibu hapa..." onblur="saveReply(${index}, this.value)">${c.reply || ''}</textarea>
+            <p><strong>Maoni kutoka kwa User:</strong> ${c.text}</p>
+            <small>${c.time}</small>
+            <textarea placeholder="Andika jibu hapa..." onblur="saveReply(${index}, this.value)">${c.reply || ''}</textarea>
         `;
         container.appendChild(div);
     });
 }
 
-function saveReply(index, reply) {
-    commentsList[index].reply = reply;
-    localStorage.setItem('commentsList', JSON.stringify(commentsList));
+function saveReply(index, replyText) {
+    if (commentsList[index]) {
+        commentsList[index].reply = replyText;
+        localStorage.setItem('commentsList', JSON.stringify(commentsList));
+    }
 }
 
-// Show/Hide
+function showMessage(id, text, type) {
+    const el = document.getElementById(id);
+    el.className = `message ${type}`;
+    el.style.display = 'block';
+    el.innerHTML = text;
+    setTimeout(() => el.style.display = 'none', 5000);
+}
+
 function showLogin() {
     hideAll();
     document.getElementById('loginPage').style.display = 'block';
@@ -248,7 +257,7 @@ function showRegister() {
     document.getElementById('registerPage').style.display = 'block';
 }
 
-// Start
+// Start App
 if (localStorage.getItem('currentUser')) {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     if (user.role === 'super_admin') showSuperDashboard();
