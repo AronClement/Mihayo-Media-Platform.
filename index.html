@@ -4,41 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mihayo Media Platform</title>
- 
+  
+    <!-- Firebase Scripts - Zimewekwa juu sana -->
     <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
+
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #ce8f07, #f39108);
-            min-height: 100vh;
-            padding: 20px;
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background: linear-gradient(135deg, #ce8f07, #f39108); 
+            min-height: 100vh; 
+            padding: 20px; 
         }
-        .form-container, .dashboard {
-            max-width: 900px;
-            margin: 40px auto;
+        .form-container {
+            max-width: 480px;
+            margin: 80px auto;
             background: white;
-            padding: 30px;
+            padding: 40px;
             border-radius: 16px;
             box-shadow: 0 15px 50px rgba(0,0,0,0.3);
         }
-        h2 { text-align: center; margin-bottom: 20px; color: #333; }
+        h2 { text-align: center; margin-bottom: 30px; color: #333; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #444; }
+        .form-group input { 
+            width: 100%; 
+            padding: 13px; 
+            border: 2px solid #ddd; 
+            border-radius: 8px; 
+            font-size: 16px; 
+        }
         button { 
-            padding: 12px 20px; 
+            width: 100%; 
+            padding: 14px; 
             background: linear-gradient(135deg, #667eea, #764ba2); 
             color: white; 
             border: none; 
             border-radius: 8px; 
-            font-size: 16px; 
+            font-size: 17px; 
+            font-weight: bold; 
             cursor: pointer; 
         }
-        .logout-btn {
-            background: #ff4444;
-            padding: 8px 16px;
-        }
         .message { 
-            padding: 12px; 
+            padding: 14px; 
             margin: 15px 0; 
             border-radius: 8px; 
             display: none; 
