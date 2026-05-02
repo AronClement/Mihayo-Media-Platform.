@@ -3,28 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Media Platform - Picha na Video</title>
-    
+    <title>Mihayo Media Platform - Picha na Video</title>
+   
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
-    
+   
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #ce8f07 0%, #f39108 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 15px;
         }
-
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -32,55 +30,40 @@
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             overflow: hidden;
-            padding: 30px;
+            padding: 25px;
         }
-
-        /* Login Form */
         .login-form, .register-form {
             max-width: 450px;
-            margin: 50px auto;
+            margin: 40px auto;
             background: white;
             padding: 35px;
             border-radius: 15px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
         }
-
-        .login-form h2, .register-form h2 {
+        h2 {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             color: #333;
-            font-size: 28px;
         }
-
         .form-group {
             margin-bottom: 20px;
         }
-
         .form-group label {
             display: block;
             margin-bottom: 8px;
             color: #555;
             font-weight: bold;
-            font-size: 14px;
         }
-
         .form-group input, .form-group textarea, .form-group select {
             width: 100%;
             padding: 12px;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             font-size: 16px;
-            transition: 0.3s;
         }
-
-        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
         button {
             width: 100%;
-            padding: 12px;
+            padding: 13px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
@@ -88,295 +71,79 @@
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
         }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 25px;
         }
-
-        /* Media Grid */
         .media-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 25px;
-            margin-top: 25px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
         }
-
         .media-card {
             background: #f9f9f9;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
+            transition: 0.3s;
         }
-
         .media-card:hover {
             transform: translateY(-5px);
         }
-
         .media-card img, .media-card video {
             width: 100%;
-            height: 220px;
+            height: 230px;
             object-fit: cover;
-            background: #000;
         }
-
-        .media-card .info {
-            padding: 15px;
-        }
-
-        .media-card .info p {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
-
         .download-btn {
             background: #4CAF50;
-            margin-top: 8px;
-            width: 100%;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            display: block;
+            margin: 10px;
+            border-radius: 6px;
+            text-decoration: none;
         }
-
         .delete-btn {
             background: #ff4444;
-            margin-top: 8px;
-            width: 100%;
-        }
-
-        /* Comments Section */
-        .comments-section {
-            margin-top: 40px;
-            padding: 25px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            border-radius: 15px;
-        }
-
-        .comments-section h3 {
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        .comment {
-            background: white;
-            padding: 15px;
-            margin-bottom: 12px;
-            border-radius: 10px;
-            border-left: 4px solid #667eea;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-
-        .comment strong {
-            color: #667eea;
-            font-size: 14px;
-        }
-
-        .comment small {
-            color: #999;
-            font-size: 11px;
-            margin-left: 10px;
-        }
-
-        .comment p {
-            margin-top: 8px;
-            color: #555;
-        }
-
-        /* Admin Panel */
-        .upload-area {
-            background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .upload-area h3 {
-            margin-bottom: 20px;
-        }
-
-        .file-input {
-            margin: 20px 0;
+            color: white;
             padding: 10px;
-            border: 2px dashed #667eea;
-            border-radius: 10px;
-            background: white;
+            margin: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
         }
-
-        /* Table for Super Admin */
-        .user-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            overflow-x: auto;
-            display: block;
-        }
-
-        .user-table th, .user-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .user-table th {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            font-weight: bold;
-        }
-
-        .user-table tr:hover {
-            background: #f5f5f5;
-        }
-
-        /* Navbar */
-        .navbar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 18px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-bottom: 30px;
-            border-radius: 12px;
-        }
-
-        .navbar h2 {
-            font-size: 24px;
-        }
-
-        .logout-btn {
-            width: auto;
-            background: #ff4444;
-            padding: 10px 25px;
-        }
-
         .message {
             padding: 12px;
             margin: 15px 0;
             border-radius: 8px;
-            display: none;
-            font-weight: bold;
             text-align: center;
+            font-weight: bold;
         }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
 
-        .success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-
-        /* Responsive */
         @media (max-width: 768px) {
-            body {
-                padding: 10px;
+            .media-grid {
+                grid-template-columns: 1fr;
             }
-            
+            .media-card img, .media-card video {
+                height: 200px;
+            }
             .container {
                 padding: 15px;
             }
-            
-            .media-grid {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-            
-            .user-table {
-                font-size: 12px;
-            }
-            
-            .user-table th, .user-table td {
-                padding: 8px;
-            }
-            
-            .navbar h2 {
-                font-size: 18px;
-            }
-            
-            .navbar {
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            .login-form, .register-form {
-                margin: 20px auto;
-                padding: 20px;
-            }
-            
-            .upload-area {
-                padding: 20px;
-            }
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .tab-btn {
-            width: auto;
-            padding: 10px 20px;
-            background: #e0e0e0;
-            color: #333;
-        }
-
-        .tab-btn.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .hide {
-            display: none;
-        }
-
-        hr {
-            margin: 30px 0;
-            border: none;
-            height: 2px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 5px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-
-        .badge-admin {
-            background: #ff9800;
-            color: white;
-        }
-
-        .badge-super {
-            background: #f44336;
-            color: white;
-        }
-
-        .badge-user {
-            background: #4caf50;
-            color: white;
         }
     </style>
 </head>
@@ -387,21 +154,20 @@
     <h2>Mihayo Media Platform</h2>
     <div id="loginMessage" class="message"></div>
     <div class="form-group">
-        <label>User's name</label>
-        <input type="text" id="loginUsername" placeholder="superadmin">
+        <label>User's Name</label>
+        <input type="text" id="loginUsername" placeholder="admin">
     </div>
     <div class="form-group">
         <label>Password</label>
         <input type="password" id="loginPassword">
     </div>
     <button onclick="handleLogin()">Login</button>
-    <p style="text-align:center; margin-top:20px;">Huna akaunti? <a href="#" onclick="showRegister()">Jisajili hapa</a></p>
+    <p style="text-align:center; margin-top:20px;">Users please <a href="#" onclick="showRegister()">enter here.</a></p>
 </div>
 
 <!-- Register Page -->
 <div class="container" id="registerPage" style="display:none;">
     <h2>Register</h2>
-    <div id="registerMessage" class="message"></div>
     <div class="form-group">
         <label>Full Name</label>
         <input type="text" id="regFullName">
@@ -411,66 +177,65 @@
         <input type="tel" id="regPhone">
     </div>
     <div class="form-group">
-        <label>Completion Year</label>
+        <label>Copmletion Year</label>
         <input type="number" id="regYear">
     </div>
-    <button onclick="handleRegister()">Register and Login</button>
-    <p style="text-align:center; margin-top:20px;"><a href="#" onclick="showLogin()">Back to Login</a></p>
+    <button onclick="handleRegister()">Register and and enter</button>
+    <p style="text-align:center; margin-top:20px;"><a href="#" onclick="showLogin()">Back to login</a></p>
 </div>
 
 <!-- Super Admin Dashboard -->
-<div class="dashboard" id="superDashboard" style="display:none;">
-    <div>
+<div class="container dashboard" id="superDashboard" style="display:none;">
+    <div class="navbar">
         <h2>Super Admin Panel</h2>
-        <button class="logout-btn" onclick="logout()">Logout</button>
+        <button class="logout-btn" onclick="logout()" style="background:#ff4444; width:auto; padding:10px 20px;">Logout</button>
     </div>
-
+    
     <h3>Upload Media</h3>
     <input type="file" id="uploadFile" accept="image/*,video/*">
-    <button onclick="uploadMedia()">⬆ Upload</button>
+    <button onclick="uploadMedia()">Upload Media</button>
 
     <h3>Uploaded Media</h3>
     <div class="media-grid" id="mediaGrid"></div>
 
-    <h3>List of Users</h3>
-    <div style="overflow-x: auto;">
-        <table id="usersTable">
-            <thead>
-                <tr><th>Name</th><th>Phone</th><th>Completion Year</th></tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
-
-    <h3>User Comments</h3>
+    <h3>User's Comments</h3>
     <div id="commentsList"></div>
 </div>
 
 <!-- User Dashboard -->
-<div class="dashboard" id="userDashboard" style="display:none;">
-    <div>
-        <h2>Dashboard Yako</h2>
-        <button class="logout-btn" onclick="logout()">Logout</button>
+<div class="container dashboard" id="userDashboard" style="display:none;">
+    <div class="navbar">
+        <h2>Your Dashboard</h2>
+        <button onclick="logout()" style="background:#ff4444; width:auto; padding:10px 20px;">Logout</button>
     </div>
-    
-    <h3>Media Zilizopo</h3>
+   
+    <h3>Available Media</h3>
     <div class="media-grid" id="userMediaGrid"></div>
-
-    <h3>Toa Maoni Yako</h3>
-    <textarea id="userComment" rows="3" placeholder="Andika maoni yako hapa..."></textarea>
-    <button onclick="submitComment()">📨 Tuma Maoni</button>
+    
+    <h3>Comment</h3>
+    <textarea id="userComment" rows="4" placeholder="Drop your comment..."></textarea>
+    <button onclick="submitComment()">Send</button>
 </div>
 
 <script>
-// ========== DATA STORAGE ==========
-let mediaList = JSON.parse(localStorage.getItem('mediaList')) || [];
-let commentsList = JSON.parse(localStorage.getItem('commentsList')) || [];
-let usersList = JSON.parse(localStorage.getItem('usersList')) || [];
+// ================== FIREBASE CONFIG ==================
+const firebaseConfig = {
+  apiKey: "AIzaSyD0rTfNVPAjtPFRQxT5SEhJaLBX40Z8q4g",
+  authDomain: "mihayo-media-platform.firebaseapp.com",
+  projectId: "mihayo-media-platform",
+  storageBucket: "mihayo-media-platform.firebasestorage.app",
+  messagingSenderId: "973572154003",
+  appId: "1:973572154003:web:837f3abb7689c0706ce366"
+};
 
-// Super Admin Credentials
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const storage = firebase.storage();
+
+// ================== VARIABLES ==================
 const SUPER_ADMIN = { username: "superadmin", password: "Mihayo@2021" };
 
-// ========== HELPER FUNCTIONS ==========
+// ================== HELPER FUNCTIONS ==================
 function escapeHtml(text) {
     if (!text) return '';
     const div = document.createElement('div');
@@ -478,17 +243,7 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-function showMessage(id, text, type) {
-    const el = document.getElementById(id);
-    if (el) {
-        el.className = `message ${type}`;
-        el.style.display = 'block';
-        el.innerHTML = text;
-        setTimeout(() => el.style.display = 'none', 5000);
-    }
-}
-
-// ========== LOGIN / REGISTER ==========
+// ================== AUTH ==================
 function handleLogin() {
     const username = document.getElementById('loginUsername').value.trim().toLowerCase();
     const password = document.getElementById('loginPassword').value;
@@ -496,15 +251,8 @@ function handleLogin() {
     if (username === SUPER_ADMIN.username && password === SUPER_ADMIN.password) {
         localStorage.setItem('currentUser', JSON.stringify({role: 'super_admin', name: 'Super Admin'}));
         showSuperDashboard();
-        return;
-    }
-
-    // Check if user is registered
-    const currentUser = localStorage.getItem('currentUser');
-    if (currentUser) {
-        showUserDashboard();
     } else {
-        alert("Tafadhali jisajili kwanza!");
+        alert("Invalid Username or Password!");
     }
 }
 
@@ -513,30 +261,24 @@ function handleRegister() {
     const phone = document.getElementById('regPhone').value.trim();
     const year = document.getElementById('regYear').value;
 
-    if (!fullName || !phone || !year) {
-        alert("Tafadhali jaza taarifa zote!");
-        return;
-    }
+    if (!fullName || !phone || !year) return alert("Please fill all details!");
 
-    const userData = {
-        name: fullName, 
-        phone: phone, 
-        year: year, 
-        registeredAt: new Date().toLocaleString()
-    };
-    usersList.push(userData);
-    localStorage.setItem('usersList', JSON.stringify(usersList));
+    db.collection("users").add({
+        name: fullName,
+        phone: phone,
+        year: year,
+        registeredAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
 
     localStorage.setItem('currentUser', JSON.stringify({role: 'user', name: fullName}));
     showUserDashboard();
 }
 
+// ================== DASHBOARDS ==================
 function showSuperDashboard() {
     hideAll();
     document.getElementById('superDashboard').style.display = 'block';
     loadMedia();
-    loadUsersTable();
-    loadComments();
 }
 
 function showUserDashboard() {
@@ -546,8 +288,7 @@ function showUserDashboard() {
 }
 
 function hideAll() {
-    const containers = document.querySelectorAll('.container, .dashboard');
-    containers.forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.container').forEach(el => el.style.display = 'none');
 }
 
 function logout() {
@@ -556,216 +297,82 @@ function logout() {
     document.getElementById('loginPage').style.display = 'block';
 }
 
-function showLogin() {
-    hideAll();
-    document.getElementById('loginPage').style.display = 'block';
-}
-
-function showRegister() {
-    hideAll();
-    document.getElementById('registerPage').style.display = 'block';
-}
-
-// ========== MEDIA FUNCTIONS ==========
-function uploadMedia() {
+// ================== MEDIA ==================
+async function uploadMedia() {
     const file = document.getElementById('uploadFile').files[0];
-    if (!file) return alert("Chagua faili unayotaka ku upload!");
-    
-    const url = URL.createObjectURL(file);
-    mediaList.push({
-        id: Date.now(), 
-        url: url, 
-        type: file.type.startsWith('image') ? 'image' : 'video', 
-        name: file.name
-    });
-    localStorage.setItem('mediaList', JSON.stringify(mediaList));
-    loadMedia();
-    alert("Media imeuploadwa成功!");
-    document.getElementById('uploadFile').value = '';
+    if (!file) return alert("Choose a file!");
+
+    try {
+        const storageRef = storage.ref('media/' + Date.now() + '_' + file.name);
+        await storageRef.put(file);
+        const url = await storageRef.getDownloadURL();
+
+        await db.collection("media").add({
+            url: url,
+            type: file.type.startsWith('image') ? 'image' : 'video',
+            name: file.name,
+            uploadedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        alert("Uploaded");
+        document.getElementById('uploadFile').value = '';
+    } catch (e) {
+        alert("Error: " + e.message);
+    }
 }
 
 function loadMedia() {
     const grid = document.getElementById('mediaGrid');
-    if (!grid) return;
-    
-    grid.innerHTML = '';
-    if (mediaList.length === 0) {
-        grid.innerHTML = '<p style="color: #6c8a9e; text-align: center; padding: 20px;">Hakuna media bado</p>';
-        return;
-    }
-    
-    mediaList.forEach(m => {
-        const div = document.createElement('div');
-        div.className = 'media-card';
-        div.innerHTML = `
-            ${m.type === 'image' ? `<img src="${m.url}" alt="${escapeHtml(m.name)}">` : `<video src="${m.url}" controls></video>`}
-            <a href="${m.url}" download="${escapeHtml(m.name)}">⬇ Download</a>
-            <button onclick="deleteMedia(${m.id})" class="delete-btn">🗑 Delete</button>
-        `;
-        grid.appendChild(div);
+    grid.innerHTML = "<p>Uploading...</p>";
+
+    db.collection("media").orderBy("uploadedAt", "desc").onSnapshot(snapshot => {
+        grid.innerHTML = '';
+        snapshot.forEach(doc => {
+            const m = doc.data();
+            const card = document.createElement('div');
+            card.className = 'media-card';
+            card.innerHTML = `
+                ${m.type === 'image' ? `<img src="${m.url}">` : `<video src="${m.url}" controls></video>`}
+                <a href="${m.url}" download class="download-btn">⬇ Download</a>
+                <button onclick="deleteMedia('${doc.id}')" class="delete-btn">🗑 Futa</button>
+            `;
+            grid.appendChild(card);
+        });
     });
 }
 
-function deleteMedia(id) {
-    if (confirm("Je, unataka kufuta media hii?")) {
-        mediaList = mediaList.filter(m => m.id !== id);
-        localStorage.setItem('mediaList', JSON.stringify(mediaList));
-        loadMedia();
+async function deleteMedia(id) {
+    if (confirm("Do you want to delete this media?")) {
+        await db.collection("media").doc(id).delete();
     }
 }
 
 function loadUserMedia() {
     const grid = document.getElementById('userMediaGrid');
-    if (!grid) return;
-    
-    grid.innerHTML = '';
-    if (mediaList.length === 0) {
-        grid.innerHTML = '<p style="color: #6c8a9e; text-align: center; padding: 20px;">Hakuna media bado</p>';
-        return;
-    }
-    
-    mediaList.forEach(m => {
-        const div = document.createElement('div');
-        div.className = 'media-card';
-        div.innerHTML = m.type === 'image' ? 
-            `<img src="${m.url}" alt="${escapeHtml(m.name)}">` : 
-            `<video src="${m.url}" controls></video>`;
-        div.innerHTML += `<a href="${m.url}" download="${escapeHtml(m.name)}">⬇ Download</a>`;
-        grid.appendChild(div);
+    grid.innerHTML = "<p>Uploading media...</p>";
+
+    db.collection("media").orderBy("uploadedAt", "desc").onSnapshot(snapshot => {
+        grid.innerHTML = '';
+        snapshot.forEach(doc => {
+            const m = doc.data();
+            const card = document.createElement('div');
+            card.className = 'media-card';
+            card.innerHTML = m.type === 'image' ? 
+                `<img src="${m.url}">` : `<video src="${m.url}" controls></video>`;
+            card.innerHTML += `<a href="${m.url}" download class="download-btn">⬇ Download</a>`;
+            grid.appendChild(card);
+        });
     });
 }
 
-// ========== USERS TABLE ==========
-function loadUsersTable() {
-    const tbody = document.querySelector('#usersTable tbody');
-    if (!tbody) return;
-    
-    tbody.innerHTML = '';
-    if (usersList.length === 0) {
-        tbody.innerHTML = '|<td colspan="3" style="text-align: center;">Hakuna watumiaji bado</td></tr>';
-        return;
-    }
-    
-    usersList.forEach(u => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${escapeHtml(u.name)}</td>
-            <td>${escapeHtml(u.phone)}</td>
-            <td>${escapeHtml(u.year)}</td>
-        `;
-        tbody.appendChild(tr);
-    });
-}
-
-// ========== COMMENTS WITH REPLY BUTTON ==========
-function submitComment() {
-    const text = document.getElementById('userComment').value.trim();
-    if (!text) {
-        alert("Tafadhali andika maoni yako!");
-        return;
-    }
-    
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    const userName = currentUser.name || "Mwana Mihayo";
-    
-    commentsList.push({
-        id: Date.now(), 
-        text: text, 
-        from: userName,
-        time: new Date().toLocaleString(), 
-        reply: "",
-        replyTime: ""
-    });
-    localStorage.setItem('commentsList', JSON.stringify(commentsList));
-    document.getElementById('userComment').value = '';
-    alert("Maoni yako yametumwa kwa Admin!");
-    
-    // Reload comments if admin dashboard is open
-    if (document.getElementById('superDashboard').style.display !== 'none') {
-        loadComments();
-    }
-}
-
-function loadComments() {
-    const container = document.getElementById('commentsList');
-    if (!container) return;
-    
-    container.innerHTML = '';
-    
-    if (commentsList.length === 0) {
-        container.innerHTML = '<p style="color: #6c8a9e; text-align: center; padding: 20px;">Hakuna maoni bado</p>';
-        return;
-    }
-    
-    commentsList.forEach((c, index) => {
-        const div = document.createElement('div');
-        div.className = 'comment';
-        
-        let replyHTML = '';
-        if (c.reply && c.reply.trim() !== '') {
-            replyHTML = `
-                <div class="reply-display">
-                    <strong>Jibu la Admin:</strong>
-                    ${escapeHtml(c.reply)}
-                    <small style="display: block; margin-top: 5px; color: #6c8a9e;">${escapeHtml(c.replyTime || '')}</small>
-                </div>
-            `;
-        }
-        
-        div.innerHTML = `
-            <div class="comment-header">
-                <strong style="color: #4a9eff;">${escapeHtml(c.from)}</strong>
-            </div>
-            <div class="comment-text">${escapeHtml(c.text)}</div>
-            <div class="comment-time">${escapeHtml(c.time)}</div>
-            <div class="reply-section">
-                <textarea 
-                    id="replyText_${c.id}" 
-                    placeholder="Andika jibu kwa mteja huyu..." 
-                    rows="2"
-                >${escapeHtml(c.reply || '')}</textarea>
-                <button 
-                    class="send-reply-btn" 
-                    onclick="sendReply(${c.id}, ${index})"
-                >📨 Send Reply</button>
-            </div>
-            ${replyHTML}
-        `;
-        
-        container.appendChild(div);
-    });
-}
-
-function sendReply(commentId, index) {
-    const textarea = document.getElementById(`replyText_${commentId}`);
-    const replyText = textarea.value.trim();
-    
-    if (!replyText) {
-        alert("Tafadhali andika jibu kabla ya kutuma!");
-        return;
-    }
-    
-    if (commentsList[index]) {
-        commentsList[index].reply = replyText;
-        commentsList[index].replyTime = new Date().toLocaleString();
-        localStorage.setItem('commentsList', JSON.stringify(commentsList));
-        
-        alert("Reply has been sent!");
-        loadComments();
-    }
-}
-
-// ========== INITIALIZE APP ==========
+// ================== INITIALIZE ==================
 const currentUser = localStorage.getItem('currentUser');
 if (currentUser) {
     const user = JSON.parse(currentUser);
-    if (user.role === 'super_admin') {
-        showSuperDashboard();
-    } else {
-        showUserDashboard();
-    }
+    if (user.role === 'super_admin') showSuperDashboard();
+    else showUserDashboard();
 } else {
-    showLogin();
+    document.getElementById('loginPage').style.display = 'block';
 }
 </script>
 </body>
