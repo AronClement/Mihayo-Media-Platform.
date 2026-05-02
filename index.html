@@ -7,99 +7,49 @@
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Segoe UI', sans-serif; 
-            background: linear-gradient(135deg, #ce8f07, #f39108); 
-            min-height: 100vh; 
-            padding: 20px; 
-        }
-        .form-container, .dashboard {
-            max-width: 1100px;
-            margin: 40px auto;
-            background: white;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 15px 50px rgba(0,0,0,0.3);
-        }
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #ce8f07, #f39108); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1100px; margin: 40px auto; background: white; padding: 30px; border-radius: 16px; box-shadow: 0 15px 50px rgba(0,0,0,0.3); }
         h2 { margin-bottom: 20px; color: #333; }
-        button { 
-            padding: 10px 18px; 
-            background: linear-gradient(135deg, #667eea, #764ba2); 
-            color: white; 
-            border: none; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            margin: 5px; 
-        }
+        button { padding: 10px 18px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 8px; cursor: pointer; margin: 5px; }
         .logout-btn { background: #ff4444; }
-        .media-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-        .media-card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        .media-card img, .media-card video {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-        }
-        .message { 
-            padding: 12px; 
-            margin: 15px 0; 
-            border-radius: 8px; 
-            display: none; 
-            font-weight: bold; 
-            text-align: center; 
-        }
+        .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; margin-top: 20px; }
+        .media-card { border: 1px solid #ddd; border-radius: 8px; overflow: hidden; position: relative; }
+        .media-card img, .media-card video { width: 100%; height: 180px; object-fit: cover; }
+        .delete-btn { position: absolute; top: 8px; right: 8px; background: #ff4444; padding: 5px 10px; font-size: 12px; }
+        .message { padding: 12px; margin: 15px 0; border-radius: 8px; display: none; font-weight: bold; text-align: center; }
         .success { background: #d4edda; color: #155724; }
         .error { background: #f8d7da; color: #721c24; }
     </style>
 </head>
 <body>
 
-<!-- Login & Register Pages (zimefupishwa) -->
-<div class="form-container" id="loginPage">
+<!-- Login na Register pages (zimefupishwa) -->
+<div class="container" id="loginPage">
     <h2>Mihayo Media Platform</h2>
     <div id="loginMessage" class="message"></div>
-    <div class="form-group">
-        <label>Jina la Mtumiaji</label>
-        <input type="text" id="loginUsername" placeholder="superadmin">
-    </div>
-    <div class="form-group">
-        <label>Nenosiri</label>
-        <input type="password" id="loginPassword">
-    </div>
-    <button onclick="handleLogin()">Ingia</button>
-    <p style="text-align:center; margin-top:20px;">
-        Huna akaunti? <a href="#" onclick="showRegister()">Jisajili hapa</a>
-    </p>
+    <input type="text" id="loginUsername" placeholder="superadmin" style="width:100%; padding:12px; margin-bottom:10px;">
+    <input type="password" id="loginPassword" placeholder="MIhayo@2021" style="width:100%; padding:12px; margin-bottom:10px;">
+    <button onclick="handleLogin()" style="width:100%;">Ingia</button>
+    <p style="text-align:center; margin-top:15px;">Huna akaunti? <a href="#" onclick="showRegister()">Jisajili</a></p>
 </div>
 
-<div class="form-container" id="registerPage" style="display:none;">
+<div class="container" id="registerPage" style="display:none;">
     <h2>Jisajili</h2>
     <div id="registerMessage" class="message"></div>
-    <!-- Inputs za register -->
-    <div class="form-group"><label>Jina Kamili</label><input type="text" id="regFullName"></div>
-    <div class="form-group"><label>Namba ya Simu</label><input type="tel" id="regPhone"></div>
-    <div class="form-group"><label>Mwaka Uliomaliza</label><input type="number" id="regYear"></div>
-    <button onclick="handleRegister()">Sajili na Ingia</button>
-    <p style="text-align:center; margin-top:20px;">
-        <a href="#" onclick="showLogin()">Rudi Login</a>
-    </p>
+    <input type="text" id="regFullName" placeholder="Jina Kamili" style="width:100%; padding:12px; margin-bottom:10px;">
+    <input type="tel" id="regPhone" placeholder="Namba ya Simu" style="width:100%; padding:12px; margin-bottom:10px;">
+    <input type="number" id="regYear" placeholder="Mwaka Uliomaliza" style="width:100%; padding:12px; margin-bottom:10px;">
+    <button onclick="handleRegister()" style="width:100%;">Sajili na Ingia</button>
+    <p style="text-align:center; margin-top:15px;"><a href="#" onclick="showLogin()">Rudi Login</a></p>
 </div>
 
 <!-- Super Admin Dashboard -->
-<div class="dashboard" id="superDashboard" style="display:none;">
+<div class="container" id="superDashboard" style="display:none;">
     <div style="display:flex; justify-content:space-between;">
         <h2>Super Admin Panel</h2>
         <button class="logout-btn" onclick="logout()">🚪 Toka</button>
     </div>
-    
+
     <h3>Upload Media</h3>
     <input type="file" id="uploadFile" accept="image/*,video/*">
     <button onclick="uploadMedia()">⬆ Upload</button>
@@ -112,38 +62,38 @@
 </div>
 
 <!-- User Dashboard -->
-<div class="dashboard" id="userDashboard" style="display:none;">
+<div class="container" id="userDashboard" style="display:none;">
     <div style="display:flex; justify-content:space-between;">
-        <h2 id="userTitle">Dashboard</h2>
+        <h2>Dashboard yako</h2>
         <button class="logout-btn" onclick="logout()">🚪 Toka</button>
     </div>
     <div class="media-grid" id="userMediaGrid"></div>
-    
+
     <h3>Tuma Maoni</h3>
     <textarea id="userComment" rows="3" placeholder="Andika maoni yako..."></textarea>
     <button onclick="submitComment()">Tuma Maoni</button>
 </div>
 
 <script>
+// Data storage (localStorage for demo)
+let mediaList = JSON.parse(localStorage.getItem('mediaList')) || [];
+let commentsList = JSON.parse(localStorage.getItem('commentsList')) || [];
+
 // Super Admin
 const SUPER_ADMIN = { username: "superadmin", password: "MIhayo@2021" };
-
-let currentUser = null;
 
 function handleLogin() {
     const username = document.getElementById('loginUsername').value.trim().toLowerCase();
     const password = document.getElementById('loginPassword').value;
 
     if (username === SUPER_ADMIN.username && password === SUPER_ADMIN.password) {
-        currentUser = {role: 'super_admin', name: 'Super Admin'};
-        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        localStorage.setItem('currentUser', JSON.stringify({role: 'super_admin'}));
         showSuperDashboard();
         return;
     }
 
     const saved = localStorage.getItem('currentUser');
     if (saved) {
-        currentUser = JSON.parse(saved);
         showUserDashboard();
     } else {
         alert("Huja sajili bado.");
@@ -151,31 +101,27 @@ function handleLogin() {
 }
 
 function handleRegister() {
-    const fullName = document.getElementById('regFullName').value.trim();
-    if (!fullName) return alert("Jaza jina lako");
-
-    currentUser = {role: 'user', name: fullName};
-    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    const name = document.getElementById('regFullName').value.trim();
+    if (!name) return alert("Jaza jina lako");
+    localStorage.setItem('currentUser', JSON.stringify({role: 'user', name: name}));
     showUserDashboard();
 }
 
 function showSuperDashboard() {
     hideAll();
     document.getElementById('superDashboard').style.display = 'block';
-    loadMedia();
+    loadMediaForSuper();
+    loadComments();
 }
 
 function showUserDashboard() {
     hideAll();
     document.getElementById('userDashboard').style.display = 'block';
-    loadUserMedia();
+    loadMediaForUser();
 }
 
 function hideAll() {
-    document.getElementById('loginPage').style.display = 'none';
-    document.getElementById('registerPage').style.display = 'none';
-    document.getElementById('superDashboard').style.display = 'none';
-    document.getElementById('userDashboard').style.display = 'none';
+    document.querySelectorAll('.container').forEach(el => el.style.display = 'none');
 }
 
 function logout() {
@@ -183,29 +129,104 @@ function logout() {
     location.reload();
 }
 
-// Placeholder Functions (Tutazijaza zaidi baadaye)
+// Upload Media
 function uploadMedia() {
-    const file = document.getElementById('uploadFile').files[0];
-    if (!file) return alert("Chagua faili kwanza");
-    alert("✅ Faili imepakiwa! (Tutaiweka kwenye storage baadaye)");
-    loadMedia();
+    const fileInput = document.getElementById('uploadFile');
+    if (!fileInput.files[0]) return alert("Chagua picha au video");
+
+    const file = fileInput.files[0];
+    const url = URL.createObjectURL(file); // temporary URL
+
+    mediaList.push({
+        id: Date.now(),
+        url: url,
+        type: file.type.startsWith('image') ? 'image' : 'video',
+        name: file.name,
+        uploadedBy: 'Super Admin',
+        uploadedAt: new Date().toLocaleString()
+    });
+
+    localStorage.setItem('mediaList', JSON.stringify(mediaList));
+    loadMediaForSuper();
+    alert("✅ Media imepakiwa!");
 }
 
-function loadMedia() {
-    // Placeholder
-    console.log("Loading media for super admin");
+// Load Media
+function loadMediaForSuper() {
+    const grid = document.getElementById('mediaGrid');
+    grid.innerHTML = '';
+    mediaList.forEach(media => {
+        const div = document.createElement('div');
+        div.className = 'media-card';
+        div.innerHTML = `
+            ${media.type === 'image' ? `<img src="${media.url}">` : `<video src="${media.url}" controls></video>`}
+            <button class="delete-btn" onclick="deleteMedia(${media.id})">🗑 Delete</button>
+        `;
+        grid.appendChild(div);
+    });
 }
 
-function loadUserMedia() {
-    console.log("Loading media for user");
+function loadMediaForUser() {
+    const grid = document.getElementById('userMediaGrid');
+    grid.innerHTML = '';
+    mediaList.forEach(media => {
+        const div = document.createElement('div');
+        div.className = 'media-card';
+        div.innerHTML = media.type === 'image' ? `<img src="${media.url}">` : `<video src="${media.url}" controls></video>`;
+        grid.appendChild(div);
+    });
 }
 
+function deleteMedia(id) {
+    if (confirm("Unataka kufuta media hii?")) {
+        mediaList = mediaList.filter(m => m.id !== id);
+        localStorage.setItem('mediaList', JSON.stringify(mediaList));
+        loadMediaForSuper();
+    }
+}
+
+// Comments
 function submitComment() {
-    const comment = document.getElementById('userComment').value;
-    if (comment) alert("Maoni yako yametumwa: " + comment);
+    const text = document.getElementById('userComment').value.trim();
+    if (!text) return alert("Andika maoni yako");
+
+    commentsList.push({
+        id: Date.now(),
+        text: text,
+        from: "User",
+        reply: "",
+        time: new Date().toLocaleString()
+    });
+
+    localStorage.setItem('commentsList', JSON.stringify(commentsList));
+    document.getElementById('userComment').value = '';
+    alert("✅ Maoni yako yametumwa!");
 }
 
-// Start
+function loadComments() {
+    const container = document.getElementById('commentsList');
+    container.innerHTML = '';
+    commentsList.forEach(c => {
+        const div = document.createElement('div');
+        div.style.border = "1px solid #ddd";
+        div.style.margin = "10px 0";
+        div.style.padding = "10px";
+        div.innerHTML = `
+            <p><strong>Maoni:</strong> ${c.text}</p>
+            <p><small>${c.time}</small></p>
+            <textarea placeholder="Jibu maoni..." onblur="replyComment(${c.id}, this.value)">${c.reply || ''}</textarea>
+        `;
+        container.appendChild(div);
+    });
+}
+
+function replyComment(id, replyText) {
+    const comment = commentsList.find(c => c.id === id);
+    if (comment) comment.reply = replyText;
+    localStorage.setItem('commentsList', JSON.stringify(commentsList));
+}
+
+// Start App
 if (localStorage.getItem('currentUser')) {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     if (user.role === 'super_admin') showSuperDashboard();
