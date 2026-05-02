@@ -4,23 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mihayo Media Platform</title>
-    
+  
+    <!-- Firebase Scripts - Zimewekwa juu sana -->
+    <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
+
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #ce8f07, #f39108); min-height: 100vh; padding: 20px; }
-        .container { max-width: 1100px; margin: 40px auto; background: white; padding: 30px; border-radius: 16px; box-shadow: 0 15px 50px rgba(0,0,0,0.3); }
-        h2 { margin-bottom: 20px; color: #333; }
-        button { padding: 10px 18px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 8px; cursor: pointer; margin: 5px; }
-        .logout-btn { background: #ff4444; }
-        .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; margin-top: 20px; }
-        .media-card { border: 1px solid #ddd; border-radius: 8px; overflow: hidden; position: relative; }
-        .media-card img, .media-card video { width: 100%; height: 180px; object-fit: cover; }
-        .download-btn { position: absolute; bottom: 8px; left: 8px; background: #4CAF50; padding: 5px 10px; color: white; text-decoration: none; }
-        .delete-btn { position: absolute; top: 8px; right: 8px; background: #ff4444; padding: 5px 10px; }
-        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
-        th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
-        .comment { border: 1px solid #ddd; padding: 12px; margin: 12px 0; border-radius: 8px; }
-        .message { padding: 12px; margin: 15px 0; border-radius: 8px; display: none; font-weight: bold; text-align: center; }
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background: linear-gradient(135deg, #ce8f07, #f39108); 
+            min-height: 100vh; 
+            padding: 20px; 
+        }
+        .form-container {
+            max-width: 480px;
+            margin: 80px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+        }
+        h2 { text-align: center; margin-bottom: 30px; color: #333; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #444; }
+        .form-group input { 
+            width: 100%; 
+            padding: 13px; 
+            border: 2px solid #ddd; 
+            border-radius: 8px; 
+            font-size: 16px; 
+        }
+        button { 
+            width: 100%; 
+            padding: 14px; 
+            background: linear-gradient(135deg, #667eea, #764ba2); 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            font-size: 17px; 
+            font-weight: bold; 
+            cursor: pointer; 
+        }
+        .message { 
+            padding: 14px; 
+            margin: 15px 0; 
+            border-radius: 8px; 
+            display: none; 
+            font-weight: bold; 
+            text-align: center; 
+        }
         .success { background: #d4edda; color: #155724; }
         .error { background: #f8d7da; color: #721c24; }
     </style>
@@ -31,41 +64,41 @@
 <div class="container" id="loginPage">
     <h2>Mihayo Media Platform</h2>
     <div id="loginMessage" class="message"></div>
-    <div class="form-group"><label>Jina la Mtumiaji</label><input type="text" id="loginUsername" placeholder="superadmin"></div>
-    <div class="form-group"><label>Nenosiri</label><input type="password" id="loginPassword"></div>
-    <button onclick="handleLogin()" style="width:100%;">Ingia</button>
-    <p style="text-align:center; margin-top:20px;">Huna akaunti? <a href="#" onclick="showRegister()">Jisajili hapa</a></p>
+    <div class="form-group"><label>User's name</label><input type="text" id="loginUsername" placeholder="superadmin"></div>
+    <div class="form-group"><label>Password</label><input type="password" id="loginPassword"></div>
+    <button onclick="handleLogin()" style="width:100%;">Login</button>
+    <p style="text-align:center; margin-top:20px;">You don't have account? <a href="#" onclick="showRegister()">Register here</a></p>
 </div>
 
 <!-- Register Page -->
 <div class="container" id="registerPage" style="display:none;">
-    <h2>Jisajili</h2>
+    <h2>Register</h2>
     <div id="registerMessage" class="message"></div>
-    <div class="form-group"><label>Jina Kamili</label><input type="text" id="regFullName"></div>
-    <div class="form-group"><label>Namba ya Simu</label><input type="tel" id="regPhone"></div>
-    <div class="form-group"><label>Mwaka Uliomaliza</label><input type="number" id="regYear"></div>
-    <button onclick="handleRegister()" style="width:100%;">Sajili na Ingia</button>
-    <p style="text-align:center; margin-top:20px;"><a href="#" onclick="showLogin()">Rudi Login</a></p>
+    <div class="form-group"><label>Full Name</label><input type="text" id="regFullName"></div>
+    <div class="form-group"><label>Phone Number</label><input type="tel" id="regPhone"></div>
+    <div class="form-group"><label>Completion Year</label><input type="number" id="regYear"></div>
+    <button onclick="handleRegister()" style="width:100%;">Register and Login</button>
+    <p style="text-align:center; margin-top:20px;"><a href="#" onclick="showLogin()">Back to Login</a></p>
 </div>
 
 <!-- Super Admin Dashboard -->
 <div class="container" id="superDashboard" style="display:none;">
     <div style="display:flex; justify-content:space-between;">
         <h2>Super Admin Panel</h2>
-        <button class="logout-btn" onclick="logout()">🚪 Toka</button>
+        <button class="logout-btn" onclick="logout()">Logout</button>
     </div>
 
     <h3>Upload Media</h3>
     <input type="file" id="uploadFile" accept="image/*,video/*">
     <button onclick="uploadMedia()">⬆ Upload</button>
 
-    <h3>Media Zilizopakiwa</h3>
+    <h3>Uploaded Media</h3>
     <div class="media-grid" id="mediaGrid"></div>
 
-    <h3>Orodha ya Watumiaji</h3>
-    <table id="usersTable"><thead><tr><th>Jina</th><th>Simu</th><th>Mwaka</th></tr></thead><tbody></tbody></table>
+    <h3>List of users</h3>
+    <table id="usersTable"><thead><tr><th>Name</th><th>Phone number</th><th>Completion Year</th></tr></thead><tbody></tbody></table>
 
-    <h3>Maoni kutoka kwa Watumiaji</h3>
+    <h3>User Comments</h3>
     <div id="commentsList"></div>
 </div>
 
@@ -73,13 +106,13 @@
 <div class="container" id="userDashboard" style="display:none;">
     <div style="display:flex; justify-content:space-between;">
         <h2>Dashboard Yako</h2>
-        <button class="logout-btn" onclick="logout()">🚪 Toka</button>
+        <button class="logout-btn" onclick="logout()">Logout</button>
     </div>
     <div class="media-grid" id="userMediaGrid"></div>
 
-    <h3>Tuma Maoni</h3>
-    <textarea id="userComment" rows="3" placeholder="Andika maoni yako..."></textarea>
-    <button onclick="submitComment()">Tuma Maoni</button>
+    <h3>Comment</h3>
+    <textarea id="userComment" rows="3" placeholder="Drop your comment"></textarea>
+    <button onclick="submitComment()">Send</button>
 </div>
 
 <script>
@@ -89,7 +122,7 @@ let commentsList = JSON.parse(localStorage.getItem('commentsList')) || [];
 let usersList = JSON.parse(localStorage.getItem('usersList')) || [];
 
 // Super Admin
-const SUPER_ADMIN = { username: "superadmin", password: "MIhayo@2021" };
+const SUPER_ADMIN = { username: "superadmin", password: "Mihayo@2021" };
 
 function handleLogin() {
     const username = document.getElementById('loginUsername').value.trim().toLowerCase();
@@ -105,7 +138,7 @@ function handleLogin() {
     if (saved) {
         showUserDashboard();
     } else {
-        alert("Huja sajili bado.");
+        alert("Please register your self.");
     }
 }
 
@@ -114,7 +147,7 @@ function handleRegister() {
     const phone = document.getElementById('regPhone').value.trim();
     const year = document.getElementById('regYear').value;
 
-    if (!fullName || !phone || !year) return alert("Jaza sehemu zote");
+    if (!fullName || !phone || !year) return alert("Fill all spaces");
 
     const userData = {name: fullName, phone: phone, year: year, registeredAt: new Date().toLocaleString()};
     usersList.push(userData);
@@ -156,7 +189,7 @@ function uploadMedia() {
     mediaList.push({id: Date.now(), url, type: file.type.startsWith('image') ? 'image' : 'video', name: file.name});
     localStorage.setItem('mediaList', JSON.stringify(mediaList));
     loadMedia();
-    alert("✅ Imepakiwa!");
+    alert("Uploaded!");
 }
 
 function loadMedia() {
@@ -175,7 +208,7 @@ function loadMedia() {
 }
 
 function deleteMedia(id) {
-    if (confirm("Unataka kufuta media hii?")) {
+    if (confirm("Do you want to delete this media?")) {
         mediaList = mediaList.filter(m => m.id !== id);
         localStorage.setItem('mediaList', JSON.stringify(mediaList));
         loadMedia();
@@ -213,7 +246,7 @@ function submitComment() {
     commentsList.push({id: Date.now(), text: text, from: "User", time: new Date().toLocaleString(), reply: ""});
     localStorage.setItem('commentsList', JSON.stringify(commentsList));
     document.getElementById('userComment').value = '';
-    alert("✅ Maoni yametumwa!");
+    alert("Your comment have been set!");
     if (document.getElementById('superDashboard').style.display !== 'none') loadComments();
 }
 
@@ -224,7 +257,7 @@ function loadComments() {
         const div = document.createElement('div');
         div.className = 'comment';
         div.innerHTML = `
-            <p><strong>Maoni kutoka kwa User:</strong> ${c.text}</p>
+            <p><strong>Comments from User:</strong> ${c.text}</p>
             <small>${c.time}</small>
             <textarea placeholder="Andika jibu hapa..." onblur="saveReply(${index}, this.value)">${c.reply || ''}</textarea>
         `;
