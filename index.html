@@ -13,118 +13,189 @@
             min-height: 100vh; 
             padding: 20px; 
         }
-        .container, .dashboard {
-            max-width: 1100px;
+        .form-container, .dashboard {
+            max-width: 900px;
             margin: 40px auto;
             background: white;
             padding: 30px;
             border-radius: 16px;
             box-shadow: 0 15px 50px rgba(0,0,0,0.3);
         }
-        h2 { margin-bottom: 20px; color: #333; }
+        h2 { text-align: center; margin-bottom: 20px; color: #333; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: bold; color: #444; }
+        .form-group input { 
+            width: 100%; 
+            padding: 12px; 
+            border: 2px solid #ddd; 
+            border-radius: 8px; 
+            font-size: 16px; 
+        }
         button { 
-            padding: 10px 18px; 
+            padding: 12px 20px; 
             background: linear-gradient(135deg, #667eea, #764ba2); 
             color: white; 
             border: none; 
             border-radius: 8px; 
+            font-size: 16px; 
             cursor: pointer; 
         }
         .logout-btn { background: #ff4444; }
-        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
-        th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
-        .message { padding: 12px; margin: 15px 0; border-radius: 8px; display: none; font-weight: bold; text-align: center; }
+        .message { 
+            padding: 12px; 
+            margin: 15px 0; 
+            border-radius: 8px; 
+            display: none; 
+            font-weight: bold; 
+            text-align: center; 
+        }
         .success { background: #d4edda; color: #155724; }
         .error { background: #f8d7da; color: #721c24; }
     </style>
 </head>
 <body>
 
-<!-- Login & Register Pages (zimeachwa kama zilivyo) -->
-<!-- ... (unaweza kuweka code ya login/register kutoka hapo awali) ... -->
-
-<!-- Super Admin Dashboard -->
-<div class="dashboard" id="superDashboard" style="display:none;">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h2>Super Admin Panel</h2>
-        <button class="logout-btn" onclick="logout()">🚪 Toka</button>
-    </div>
+<!-- ====================== LOGIN PAGE ====================== -->
+<div class="form-container" id="loginPage">
+    <h2>Mihayo Media Platform</h2>
+    <div id="loginMessage" class="message"></div>
     
-    <h3>Watumiaji Wote</h3>
-    <table id="usersTable">
-        <thead><tr><th>Jina</th><th>Simu</th><th>Mwaka</th><th>Muda wa Kuingia</th></tr></thead>
-        <tbody></tbody>
-    </table>
-
-    <h3>Upload Picha au Video</h3>
-    <input type="file" id="uploadFile" accept="image/*,video/*">
-    <button onclick="uploadMedia()">⬆ Upload</button>
-
-    <h3>Maoni kutoka kwa Watumiaji</h3>
-    <div id="commentsList"></div>
+    <div class="form-group">
+        <label>Jina la Mtumiaji</label>
+        <input type="text" id="loginUsername" placeholder="superadmin">
+    </div>
+    <div class="form-group">
+        <label>Nenosiri</label>
+        <input type="password" id="loginPassword">
+    </div>
+    <button onclick="handleLogin()">Ingia</button>
+    
+    <p style="text-align:center; margin-top:25px;">
+        Huna akaunti? <a href="#" onclick="showRegister()">Jisajili hapa</a>
+    </p>
 </div>
 
-<!-- Normal User Dashboard -->
-<div class="dashboard" id="userDashboard" style="display:none;">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h2 id="userTitle">Dashboard</h2>
+<!-- ====================== REGISTER PAGE ====================== -->
+<div class="form-container" id="registerPage" style="display:none;">
+    <h2>Jisajili (Mara Moja Tu)</h2>
+    <div id="registerMessage" class="message"></div>
+    
+    <div class="form-group">
+        <label>Jina Kamili</label>
+        <input type="text" id="regFullName" placeholder="Aron Clement">
+    </div>
+    <div class="form-group">
+        <label>Namba ya Simu</label>
+        <input type="tel" id="regPhone" placeholder="0712345678">
+    </div>
+    <div class="form-group">
+        <label>Mwaka Uliomaliza</label>
+        <input type="number" id="regYear" placeholder="2024">
+    </div>
+    <button onclick="handleRegister()">Sajili na Ingia</button>
+    
+    <p style="text-align:center; margin-top:20px;">
+        <a href="#" onclick="showLogin()">Rudi kwenye Login</a>
+    </p>
+</div>
+
+<!-- ====================== DASHBOARD ====================== -->
+<div class="dashboard" id="dashboardPage" style="display:none;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h2 id="dashboardTitle">Dashboard</h2>
         <button class="logout-btn" onclick="logout()">🚪 Toka</button>
     </div>
-    
-    <h3>Picha na Video</h3>
-    <div id="mediaGrid"></div>
-
-    <h3>Tuma Maoni</h3>
-    <textarea id="userComment" rows="3" placeholder="Andika maoni yako..."></textarea>
-    <button onclick="submitComment()">Tuma Maoni</button>
+    <div id="welcomeText"></div>
+    <p>Hapa utaona maudhui (picha, video, maoni) baadaye.</p>
 </div>
 
 <script>
-// Super Admin Credentials
+// Super Admin
 const SUPER_ADMIN = { username: "superadmin", password: "MIhayo@2021" };
 
-// Handle Login (kama ilivyokuwa)
 function handleLogin() {
     const username = document.getElementById('loginUsername').value.trim().toLowerCase();
     const password = document.getElementById('loginPassword').value;
 
+    if (!username || !password) {
+        showMessage('loginMessage', 'Jaza username na nenosiri!', 'error');
+        return;
+    }
+
     if (username === SUPER_ADMIN.username && password === SUPER_ADMIN.password) {
         localStorage.setItem('currentUser', JSON.stringify({role: 'super_admin', name: 'Super Admin'}));
-        showSuperDashboard();
+        showDashboard();
         return;
     }
 
     const savedUser = localStorage.getItem('currentUser');
     if (savedUser) {
-        showUserDashboard();
+        showDashboard();
     } else {
-        alert("Huja sajili bado. Tafadhali jisajili.");
+        showMessage('loginMessage', 'Huja sajili bado. Tafadhali jisajili.', 'error');
     }
 }
 
-function showSuperDashboard() {
-    document.getElementById('loginPage').style.display = 'none';
-    document.getElementById('superDashboard').style.display = 'block';
-    loadUsers();
+function handleRegister() {
+    const fullName = document.getElementById('regFullName').value.trim();
+    const phone = document.getElementById('regPhone').value.trim();
+    const year = document.getElementById('regYear').value;
+
+    if (!fullName || !phone || !year) {
+        showMessage('registerMessage', 'Jaza sehemu zote!', 'error');
+        return;
+    }
+
+    localStorage.setItem('currentUser', JSON.stringify({name: fullName, role: "user"}));
+    showMessage('registerMessage', '✅ Usajili umefanikiwa!', 'success');
+    setTimeout(showDashboard, 1500);
 }
 
-function showUserDashboard() {
+function showDashboard() {
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    
     document.getElementById('loginPage').style.display = 'none';
-    document.getElementById('userDashboard').style.display = 'block';
+    document.getElementById('registerPage').style.display = 'none';
+    document.getElementById('dashboardPage').style.display = 'block';
+
+    const title = document.getElementById('dashboardTitle');
+    const welcome = document.getElementById('welcomeText');
+
+    if (user.role === 'super_admin') {
+        title.textContent = 'Super Admin Dashboard';
+        welcome.innerHTML = '<strong>Karibu Super Admin!</strong><br>Hapa utaweza kuona watumiaji, upload media, na kujibu maoni.';
+    } else {
+        title.textContent = 'Dashboard ya Mtumiaji';
+        welcome.innerHTML = `Karibu, <strong>${user.name || 'Mwanachama'}</strong>!`;
+    }
 }
 
-// Logout
 function logout() {
     localStorage.removeItem('currentUser');
-    location.reload();
+    document.getElementById('dashboardPage').style.display = 'none';
+    document.getElementById('loginPage').style.display = 'block';
 }
 
-// Placeholder functions (tutazijaza baadaye)
-function loadUsers() { console.log("Loading users..."); }
-function uploadMedia() { alert("Upload inafanya kazi (tutaiweka Firestore baadaye)"); }
-function submitComment() { alert("Maoni yako yametumwa!"); }
+function showMessage(id, text, type) {
+    const el = document.getElementById(id);
+    el.className = `message ${type}`;
+    el.style.display = 'block';
+    el.innerHTML = text;
+    setTimeout(() => el.style.display = 'none', 5000);
+}
 
-showLogin(); // Anza na login page
+function showLogin() {
+    document.getElementById('registerPage').style.display = 'none';
+    document.getElementById('loginPage').style.display = 'block';
+}
+
+function showRegister() {
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('registerPage').style.display = 'block';
+}
+
+// Anza na Login Page
+showLogin();
 </script>
 </body>
 </html>
