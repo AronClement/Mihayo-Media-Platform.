@@ -2,446 +2,467 @@
 <html lang="sw">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mihayo Media Platform</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Mihayo Media Platform - Dark Blue Theme</title>
 
     <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
+    
     <style>
+        /* ========== RESET & BASE ========== */
         * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #0a1a3a 0%, #0a1a3a 50%, #0d2b4a 100%);
-    min-height: 100vh;
-    padding: 20px;
-    position: relative;
-}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a1a3a;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+        }
 
-/* Containers - Responsive */
-.container {
-    max-width: 500px;
-    margin: 40px auto;
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(10px);
-    padding: 35px 30px;
-    border-radius: 24px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s ease;
-}
+        /* ========== CONTAINERS ========== */
+        .container {
+            max-width: 500px;
+            margin: 40px auto;
+            background: rgba(13, 27, 42, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 35px 30px;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(30, 100, 150, 0.3);
+        }
 
-/* Dashboard */
-.dashboard, #superDashboard, #userDashboard {
-    max-width: 1300px;
-    margin: 30px auto;
-    background: rgba(255, 255, 255, 0.97);
-    padding: 30px;
-    border-radius: 32px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
-}
+        /* Dashboard - Compact */
+        .dashboard, #superDashboard, #userDashboard {
+            max-width: 1300px;
+            margin: 20px auto;
+            background: rgba(13, 27, 42, 0.95);
+            padding: 20px 25px;
+            border-radius: 32px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(30, 100, 150, 0.3);
+        }
 
-.dashboard-header, #superDashboard > div:first-child, #userDashboard > div:first-child {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-bottom: 30px;
-    padding-bottom: 20px;
-    border-bottom: 3px solid #f0f0f0;
-}
+        .dashboard-header, #superDashboard > div:first-child, #userDashboard > div:first-child {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #1e5470;
+        }
 
-h2 {
-    font-size: clamp(1.5rem, 5vw, 2.2rem);
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    margin-bottom: 10px;
-}
+        /* ========== TYPOGRAPHY ========== */
+        h2 {
+            font-size: clamp(1.5rem, 5vw, 2.2rem);
+            background: linear-gradient(135deg, #4a9eff, #1e6f9f);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 5px;
+        }
 
-h3 {
-    font-size: 1.5rem;
-    color: #333;
-    margin: 30px 0 20px 0;
-    padding-left: 10px;
-    border-left: 5px solid #764ba2;
-}
+        h3 {
+            font-size: 1.3rem;
+            color: #4a9eff;
+            margin: 20px 0 12px 0;
+            padding-left: 10px;
+            border-left: 5px solid #1e6f9f;
+        }
 
-/* Forms */
-.form-group {
-    margin-bottom: 22px;
-}
+        /* ========== FORMS ========== */
+        .form-group {
+            margin-bottom: 15px;
+        }
 
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: #444;
-    font-size: 0.95rem;
-}
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #c8e7ff;
+            font-size: 0.9rem;
+        }
 
-.form-group input, 
-.form-group select,
-textarea {
-    width: 100%;
-    padding: 12px 16px;
-    border: 2px solid #e0e0e0;
-    border-radius: 12px;
-    font-size: 16px;
-    transition: all 0.3s;
-    background: white;
-}
+        .form-group input, 
+        .form-group select,
+        textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #1e5470;
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.3s;
+            background: #0a1a2a;
+            color: #e0e0e0;
+        }
 
-.form-group input:focus,
-.form-group select:focus,
-textarea:focus {
-    outline: none;
-    border-color: #764ba2;
-    box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1);
-}
+        .form-group input:focus,
+        .form-group select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #4a9eff;
+            box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.2);
+            background: #0d2235;
+        }
 
-textarea {
-    resize: vertical;
-    min-height: 100px;
-}
+        /* ========== BUTTONS ========== */
+        button, .logout-btn {
+            background: linear-gradient(135deg, #1e6f9f, #0d3b55);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(30, 111, 159, 0.3);
+        }
 
-/* Buttons */
-button, .logout-btn {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
-    border: none;
-    padding: 12px 28px;
-    border-radius: 40px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-}
+        button:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #2a85b8, #124a6b);
+            box-shadow: 0 6px 20px rgba(30, 111, 159, 0.5);
+        }
 
-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-}
+        .logout-btn {
+            background: linear-gradient(135deg, #8b3a3a, #5a2020);
+            box-shadow: 0 4px 12px rgba(139, 58, 58, 0.3);
+        }
 
-.logout-btn {
-    background: linear-gradient(135deg, #f093fb, #f5576c);
-    box-shadow: 0 4px 12px rgba(245, 87, 108, 0.3);
-}
+        .logout-btn:hover {
+            background: linear-gradient(135deg, #a04545, #6e2828);
+        }
 
-/* Media Grid */
-.media-grid, .feature-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 25px;
-    margin: 30px 0;
-}
+        /* ========== MEDIA GRID ========== */
+        .media-grid, .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
 
-.media-card {
-    background: white;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    border: 1px solid rgba(118, 75, 162, 0.1);
-}
+        .media-card {
+            background: #0a1a2a;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            border: 1px solid #1e5470;
+        }
 
-.media-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-}
+        .media-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            border-color: #4a9eff;
+        }
 
-.media-card img,
-.media-card video {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    display: block;
-}
+        .media-card img,
+        .media-card video {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+        }
 
-.media-card a,
-.media-card button {
-    margin: 10px;
-    padding: 8px 16px;
-    font-size: 14px;
-    display: inline-block;
-}
+        .media-card a,
+        .media-card button {
+            margin: 8px;
+            padding: 6px 12px;
+            font-size: 12px;
+            display: inline-block;
+        }
 
-.delete-btn {
-    background: #dc3545;
-    box-shadow: none;
-}
+        .media-card a {
+            color: #4a9eff;
+            text-decoration: none;
+        }
 
-/* Table Styles */
-table {
-    width: 100%;
-    background: white;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-    margin: 20px 0;
-}
+        .media-card a:hover {
+            text-decoration: underline;
+        }
 
-th {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
-    padding: 15px;
-    text-align: left;
-    font-weight: 600;
-}
+        .delete-btn {
+            background: #8b3a3a;
+            box-shadow: none;
+        }
 
-td {
-    padding: 12px 15px;
-    border-bottom: 1px solid #f0f0f0;
-}
+        .delete-btn:hover {
+            background: #a04545;
+        }
 
-tr:hover {
-    background: #f9f9ff;
-}
+        /* ========== TABLE ========== */
+        table {
+            width: 100%;
+            background: #0a1a2a;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            margin: 15px 0;
+            border-collapse: collapse;
+        }
 
-/* Comments Section */
-.comment {
-    background: #f8f9fa;
-    border-radius: 16px;
-    padding: 20px;
-    margin: 20px 0;
-    border-left: 4px solid #764ba2;
-}
+        th {
+            background: linear-gradient(135deg, #1e6f9f, #0d3b55);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+        }
 
-.comment p {
-    margin-bottom: 8px;
-    color: #333;
-    font-size: 1rem;
-}
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #1e5470;
+            color: #c8e7ff;
+            font-size: 13px;
+        }
 
-.comment small {
-    color: #888;
-    font-size: 0.8rem;
-    display: block;
-    margin-bottom: 12px;
-}
+        tr:hover {
+            background: #0d2235;
+        }
 
-.comment textarea {
-    width: 100%;
-    margin-top: 10px;
-    border-radius: 12px;
-    font-size: 14px;
-}
+        /* ========== COMMENTS SECTION ========== */
+        .comment {
+            background: #0a1a2a;
+            border-radius: 16px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #4a9eff;
+            border: 1px solid #1e5470;
+        }
 
-/* Message Alerts */
-.message {
-    padding: 15px;
-    border-radius: 12px;
-    margin: 15px 0;
-    display: none;
-    font-weight: 500;
-    text-align: center;
-}
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
 
-.success {
-    background: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
+        .comment-text {
+            margin-bottom: 8px;
+            color: #e0e0e0;
+            font-size: 14px;
+            line-height: 1.4;
+        }
 
-.error {
-    background: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
+        .comment-time {
+            color: #6c8a9e;
+            font-size: 11px;
+            margin-bottom: 10px;
+        }
 
-/* File Input */
-input[type="file"] {
-    padding: 10px;
-    border: 2px dashed #764ba2;
-    border-radius: 12px;
-    background: #faf9ff;
-    margin: 15px 0;
-    width: 100%;
-}
+        .reply-section {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #1e5470;
+        }
 
-/* Links */
-a {
-    color: #764ba2;
-    text-decoration: none;
-    font-weight: 500;
-}
+        .reply-section textarea {
+            width: 100%;
+            padding: 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            background: #0d1f2d;
+            color: #e0e0e0;
+            border: 1px solid #1e5470;
+            resize: vertical;
+            min-height: 50px;
+        }
 
-a:hover {
-    text-decoration: underline;
-}
+        .reply-section textarea:focus {
+            border-color: #4a9eff;
+            outline: none;
+        }
 
-/* Welcome Card */
-.welcome-card, .placeholder-media {
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    padding: 30px;
-    border-radius: 24px;
-    text-align: center;
-    margin: 20px 0;
-}
+        .send-reply-btn {
+            background: linear-gradient(135deg, #1e6f9f, #0d3b55);
+            color: white;
+            border: none;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 6px;
+            transition: all 0.3s ease;
+            width: auto;
+            display: inline-block;
+        }
 
-/* ========== RESPONSIVE DESIGN ========== */
+        .send-reply-btn:hover {
+            background: linear-gradient(135deg, #2a85b8, #124a6b);
+            transform: translateY(-1px);
+        }
 
-/* Tablets (768px and below) */
-@media (max-width: 768px) {
-    body {
-        padding: 15px;
-    }
-    
-    .dashboard, #superDashboard, #userDashboard {
-        padding: 20px;
-        margin: 20px 10px;
-    }
-    
-    .container {
-        padding: 25px 20px;
-        margin: 30px 15px;
-    }
-    
-    .media-grid, .feature-grid {
-        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-        gap: 15px;
-    }
-    
-    h3 {
-        font-size: 1.3rem;
-    }
-    
-    button, .logout-btn {
-        padding: 10px 20px;
-        font-size: 14px;
-    }
-    
-    table {
-        font-size: 14px;
-    }
-    
-    th, td {
-        padding: 10px;
-    }
-}
+        .reply-display {
+            margin-top: 10px;
+            padding: 8px;
+            background: #0d1f2d;
+            border-radius: 10px;
+            border-left: 3px solid #4a9eff;
+            font-size: 12px;
+            color: #b0d4ff;
+        }
 
-/* Mobile phones (550px and below) */
-@media (max-width: 550px) {
-    body {
-        padding: 10px;
-    }
-    
-    .dashboard, #superDashboard, #userDashboard {
-        padding: 15px;
-        border-radius: 20px;
-    }
-    
-    .dashboard-header, #superDashboard > div:first-child, #userDashboard > div:first-child {
-        flex-direction: column;
-        gap: 15px;
-        align-items: stretch;
-    }
-    
-    .dashboard-header button,
-    #superDashboard > div:first-child button,
-    #userDashboard > div:first-child button {
-        width: 100%;
-    }
-    
-    .media-grid, .feature-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-    
-    .media-card img,
-    .media-card video {
-        height: 180px;
-    }
-    
-    .form-group input, 
-    .form-group select,
-    textarea {
-        padding: 10px 14px;
-        font-size: 14px;
-    }
-    
-    button {
-        padding: 12px;
-        width: 100%;
-    }
-    
-    /* Make table scrollable on mobile */
-    table {
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
-    }
-    
-    .comment {
-        padding: 15px;
-    }
-    
-    .comment textarea {
-        font-size: 13px;
-    }
-    
-    h2 {
-        font-size: 1.6rem;
-    }
-    
-    .container {
-        padding: 20px 15px;
-    }
-}
+        .reply-display strong {
+            color: #4a9eff;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 11px;
+        }
 
-/* Small phones (400px and below) */
-@media (max-width: 400px) {
-    .media-card img,
-    .media-card video {
-        height: 150px;
-    }
-    
-    .comment p {
-        font-size: 0.9rem;
-    }
-    
-    .form-group label {
-        font-size: 0.85rem;
-    }
-    
-    .dashboard, #superDashboard, #userDashboard {
-        padding: 12px;
-    }
-}
+        /* ========== FILE INPUT ========== */
+        input[type="file"] {
+            padding: 8px;
+            border: 2px dashed #4a9eff;
+            border-radius: 12px;
+            background: #0a1a2a;
+            margin: 8px 0;
+            width: 100%;
+            color: #c8e7ff;
+            font-size: 12px;
+        }
 
-/* Desktop and above (1200px+) */
-@media (min-width: 1200px) {
-    .dashboard, #superDashboard, #userDashboard {
-        max-width: 1400px;
-        padding: 40px;
-    }
-    
-    .media-grid {
-        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-        gap: 30px;
-    }
-    
-    .media-card img,
-    .media-card video {
-        height: 220px;
-    }
-}
+        input[type="file"]::file-selector-button {
+            background: #1e6f9f;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-right: 10px;
+            font-size: 11px;
+        }
 
-/* Print styles (optional) */
-@media print {
-    body {
-        background: white;
-        padding: 0;
-    }
-    button, .logout-btn {
-        display: none;
-    }
-}
+        input[type="file"]::file-selector-button:hover {
+            background: #2a85b8;
+        }
+
+        /* ========== MESSAGES ========== */
+        .message {
+            padding: 12px;
+            border-radius: 12px;
+            margin: 12px 0;
+            display: none;
+            font-weight: 500;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .success {
+            background: #0d3b2a;
+            color: #4ade80;
+            border: 1px solid #4ade80;
+        }
+
+        .error {
+            background: #3b1a1a;
+            color: #ff6b6b;
+            border: 1px solid #ff6b6b;
+        }
+
+        /* ========== LINKS ========== */
+        a {
+            color: #4a9eff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .dashboard, #superDashboard, #userDashboard {
+                padding: 15px;
+                margin: 15px 10px;
+            }
+            
+            .container {
+                padding: 20px;
+                margin: 20px 15px;
+            }
+            
+            .media-grid {
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+                gap: 12px;
+            }
+            
+            h3 {
+                font-size: 1.2rem;
+            }
+            
+            button, .logout-btn {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .dashboard, #superDashboard, #userDashboard {
+                padding: 12px;
+            }
+            
+            .dashboard-header, #superDashboard > div:first-child, #userDashboard > div:first-child {
+                flex-direction: column;
+                gap: 10px;
+                align-items: stretch;
+            }
+            
+            .dashboard-header button,
+            #superDashboard > div:first-child button,
+            #userDashboard > div:first-child button {
+                width: 100%;
+            }
+            
+            .media-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            .comment {
+                padding: 12px;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0a1a2a;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1e6f9f;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4a9eff;
+        }
     </style>
 </head>
 <body>
@@ -450,26 +471,41 @@ a:hover {
 <div class="container" id="loginPage">
     <h2>Mihayo Media Platform</h2>
     <div id="loginMessage" class="message"></div>
-    <div class="form-group"><label>User's name</label><input type="text" id="loginUsername" placeholder="superadmin"></div>
-    <div class="form-group"><label>Password</label><input type="password" id="loginPassword"></div>
-    <button onclick="handleLogin()" style="width:100%;">Login</button>
-    <p style="text-align:center; margin-top:20px;">You don't have account? <a href="#" onclick="showRegister()">Register here</a></p>
+    <div class="form-group">
+        <label>User's name</label>
+        <input type="text" id="loginUsername" placeholder="superadmin">
+    </div>
+    <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginPassword">
+    </div>
+    <button onclick="handleLogin()">Login</button>
+    <p style="text-align:center; margin-top:20px;">Huna akaunti? <a href="#" onclick="showRegister()">Jisajili hapa</a></p>
 </div>
 
 <!-- Register Page -->
 <div class="container" id="registerPage" style="display:none;">
     <h2>Register</h2>
     <div id="registerMessage" class="message"></div>
-    <div class="form-group"><label>Full Name</label><input type="text" id="regFullName"></div>
-    <div class="form-group"><label>Phone Number</label><input type="tel" id="regPhone"></div>
-    <div class="form-group"><label>Completion Year</label><input type="number" id="regYear"></div>
-    <button onclick="handleRegister()" style="width:100%;">Register and Login</button>
+    <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="regFullName">
+    </div>
+    <div class="form-group">
+        <label>Phone Number</label>
+        <input type="tel" id="regPhone">
+    </div>
+    <div class="form-group">
+        <label>Completion Year</label>
+        <input type="number" id="regYear">
+    </div>
+    <button onclick="handleRegister()">Register and Login</button>
     <p style="text-align:center; margin-top:20px;"><a href="#" onclick="showLogin()">Back to Login</a></p>
 </div>
 
 <!-- Super Admin Dashboard -->
-<div class="container" id="superDashboard" style="display:none;">
-    <div style="display:flex; justify-content:space-between;">
+<div class="dashboard" id="superDashboard" style="display:none;">
+    <div>
         <h2>Super Admin Panel</h2>
         <button class="logout-btn" onclick="logout()">Logout</button>
     </div>
@@ -481,35 +517,63 @@ a:hover {
     <h3>Uploaded Media</h3>
     <div class="media-grid" id="mediaGrid"></div>
 
-    <h3>List of users</h3>
-    <table id="usersTable"><thead><tr><th>Name</th><th>Phone number</th><th>Completion Year</th></tr></thead><tbody></tbody></table>
+    <h3>List of Users</h3>
+    <div style="overflow-x: auto;">
+        <table id="usersTable">
+            <thead>
+                <tr><th>Name</th><th>Phone</th><th>Completion Year</th></tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 
     <h3>User Comments</h3>
     <div id="commentsList"></div>
 </div>
 
 <!-- User Dashboard -->
-<div class="container" id="userDashboard" style="display:none;">
-    <div style="display:flex; justify-content:space-between;">
+<div class="dashboard" id="userDashboard" style="display:none;">
+    <div>
         <h2>Dashboard Yako</h2>
         <button class="logout-btn" onclick="logout()">Logout</button>
     </div>
+    
+    <h3>Media Zilizopo</h3>
     <div class="media-grid" id="userMediaGrid"></div>
 
-    <h3>Comment</h3>
-    <textarea id="userComment" rows="3" placeholder="Drop your comment"></textarea>
-    <button onclick="submitComment()">Send</button>
+    <h3>Toa Maoni Yako</h3>
+    <textarea id="userComment" rows="3" placeholder="Andika maoni yako hapa..."></textarea>
+    <button onclick="submitComment()">📨 Tuma Maoni</button>
 </div>
 
 <script>
-// Data
+// ========== DATA STORAGE ==========
 let mediaList = JSON.parse(localStorage.getItem('mediaList')) || [];
 let commentsList = JSON.parse(localStorage.getItem('commentsList')) || [];
 let usersList = JSON.parse(localStorage.getItem('usersList')) || [];
 
-// Super Admin
+// Super Admin Credentials
 const SUPER_ADMIN = { username: "superadmin", password: "Mihayo@2021" };
 
+// ========== HELPER FUNCTIONS ==========
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function showMessage(id, text, type) {
+    const el = document.getElementById(id);
+    if (el) {
+        el.className = `message ${type}`;
+        el.style.display = 'block';
+        el.innerHTML = text;
+        setTimeout(() => el.style.display = 'none', 5000);
+    }
+}
+
+// ========== LOGIN / REGISTER ==========
 function handleLogin() {
     const username = document.getElementById('loginUsername').value.trim().toLowerCase();
     const password = document.getElementById('loginPassword').value;
@@ -520,11 +584,12 @@ function handleLogin() {
         return;
     }
 
-    const saved = localStorage.getItem('currentUser');
-    if (saved) {
+    // Check if user is registered
+    const currentUser = localStorage.getItem('currentUser');
+    if (currentUser) {
         showUserDashboard();
     } else {
-        alert("Please register your self.");
+        alert("Tafadhali jisajili kwanza!");
     }
 }
 
@@ -533,9 +598,17 @@ function handleRegister() {
     const phone = document.getElementById('regPhone').value.trim();
     const year = document.getElementById('regYear').value;
 
-    if (!fullName || !phone || !year) return alert("Fill all spaces");
+    if (!fullName || !phone || !year) {
+        alert("Tafadhali jaza taarifa zote!");
+        return;
+    }
 
-    const userData = {name: fullName, phone: phone, year: year, registeredAt: new Date().toLocaleString()};
+    const userData = {
+        name: fullName, 
+        phone: phone, 
+        year: year, 
+        registeredAt: new Date().toLocaleString()
+    };
     usersList.push(userData);
     localStorage.setItem('usersList', JSON.stringify(usersList));
 
@@ -558,112 +631,14 @@ function showUserDashboard() {
 }
 
 function hideAll() {
-    document.querySelectorAll('.container').forEach(el => el.style.display = 'none');
+    const containers = document.querySelectorAll('.container, .dashboard');
+    containers.forEach(el => el.style.display = 'none');
 }
 
 function logout() {
     localStorage.removeItem('currentUser');
     hideAll();
     document.getElementById('loginPage').style.display = 'block';
-}
-
-// Media
-function uploadMedia() {
-    const file = document.getElementById('uploadFile').files[0];
-    if (!file) return alert("Chagua faili");
-    const url = URL.createObjectURL(file);
-    mediaList.push({id: Date.now(), url, type: file.type.startsWith('image') ? 'image' : 'video', name: file.name});
-    localStorage.setItem('mediaList', JSON.stringify(mediaList));
-    loadMedia();
-    alert("Uploaded!");
-}
-
-function loadMedia() {
-    const grid = document.getElementById('mediaGrid');
-    grid.innerHTML = '';
-    mediaList.forEach(m => {
-        const div = document.createElement('div');
-        div.className = 'media-card';
-        div.innerHTML = `
-            ${m.type === 'image' ? `<img src="${m.url}">` : `<video src="${m.url}" controls></video>`}
-            <a href="${m.url}" download="${m.name}" class="download-btn">⬇ Download</a>
-            <button onclick="deleteMedia(${m.id})" class="delete-btn">🗑</button>
-        `;
-        grid.appendChild(div);
-    });
-}
-
-function deleteMedia(id) {
-    if (confirm("Do you want to delete this media?")) {
-        mediaList = mediaList.filter(m => m.id !== id);
-        localStorage.setItem('mediaList', JSON.stringify(mediaList));
-        loadMedia();
-    }
-}
-
-function loadUserMedia() {
-    const grid = document.getElementById('userMediaGrid');
-    grid.innerHTML = '';
-    mediaList.forEach(m => {
-        const div = document.createElement('div');
-        div.className = 'media-card';
-        div.innerHTML = m.type === 'image' ? `<img src="${m.url}">` : `<video src="${m.url}" controls></video>`;
-        div.innerHTML += `<a href="${m.url}" download="${m.name}" style="display:block;text-align:center;margin:8px;color:#4CAF50;">⬇ Download</a>`;
-        grid.appendChild(div);
-    });
-}
-
-// Users
-function loadUsersTable() {
-    const tbody = document.querySelector('#usersTable tbody') || document.createElement('tbody');
-    if (!document.getElementById('usersTable')) return;
-    tbody.innerHTML = '';
-    usersList.forEach(u => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${u.name}</td><td>${u.phone}</td><td>${u.year}</td>`;
-        tbody.appendChild(tr);
-    });
-}
-
-// Comments with Reply
-function submitComment() {
-    const text = document.getElementById('userComment').value.trim();
-    if (!text) return alert("Andika maoni");
-    commentsList.push({id: Date.now(), text: text, from: "User", time: new Date().toLocaleString(), reply: ""});
-    localStorage.setItem('commentsList', JSON.stringify(commentsList));
-    document.getElementById('userComment').value = '';
-    alert("Your comment have been set!");
-    if (document.getElementById('superDashboard').style.display !== 'none') loadComments();
-}
-
-function loadComments() {
-    const container = document.getElementById('commentsList');
-    container.innerHTML = '';
-    commentsList.forEach((c, index) => {
-        const div = document.createElement('div');
-        div.className = 'comment';
-        div.innerHTML = `
-            <p><strong>Comments from User:</strong> ${c.text}</p>
-            <small>${c.time}</small>
-            <textarea placeholder="Andika jibu hapa..." onblur="saveReply(${index}, this.value)">${c.reply || ''}</textarea>
-        `;
-        container.appendChild(div);
-    });
-}
-
-function saveReply(index, replyText) {
-    if (commentsList[index]) {
-        commentsList[index].reply = replyText;
-        localStorage.setItem('commentsList', JSON.stringify(commentsList));
-    }
-}
-
-function showMessage(id, text, type) {
-    const el = document.getElementById(id);
-    el.className = `message ${type}`;
-    el.style.display = 'block';
-    el.innerHTML = text;
-    setTimeout(() => el.style.display = 'none', 5000);
 }
 
 function showLogin() {
@@ -676,11 +651,204 @@ function showRegister() {
     document.getElementById('registerPage').style.display = 'block';
 }
 
-// Start App
-if (localStorage.getItem('currentUser')) {
-    const user = JSON.parse(localStorage.getItem('currentUser'));
-    if (user.role === 'super_admin') showSuperDashboard();
-    else showUserDashboard();
+// ========== MEDIA FUNCTIONS ==========
+function uploadMedia() {
+    const file = document.getElementById('uploadFile').files[0];
+    if (!file) return alert("Chagua faili unayotaka ku upload!");
+    
+    const url = URL.createObjectURL(file);
+    mediaList.push({
+        id: Date.now(), 
+        url: url, 
+        type: file.type.startsWith('image') ? 'image' : 'video', 
+        name: file.name
+    });
+    localStorage.setItem('mediaList', JSON.stringify(mediaList));
+    loadMedia();
+    alert("Media imeuploadwa成功!");
+    document.getElementById('uploadFile').value = '';
+}
+
+function loadMedia() {
+    const grid = document.getElementById('mediaGrid');
+    if (!grid) return;
+    
+    grid.innerHTML = '';
+    if (mediaList.length === 0) {
+        grid.innerHTML = '<p style="color: #6c8a9e; text-align: center; padding: 20px;">Hakuna media bado</p>';
+        return;
+    }
+    
+    mediaList.forEach(m => {
+        const div = document.createElement('div');
+        div.className = 'media-card';
+        div.innerHTML = `
+            ${m.type === 'image' ? `<img src="${m.url}" alt="${escapeHtml(m.name)}">` : `<video src="${m.url}" controls></video>`}
+            <a href="${m.url}" download="${escapeHtml(m.name)}">⬇ Download</a>
+            <button onclick="deleteMedia(${m.id})" class="delete-btn">🗑 Delete</button>
+        `;
+        grid.appendChild(div);
+    });
+}
+
+function deleteMedia(id) {
+    if (confirm("Je, unataka kufuta media hii?")) {
+        mediaList = mediaList.filter(m => m.id !== id);
+        localStorage.setItem('mediaList', JSON.stringify(mediaList));
+        loadMedia();
+    }
+}
+
+function loadUserMedia() {
+    const grid = document.getElementById('userMediaGrid');
+    if (!grid) return;
+    
+    grid.innerHTML = '';
+    if (mediaList.length === 0) {
+        grid.innerHTML = '<p style="color: #6c8a9e; text-align: center; padding: 20px;">Hakuna media bado</p>';
+        return;
+    }
+    
+    mediaList.forEach(m => {
+        const div = document.createElement('div');
+        div.className = 'media-card';
+        div.innerHTML = m.type === 'image' ? 
+            `<img src="${m.url}" alt="${escapeHtml(m.name)}">` : 
+            `<video src="${m.url}" controls></video>`;
+        div.innerHTML += `<a href="${m.url}" download="${escapeHtml(m.name)}">⬇ Download</a>`;
+        grid.appendChild(div);
+    });
+}
+
+// ========== USERS TABLE ==========
+function loadUsersTable() {
+    const tbody = document.querySelector('#usersTable tbody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    if (usersList.length === 0) {
+        tbody.innerHTML = '|<td colspan="3" style="text-align: center;">Hakuna watumiaji bado</td></tr>';
+        return;
+    }
+    
+    usersList.forEach(u => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${escapeHtml(u.name)}</td>
+            <td>${escapeHtml(u.phone)}</td>
+            <td>${escapeHtml(u.year)}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// ========== COMMENTS WITH REPLY BUTTON ==========
+function submitComment() {
+    const text = document.getElementById('userComment').value.trim();
+    if (!text) {
+        alert("Tafadhali andika maoni yako!");
+        return;
+    }
+    
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const userName = currentUser.name || "Mwana Mihayo";
+    
+    commentsList.push({
+        id: Date.now(), 
+        text: text, 
+        from: userName,
+        time: new Date().toLocaleString(), 
+        reply: "",
+        replyTime: ""
+    });
+    localStorage.setItem('commentsList', JSON.stringify(commentsList));
+    document.getElementById('userComment').value = '';
+    alert("Maoni yako yametumwa kwa Admin!");
+    
+    // Reload comments if admin dashboard is open
+    if (document.getElementById('superDashboard').style.display !== 'none') {
+        loadComments();
+    }
+}
+
+function loadComments() {
+    const container = document.getElementById('commentsList');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    if (commentsList.length === 0) {
+        container.innerHTML = '<p style="color: #6c8a9e; text-align: center; padding: 20px;">Hakuna maoni bado</p>';
+        return;
+    }
+    
+    commentsList.forEach((c, index) => {
+        const div = document.createElement('div');
+        div.className = 'comment';
+        
+        let replyHTML = '';
+        if (c.reply && c.reply.trim() !== '') {
+            replyHTML = `
+                <div class="reply-display">
+                    <strong>Jibu la Admin:</strong>
+                    ${escapeHtml(c.reply)}
+                    <small style="display: block; margin-top: 5px; color: #6c8a9e;">${escapeHtml(c.replyTime || '')}</small>
+                </div>
+            `;
+        }
+        
+        div.innerHTML = `
+            <div class="comment-header">
+                <strong style="color: #4a9eff;">${escapeHtml(c.from)}</strong>
+            </div>
+            <div class="comment-text">${escapeHtml(c.text)}</div>
+            <div class="comment-time">${escapeHtml(c.time)}</div>
+            <div class="reply-section">
+                <textarea 
+                    id="replyText_${c.id}" 
+                    placeholder="Andika jibu kwa mteja huyu..." 
+                    rows="2"
+                >${escapeHtml(c.reply || '')}</textarea>
+                <button 
+                    class="send-reply-btn" 
+                    onclick="sendReply(${c.id}, ${index})"
+                >📨 Send Reply</button>
+            </div>
+            ${replyHTML}
+        `;
+        
+        container.appendChild(div);
+    });
+}
+
+function sendReply(commentId, index) {
+    const textarea = document.getElementById(`replyText_${commentId}`);
+    const replyText = textarea.value.trim();
+    
+    if (!replyText) {
+        alert("Tafadhali andika jibu kabla ya kutuma!");
+        return;
+    }
+    
+    if (commentsList[index]) {
+        commentsList[index].reply = replyText;
+        commentsList[index].replyTime = new Date().toLocaleString();
+        localStorage.setItem('commentsList', JSON.stringify(commentsList));
+        
+        alert("Reply has been sent!");
+        loadComments();
+    }
+}
+
+// ========== INITIALIZE APP ==========
+const currentUser = localStorage.getItem('currentUser');
+if (currentUser) {
+    const user = JSON.parse(currentUser);
+    if (user.role === 'super_admin') {
+        showSuperDashboard();
+    } else {
+        showUserDashboard();
+    }
 } else {
     showLogin();
 }
