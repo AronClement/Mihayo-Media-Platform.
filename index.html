@@ -4,11 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mihayo Media Platform</title>
-  
-    <!-- Firebase Scripts -->
-    <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
-
+    
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -17,37 +13,30 @@
             min-height: 100vh; 
             padding: 20px; 
         }
-        .form-container {
-            max-width: 480px;
-            margin: 80px auto;
+        .form-container, .dashboard {
+            max-width: 900px;
+            margin: 40px auto;
             background: white;
-            padding: 40px;
+            padding: 30px;
             border-radius: 16px;
             box-shadow: 0 15px 50px rgba(0,0,0,0.3);
         }
-        h2 { text-align: center; margin-bottom: 30px; color: #333; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #444; }
-        .form-group input { 
-            width: 100%; 
-            padding: 13px; 
-            border: 2px solid #ddd; 
-            border-radius: 8px; 
-            font-size: 16px; 
-        }
+        h2 { text-align: center; margin-bottom: 20px; color: #333; }
         button { 
-            width: 100%; 
-            padding: 14px; 
+            padding: 12px 20px; 
             background: linear-gradient(135deg, #667eea, #764ba2); 
             color: white; 
             border: none; 
             border-radius: 8px; 
-            font-size: 17px; 
-            font-weight: bold; 
+            font-size: 16px; 
             cursor: pointer; 
         }
+        .logout-btn {
+            background: #ff4444;
+            padding: 8px 16px;
+        }
         .message { 
-            padding: 14px; 
+            padding: 12px; 
             margin: 15px 0; 
             border-radius: 8px; 
             display: none; 
@@ -60,6 +49,7 @@
 </head>
 <body>
 
+<!-- Login Page -->
 <div class="form-container" id="loginPage">
     <h2>Mihayo Media Platform</h2>
     <div id="loginMessage" class="message"></div>
@@ -79,6 +69,7 @@
     </p>
 </div>
 
+<!-- Register Page -->
 <div class="form-container" id="registerPage" style="display:none;">
     <h2>Jisajili (Mara Moja Tu)</h2>
     <div id="registerMessage" class="message"></div>
@@ -102,101 +93,95 @@
     </p>
 </div>
 
+<!-- Dashboard -->
+<div class="dashboard" id="dashboardPage" style="display:none;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h2 id="dashboardTitle">Dashboard</h2>
+        <button class="logout-btn" onclick="logout()">🚪 Toka</button>
+    </div>
+    <div id="dashboardContent">
+        <p>Karibu! Hapa utaona picha na video baadaye.</p>
+    </div>
+</div>
+
 <script>
-console.log("App inaanza...");
+// Super Admin
+const SUPER_ADMIN = { username: "superadmin", password: "MIhayo@2021" };
 
-// Subiri kila kitu kipakie
-window.onload = function() {
-    console.log("Window loaded - Checking Firebase...");
+function handleLogin() {
+    const username = document.getElementById('loginUsername').value.trim().toLowerCase();
+    const password = document.getElementById('loginPassword').value;
 
-    if (typeof firebase === "undefined") {
-        console.error("Firebase haijapakuliwa");
-        alert("Firebase haijaload vizuri.\n\nTafadhali:\n1. Angalia mtandao wako\n2. Refresh ukurasa (Ctrl + Shift + R)");
+    if (!username || !password) {
+        showMessage('loginMessage', 'Jaza username na nenosiri!', 'error');
         return;
     }
 
-    console.log("✅ Firebase imepatikana!");
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyD0rTfNVPAjtPFRQxT5SEhJaLBX40Z8q4g",
-      authDomain: "mihayo-media-platform.firebaseapp.com",
-      projectId: "mihayo-media-platform",
-      storageBucket: "mihayo-media-platform.firebasestorage.app",
-      messagingSenderId: "973572154003",
-      appId: "1:973572154003:web:837f3abb7689c0706ce366"
-    };
-
-    try {
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        console.log("✅ Firebase initialized successfully");
-    } catch (e) {
-        console.error("Firebase initialization failed", e);
+    if (username === SUPER_ADMIN.username && password === SUPER_ADMIN.password) {
+        localStorage.setItem('currentUser', JSON.stringify({role: 'super_admin', name: 'Super Admin'}));
+        showDashboard();
+        return;
     }
 
-    const SUPER_ADMIN = { username: "superadmin", password: "MIhayo@2021" };
+    const savedUser = localStorage.getItem('currentUser');
+    if (savedUser) {
+        showDashboard();
+    } else {
+        showMessage('loginMessage', 'Huja sajili bado. Tafadhali jisajili.', 'error');
+    }
+}
 
-    window.handleLogin = function() {
-        const username = document.getElementById('loginUsername').value.trim().toLowerCase();
-        const password = document.getElementById('loginPassword').value;
+function handleRegister() {
+    const fullName = document.getElementById('regFullName').value.trim();
+    const phone = document.getElementById('regPhone').value.trim();
+    const year = document.getElementById('regYear').value;
 
-        if (!username || !password) {
-            showMessage('loginMessage', 'Jaza username na nenosiri!', 'error');
-            return;
-        }
-
-        if (username === SUPER_ADMIN.username && password === SUPER_ADMIN.password) {
-            showMessage('loginMessage', '✅ Karibu Super Admin!', 'success');
-            localStorage.setItem('currentUser', JSON.stringify({role: 'super_admin', name: 'Super Admin'}));
-            setTimeout(() => alert("Karibu Super Admin!"), 800);
-            return;
-        }
-
-        showMessage('loginMessage', 'Huja sajili au credentials si sahihi.', 'error');
-    };
-
-    window.handleRegister = async function() {
-        const fullName = document.getElementById('regFullName').value.trim();
-        const phone = document.getElementById('regPhone').value.trim();
-        const year = document.getElementById('regYear').value;
-
-        if (!fullName || !phone || !year) {
-            showMessage('registerMessage', 'Jaza sehemu zote!', 'error');
-            return;
-        }
-
-        showMessage('registerMessage', 'Inasajili...', 'info');
-
-        // Hapa tutaweka tu localStorage kwa sasa (Firestore itaongezwa baadaye)
-        localStorage.setItem('currentUser', JSON.stringify({name: fullName, role: "user"}));
-
-        showMessage('registerMessage', '✅ Usajili umefanikiwa!', 'success');
-        setTimeout(() => {
-            alert(`Karibu ${fullName}!\nSasa unaweza kuona maudhui ya website.`);
-        }, 1200);
-    };
-
-    function showMessage(id, text, type) {
-        const el = document.getElementById(id);
-        el.className = `message ${type}`;
-        el.style.display = 'block';
-        el.innerHTML = text;
-        setTimeout(() => el.style.display = 'none', 5000);
+    if (!fullName || !phone || !year) {
+        showMessage('registerMessage', 'Jaza sehemu zote!', 'error');
+        return;
     }
 
-    function showLogin() {
-        document.getElementById('registerPage').style.display = 'none';
-        document.getElementById('loginPage').style.display = 'block';
-    }
+    localStorage.setItem('currentUser', JSON.stringify({name: fullName, role: "user"}));
+    showMessage('registerMessage', '✅ Usajili umefanikiwa!', 'success');
+    setTimeout(showDashboard, 1500);
+}
 
-    function showRegister() {
-        document.getElementById('loginPage').style.display = 'none';
-        document.getElementById('registerPage').style.display = 'block';
-    }
+function showDashboard() {
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('registerPage').style.display = 'none';
+    document.getElementById('dashboardPage').style.display = 'block';
 
-    showLogin();
-    console.log("✅ App imeanza vizuri");
-};
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const title = document.getElementById('dashboardTitle');
+    title.textContent = user.role === 'super_admin' ? 'Super Admin Dashboard' : 'Dashboard ya Mtumiaji';
+}
+
+function logout() {
+    localStorage.removeItem('currentUser');
+    document.getElementById('dashboardPage').style.display = 'none';
+    document.getElementById('loginPage').style.display = 'block';
+}
+
+function showMessage(id, text, type) {
+    const el = document.getElementById(id);
+    el.className = `message ${type}`;
+    el.style.display = 'block';
+    el.innerHTML = text;
+    setTimeout(() => el.style.display = 'none', 5000);
+}
+
+function showLogin() {
+    document.getElementById('registerPage').style.display = 'none';
+    document.getElementById('loginPage').style.display = 'block';
+}
+
+function showRegister() {
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('registerPage').style.display = 'block';
+}
+
+// Start
+showLogin();
 </script>
 </body>
 </html>
