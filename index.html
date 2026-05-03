@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Mihayo Media Platform - Fixed Version</title>
+    <title>Mihayo Media Platform - Complete System</title>
   
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -12,13 +12,19 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
+
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -29,14 +35,45 @@
             padding: 30px;
             animation: fadeIn 0.5s ease;
         }
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        h2 { text-align: center; margin-bottom: 25px; color: #333; font-size: 28px; }
-        h3 { margin: 25px 0 15px 0; color: #555; font-size: 22px; border-bottom: 3px solid #667eea; padding-bottom: 10px; display: inline-block; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #555; }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #333;
+            font-size: 28px;
+        }
+
+        h3 {
+            margin: 25px 0 15px 0;
+            color: #555;
+            font-size: 22px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+
         input, textarea, select {
             width: 100%;
             padding: 12px;
@@ -45,11 +82,13 @@
             font-size: 16px;
             transition: all 0.3s ease;
         }
+
         input:focus, textarea:focus, select:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
         }
+
         button {
             padding: 13px 20px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -61,10 +100,16 @@
             font-size: 16px;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
+
         button:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
+
+        button:active {
+            transform: translateY(0);
+        }
+
         .navbar {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -77,16 +122,39 @@
             flex-wrap: wrap;
             gap: 15px;
         }
-        .navbar h2 { margin: 0; color: white; }
-        .user-info { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
-        .user-info span { background: rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 20px; font-size: 14px; }
-        .logout-btn { background: #ff4444; padding: 8px 20px; width: auto; }
+
+        .navbar h2 {
+            margin: 0;
+            color: white;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .user-info span {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .logout-btn {
+            background: #ff4444;
+            padding: 8px 20px;
+            width: auto;
+        }
+
         .media-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 25px;
             margin-top: 20px;
         }
+
         .media-card {
             background: #f9f9f9;
             border-radius: 12px;
@@ -94,11 +162,32 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             transition: transform 0.3s ease;
         }
-        .media-card:hover { transform: translateY(-5px); }
-        .media-card img, .media-card video { width: 100%; height: 250px; object-fit: cover; }
-        .media-info { padding: 15px; }
-        .media-info small { color: #666; font-size: 12px; }
-        .media-actions { display: flex; gap: 10px; padding: 0 15px 15px 15px; }
+
+        .media-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .media-card img, .media-card video {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .media-info {
+            padding: 15px;
+        }
+
+        .media-info small {
+            color: #666;
+            font-size: 12px;
+        }
+
+        .media-actions {
+            display: flex;
+            gap: 10px;
+            padding: 0 15px 15px 15px;
+        }
+
         .download-btn, .delete-btn {
             padding: 8px 15px;
             border-radius: 6px;
@@ -109,8 +198,18 @@
             cursor: pointer;
             flex: 1;
         }
-        .download-btn { background: #4CAF50; color: white; }
-        .delete-btn { background: #ff4444; color: white; border: none; }
+
+        .download-btn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .delete-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+        }
+
         .comment {
             background: #f8f9fa;
             padding: 20px;
@@ -118,12 +217,14 @@
             border-radius: 10px;
             border-left: 5px solid #667eea;
         }
+
         .reply-section {
             margin-top: 15px;
             padding: 15px;
             background: #e3f2fd;
             border-radius: 8px;
         }
+
         .error-message {
             background: #ffebee;
             color: #c62828;
@@ -133,6 +234,7 @@
             border-left: 4px solid #c62828;
             display: none;
         }
+
         .success-message {
             background: #e8f5e9;
             color: #2e7d32;
@@ -142,13 +244,19 @@
             border-left: 4px solid #2e7d32;
             display: none;
         }
+
         .loading {
             text-align: center;
             padding: 40px;
             color: #667eea;
             font-size: 18px;
         }
-        .upload-progress { margin-top: 10px; display: none; }
+
+        .upload-progress {
+            margin-top: 10px;
+            display: none;
+        }
+
         .progress-bar {
             width: 100%;
             height: 30px;
@@ -157,6 +265,7 @@
             overflow: hidden;
             margin-top: 10px;
         }
+
         .progress-fill {
             height: 100%;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -169,9 +278,14 @@
             font-size: 12px;
             font-weight: bold;
         }
+
         @media (max-width: 768px) {
-            .container { padding: 20px; }
-            .media-grid { grid-template-columns: 1fr; }
+            .container {
+                padding: 20px;
+            }
+            .media-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -183,7 +297,7 @@
     <div id="loginError" class="error-message"></div>
     <div class="form-group">
         <label>Email Address</label>
-        <input type="email" id="loginEmail" placeholder="mwandamboclemence@gmail.com">
+        <input type="email" id="loginEmail" placeholder="Enter your email address">
     </div>
     <div class="form-group">
         <label>Password</label>
@@ -194,8 +308,9 @@
         Don't have an account? <a href="#" onclick="showRegister()">Register here</a>
     </p>
     <p style="text-align:center; margin-top:10px; font-size:12px; color:#666;">
-        <strong>Designed by: aronclement93@gmail.com<br></strong>Contact: 0772236223/0615702706 <br>
-        @2021
+        <strong>Designed by: aronclement93@gmail.com</strong><br>
+        Contact: 0772236223 / 0615702706<br>
+        &copy; 2021
     </p>
 </div>
 
@@ -204,13 +319,30 @@
     <h2>Create New Account</h2>
     <div id="registerError" class="error-message"></div>
     <div id="registerSuccess" class="success-message"></div>
-    <div class="form-group"><label>Full Name</label><input type="text" id="regFullName" placeholder="John Mihayo"></div>
-    <div class="form-group"><label>Email Address</label><input type="email" id="regEmail" placeholder="clemencemwandambo@gmail.com"></div>
-    <div class="form-group"><label>Phone Number</label><input type="tel" id="regPhone" placeholder="0712345678"></div>
-    <div class="form-group"><label>Password (min 6 characters)</label><input type="password" id="regPassword" placeholder="miHayo@2021"></div>
-    <div class="form-group"><label>Confirm Password</label><input type="password" id="regConfirmPassword" placeholder="Confirm your password"></div>
+    <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="regFullName" placeholder="Enter your full name">
+    </div>
+    <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="regEmail" placeholder="Enter your email address">
+    </div>
+    <div class="form-group">
+        <label>Phone Number</label>
+        <input type="tel" id="regPhone" placeholder="Enter your phone number">
+    </div>
+    <div class="form-group">
+        <label>Password (min 6 characters)</label>
+        <input type="password" id="regPassword" placeholder="Create a password">
+    </div>
+    <div class="form-group">
+        <label>Confirm Password</label>
+        <input type="password" id="regConfirmPassword" placeholder="Confirm your password">
+    </div>
     <button onclick="handleRegister()">Register</button>
-    <p style="text-align:center; margin-top:20px;"><a href="#" onclick="showLogin()">← Back to Login</a></p>
+    <p style="text-align:center; margin-top:20px;">
+        <a href="#" onclick="showLogin()">Back to Login</a>
+    </p>
 </div>
 
 <!-- Super Admin Dashboard -->
@@ -241,7 +373,7 @@
         <div class="loading">Loading media...</div>
     </div>
 
-    <h3>User Comments & Feedback</h3>
+    <h3>User Comments and Feedback</h3>
     <div id="commentsList">
         <div class="loading">Loading comments...</div>
     </div>
@@ -290,20 +422,11 @@ const auth = firebase.auth();
 const SUPER_ADMIN_EMAIL = "admin@mihayo.com";
 const SUPER_ADMIN_PASSWORD = "Admin@123";
 
-// Enable offline persistence for better performance
-db.enablePersistence()
-    .catch((err) => {
-        if (err.code == 'failed-precondition') {
-            console.log("Multiple tabs open, persistence can only be enabled in one tab at a a time.");
-        } else if (err.code == 'unimplemented') {
-            console.log("Browser doesn't support persistence");
-        }
-    });
-
 // ==================== UI HELPER FUNCTIONS ====================
 
 function hideAll() {
-    document.querySelectorAll('.container').forEach(container => {
+    const containers = document.querySelectorAll('.container');
+    containers.forEach(function(container) {
         container.style.display = 'none';
     });
 }
@@ -321,7 +444,8 @@ function showLogin() {
 }
 
 function clearMessages() {
-    document.querySelectorAll('.error-message, .success-message').forEach(el => {
+    const errors = document.querySelectorAll('.error-message, .success-message');
+    errors.forEach(function(el) {
         el.style.display = 'none';
         el.textContent = '';
     });
@@ -332,7 +456,7 @@ function showError(elementId, message) {
     if (element) {
         element.textContent = message;
         element.style.display = 'block';
-        setTimeout(() => {
+        setTimeout(function() {
             element.style.display = 'none';
         }, 5000);
     }
@@ -343,7 +467,7 @@ function showSuccess(elementId, message) {
     if (element) {
         element.textContent = message;
         element.style.display = 'block';
-        setTimeout(() => {
+        setTimeout(function() {
             element.style.display = 'none';
         }, 3000);
     }
@@ -406,7 +530,7 @@ async function handleRegister() {
         document.getElementById('regPassword').value = '';
         document.getElementById('regConfirmPassword').value = '';
         
-        setTimeout(() => {
+        setTimeout(function() {
             showLogin();
         }, 2000);
         
@@ -547,25 +671,25 @@ async function uploadMedia() {
     
     try {
         const timestamp = Date.now();
-        const fileName = `${timestamp}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
-        const storageRef = storage.ref(`media/${fileName}`);
+        const fileName = timestamp + '_' + file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+        const storageRef = storage.ref('media/' + fileName);
         
         const uploadTask = storageRef.put(file);
         
         uploadTask.on('state_changed',
-            (snapshot) => {
+            function(snapshot) {
                 const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                 const percent = Math.round(progress);
-                progressFill.style.width = `${percent}%`;
-                progressFill.textContent = `${percent}%`;
-                statusDiv.innerHTML = Uploading... ${percent}%`;
+                progressFill.style.width = percent + '%';
+                progressFill.textContent = percent + '%';
+                statusDiv.innerHTML = "Uploading... " + percent + "%";
             },
-            (error) => {
+            function(error) {
                 console.error("Upload error:", error);
                 let errorMessage = "Upload failed: ";
                 switch(error.code) {
                     case 'storage/unauthorized':
-                        errorMessage += "Permission denied! Go to Firebase Console → Storage → Rules and set: allow read, write: if true";
+                        errorMessage += "Permission denied! Go to Firebase Console -> Storage -> Rules and set: allow read, write: if true";
                         break;
                     case 'storage/canceled':
                         errorMessage += "Upload canceled.";
@@ -573,7 +697,7 @@ async function uploadMedia() {
                     default:
                         errorMessage += error.message;
                 }
-                statusDiv.innerHTML = `${errorMessage}`;
+                statusDiv.innerHTML = errorMessage;
                 statusDiv.style.color = "red";
                 progressDiv.style.display = 'none';
             }
@@ -599,19 +723,19 @@ async function uploadMedia() {
         
         loadMedia();
         
-        setTimeout(() => {
+        setTimeout(function() {
             statusDiv.innerHTML = "";
         }, 3000);
         
     } catch (error) {
         console.error("Upload error:", error);
-        statusDiv.innerHTML = `Upload failed: ${error.message}`;
+        statusDiv.innerHTML = "Upload failed: " + error.message;
         statusDiv.style.color = "red";
         progressDiv.style.display = 'none';
     }
 }
 
-// ==================== LOAD MEDIA FUNCTIONS WITH ERROR HANDLING ====================
+// ==================== LOAD MEDIA FUNCTIONS ====================
 
 function loadMedia() {
     const grid = document.getElementById('mediaGrid');
@@ -619,90 +743,42 @@ function loadMedia() {
     
     grid.innerHTML = '<div class="loading">Loading media...</div>';
     
-    // Try to get media collection
     db.collection("media")
         .orderBy("uploadedAt", "desc")
-        .get()
-        .then((querySnapshot) => {
-            if (querySnapshot.empty) {
+        .onSnapshot(function(snapshot) {
+            if (snapshot.empty) {
                 grid.innerHTML = '<div style="text-align:center; padding:40px;">No media uploaded yet. Upload your first media!</div>';
                 return;
             }
             
             grid.innerHTML = '';
-            querySnapshot.forEach((doc) => {
+            snapshot.forEach(function(doc) {
                 const media = doc.data();
                 const mediaCard = document.createElement('div');
                 mediaCard.className = 'media-card';
                 
                 let mediaContent = '';
                 if (media.type === 'image') {
-                    mediaContent = `<img src="${media.url}" alt="${media.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/300?text=Image+Not+Found'">`;
+                    mediaContent = '<img src="' + media.url + '" alt="' + media.name + '" loading="lazy" onerror="this.src=\'https://via.placeholder.com/300?text=Image+Not+Found\'">';
                 } else {
-                    mediaContent = `<video src="${media.url}" controls preload="metadata"></video>`;
+                    mediaContent = '<video src="' + media.url + '" controls preload="metadata"></video>';
                 }
                 
-                mediaCard.innerHTML = `
-                    ${mediaContent}
-                    <div class="media-info">
-                        <small>${escapeHtml(media.name)}</small><br>
-                        <small>Uploaded by: ${escapeHtml(media.uploadedByName || 'Unknown')}</small><br>
-                        <small>${media.uploadedAt ? new Date(media.uploadedAt.toDate()).toLocaleString() : 'Just now'}</small>
-                    </div>
-                    <div class="media-actions">
-                        <a href="${media.url}" download class="download-btn">⬇ Download</a>
-                        <button onclick="deleteMedia('${doc.id}')" class="delete-btn">🗑 Delete</button>
-                    </div>
-                `;
+                mediaCard.innerHTML = mediaContent + 
+                    '<div class="media-info">' +
+                        '<small>' + escapeHtml(media.name) + '</small><br>' +
+                        '<small>Uploaded by: ' + escapeHtml(media.uploadedByName || 'Unknown') + '</small><br>' +
+                        '<small>' + (media.uploadedAt ? new Date(media.uploadedAt.toDate()).toLocaleString() : 'Just now') + '</small>' +
+                    '</div>' +
+                    '<div class="media-actions">' +
+                        '<a href="' + media.url + '" download class="download-btn">Download</a>' +
+                        '<button onclick="deleteMedia(\'' + doc.id + '\')" class="delete-btn">Delete</button>' +
+                    '</div>';
                 grid.appendChild(mediaCard);
             });
-        })
-        .catch((error) => {
+        }, function(error) {
             console.error("Error loading media:", error);
-            grid.innerHTML = `<div class="loading" style="color: red;">Error loading media: ${error.message}<br><br>
-            <strong>Solution:</strong><br>
-            1. Go to Firebase Console → Firestore Database → Rules<br>
-            2. Set rules to: allow read, write: if true;<br>
-            3. Click Publish<br>
-            4. Refresh this page</div>`;
-        });
-    
-    // Set up real-time listener
-    db.collection("media")
-        .orderBy("uploadedAt", "desc")
-        .onSnapshot((snapshot) => {
-            if (!snapshot.empty && grid.innerHTML !== '') {
-                // Update grid in real-time
-                grid.innerHTML = '';
-                snapshot.forEach((doc) => {
-                    const media = doc.data();
-                    const mediaCard = document.createElement('div');
-                    mediaCard.className = 'media-card';
-                    
-                    let mediaContent = '';
-                    if (media.type === 'image') {
-                        mediaContent = `<img src="${media.url}" alt="${media.name}" loading="lazy">`;
-                    } else {
-                        mediaContent = `<video src="${media.url}" controls preload="metadata"></video>`;
-                    }
-                    
-                    mediaCard.innerHTML = `
-                        ${mediaContent}
-                        <div class="media-info">
-                            <small>${escapeHtml(media.name)}</small><br>
-                            <small>${escapeHtml(media.uploadedByName || 'Unknown')}</small><br>
-                            <small>${media.uploadedAt ? new Date(media.uploadedAt.toDate()).toLocaleString() : 'Just now'}</small>
-                        </div>
-                        <div class="media-actions">
-                            <a href="${media.url}" download class="download-btn">⬇ Download</a>
-                            <button onclick="deleteMedia('${doc.id}')" class="delete-btn">🗑 Delete</button>
-                        </div>
-                    `;
-                    grid.appendChild(mediaCard);
-                });
-            }
-        }, (error) => {
-            console.error("Realtime listener error:", error);
+            grid.innerHTML = '<div class="loading" style="color: red;">Error loading media: ' + error.message + '</div>';
         });
 }
 
@@ -714,42 +790,38 @@ function loadUserMedia() {
     
     db.collection("media")
         .orderBy("uploadedAt", "desc")
-        .get()
-        .then((querySnapshot) => {
-            if (querySnapshot.empty) {
+        .onSnapshot(function(snapshot) {
+            if (snapshot.empty) {
                 grid.innerHTML = '<div style="text-align:center; padding:40px;">No media available yet.</div>';
                 return;
             }
             
             grid.innerHTML = '';
-            querySnapshot.forEach((doc) => {
+            snapshot.forEach(function(doc) {
                 const media = doc.data();
                 const mediaCard = document.createElement('div');
                 mediaCard.className = 'media-card';
                 
                 let mediaContent = '';
                 if (media.type === 'image') {
-                    mediaContent = `<img src="${media.url}" alt="${media.name}" loading="lazy">`;
+                    mediaContent = '<img src="' + media.url + '" alt="' + media.name + '" loading="lazy">';
                 } else {
-                    mediaContent = `<video src="${media.url}" controls preload="metadata"></video>`;
+                    mediaContent = '<video src="' + media.url + '" controls preload="metadata"></video>';
                 }
                 
-                mediaCard.innerHTML = `
-                    ${mediaContent}
-                    <div class="media-info">
-                        <small>${escapeHtml(media.name)}</small><br>
-                        <small>${media.uploadedAt ? new Date(media.uploadedAt.toDate()).toLocaleString() : 'Just now'}</small>
-                    </div>
-                    <div class="media-actions">
-                        <a href="${media.url}" download class="download-btn">⬇ Download</a>
-                    </div>
-                `;
+                mediaCard.innerHTML = mediaContent + 
+                    '<div class="media-info">' +
+                        '<small>' + escapeHtml(media.name) + '</small><br>' +
+                        '<small>' + (media.uploadedAt ? new Date(media.uploadedAt.toDate()).toLocaleString() : 'Just now') + '</small>' +
+                    '</div>' +
+                    '<div class="media-actions">' +
+                        '<a href="' + media.url + '" download class="download-btn">Download</a>' +
+                    '</div>';
                 grid.appendChild(mediaCard);
             });
-        })
-        .catch((error) => {
+        }, function(error) {
             console.error("Error loading user media:", error);
-            grid.innerHTML = `<div class="loading" style="color: red;">❌ Error loading media: ${error.message}</div>`;
+            grid.innerHTML = '<div class="loading" style="color: red;">Error loading media: ' + error.message + '</div>';
         });
 }
 
@@ -812,53 +884,45 @@ function loadComments() {
     const container = document.getElementById('commentsList');
     if (!container) return;
     
-    container.innerHTML = '<div class="loading">💬 Loading comments...</div>';
+    container.innerHTML = '<div class="loading">Loading comments...</div>';
     
     db.collection("comments")
         .orderBy("createdAt", "desc")
-        .onSnapshot((snapshot) => {
+        .onSnapshot(function(snapshot) {
             if (snapshot.empty) {
                 container.innerHTML = '<div style="text-align:center; padding:40px;">No comments yet. Be the first to comment!</div>';
                 return;
             }
             
             container.innerHTML = '';
-            snapshot.forEach((doc) => {
+            snapshot.forEach(function(doc) {
                 const comment = doc.data();
                 const commentDiv = document.createElement('div');
                 commentDiv.className = 'comment';
                 
                 let replyHtml = '';
                 if (comment.reply) {
-                    replyHtml = `
-                        <div class="reply-section">
-                            <strong>Admin Reply:</strong><br>
-                            ${escapeHtml(comment.reply)}<br>
-                            <small>${comment.replyTime || 'Recently'}</small>
-                        </div>
-                    `;
+                    replyHtml = '<div class="reply-section">' +
+                        '<strong>Admin Reply:</strong><br>' +
+                        escapeHtml(comment.reply) + '<br>' +
+                        '<small>' + (comment.replyTime || 'Recently') + '</small>' +
+                        '</div>';
                 } else {
                     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
                     if (currentUser.role === 'super_admin') {
-                        replyHtml = `
-                            <button onclick="replyToComment('${doc.id}')" style="margin-top: 10px; padding: 8px 15px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer;">
-                                Reply as Admin
-                            </button>
-                        `;
+                        replyHtml = '<button onclick="replyToComment(\'' + doc.id + '\')" style="margin-top: 10px; padding: 8px 15px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer;">Reply as Admin</button>';
                     }
                 }
                 
-                commentDiv.innerHTML = `
-                    <strong>${escapeHtml(comment.userName || 'Anonymous')}</strong>
-                    <small>${comment.time || 'Just now'}</small>
-                    <p style="margin-top: 10px;">${escapeHtml(comment.text)}</p>
-                    ${replyHtml}
-                `;
+                commentDiv.innerHTML = '<strong>' + escapeHtml(comment.userName || 'Anonymous') + '</strong>' +
+                    '<small> ' + (comment.time || 'Just now') + '</small>' +
+                    '<p style="margin-top: 10px;">' + escapeHtml(comment.text) + '</p>' +
+                    replyHtml;
                 container.appendChild(commentDiv);
             });
-        }, (error) => {
+        }, function(error) {
             console.error("Error loading comments:", error);
-            container.innerHTML = `<div class="loading" style="color: red;">Error loading comments: ${error.message}</div>`;
+            container.innerHTML = '<div class="loading" style="color: red;">Error loading comments: ' + error.message + '</div>';
         });
 }
 
@@ -884,7 +948,7 @@ async function replyToComment(commentId) {
 function showSuperDashboard() {
     hideAll();
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    document.getElementById('adminEmail').innerHTML = `${currentUser.email}`;
+    document.getElementById('adminEmail').innerHTML = currentUser.email;
     document.getElementById('superDashboard').style.display = 'block';
     loadMedia();
     loadComments();
@@ -893,7 +957,7 @@ function showSuperDashboard() {
 function showUserDashboard() {
     hideAll();
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    document.getElementById('userName').innerHTML = ${currentUser.name}`;
+    document.getElementById('userName').innerHTML = currentUser.name;
     document.getElementById('userDashboard').style.display = 'block';
     loadUserMedia();
 }
@@ -937,7 +1001,7 @@ async function setupSuperAdmin() {
 
 // ==================== INITIALIZATION ====================
 
-auth.onAuthStateChanged(async (user) => {
+auth.onAuthStateChanged(async function(user) {
     if (user) {
         const userDoc = await db.collection("users").doc(user.uid).get();
         if (userDoc.exists) {
@@ -964,7 +1028,7 @@ auth.onAuthStateChanged(async (user) => {
     }
 });
 
-window.addEventListener('DOMContentLoaded', async () => {
+window.addEventListener('DOMContentLoaded', async function() {
     await setupSuperAdmin();
     
     const storedUser = localStorage.getItem('currentUser');
