@@ -2,24 +2,29 @@
 <html lang="sw">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mihayo Media Platform - Fixed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Mihayo Media Platform - Complete System</title>
   
-    <!-- Firebase SDKs (MODULAR VERSION - BETTER) -->
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   
     <style>
-        /* Your existing styles - keep as is */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #ce8f07 0%, #f39108 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 15px;
+            padding: 20px;
         }
+
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -27,79 +32,288 @@
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             overflow: hidden;
-            padding: 25px;
+            padding: 30px;
+            animation: fadeIn 0.5s ease;
         }
-        h2 { text-align: center; margin-bottom: 25px; color: #333; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #555; }
-        input, textarea, select { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #333;
+            font-size: 28px;
+        }
+
+        h3 {
+            margin: 25px 0 15px 0;
+            color: #555;
+            font-size: 22px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
         button {
-            padding: 13px;
+            padding: 13px 20px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
             border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
-            width: 100%;
+            font-size: 16px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
         .navbar {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 15px 20px;
+            padding: 20px;
             border-radius: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
+
+        .navbar h2 {
+            margin: 0;
+            color: white;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .user-info span {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .logout-btn {
+            background: #ff4444;
+            padding: 8px 20px;
+            width: auto;
+        }
+
         .media-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
             margin-top: 20px;
         }
+
         .media-card {
             background: #f9f9f9;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        .media-card img, .media-card video { width: 100%; height: 230px; object-fit: cover; }
+
+        .media-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .media-card img, .media-card video {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .media-info {
+            padding: 15px;
+        }
+
+        .media-info small {
+            color: #666;
+            font-size: 12px;
+        }
+
+        .media-actions {
+            display: flex;
+            gap: 10px;
+            padding: 0 15px 15px 15px;
+        }
+
         .download-btn, .delete-btn {
-            padding: 10px;
-            margin: 8px;
+            padding: 8px 15px;
             border-radius: 6px;
             text-align: center;
+            text-decoration: none;
             display: inline-block;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            flex: 1;
         }
-        .download-btn { background: #4CAF50; color: white; text-decoration: none; }
-        .delete-btn { background: #ff4444; color: white; border: none; cursor: pointer; }
-        .comment { 
-            background: #f8f9fa; 
-            padding: 15px; 
-            margin: 12px 0; 
+
+        .download-btn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .delete-btn {
+            background: #ff4444;
+            color: white;
+        }
+
+        .comment {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 15px 0;
             border-radius: 10px;
             border-left: 5px solid #667eea;
+            transition: all 0.3s ease;
         }
+
+        .comment:hover {
+            background: #f0f2f5;
+            transform: translateX(5px);
+        }
+
+        .comment strong {
+            color: #667eea;
+            font-size: 16px;
+        }
+
+        .comment small {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .reply-section {
+            margin-top: 15px;
+            padding: 15px;
+            background: #e3f2fd;
+            border-radius: 8px;
+        }
+
         .error-message {
             background: #ffebee;
             color: #c62828;
-            padding: 10px;
+            padding: 12px;
             border-radius: 8px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #c62828;
             display: none;
         }
+
         .success-message {
             background: #e8f5e9;
             color: #2e7d32;
-            padding: 10px;
+            padding: 12px;
             border-radius: 8px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2e7d32;
             display: none;
         }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+            font-size: 18px;
+        }
+
+        .upload-progress {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
         @media (max-width: 768px) {
-            .media-grid { grid-template-columns: 1fr; }
+            .container {
+                padding: 20px;
+            }
+            
+            .media-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .navbar {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            h2 {
+                font-size: 24px;
+            }
+            
+            h3 {
+                font-size: 20px;
+            }
         }
     </style>
 </head>
@@ -110,85 +324,118 @@
     <h2>🎬 Mihayo Media Platform</h2>
     <div id="loginError" class="error-message"></div>
     <div class="form-group">
-        <label>Email</label>
+        <label>📧 Email Address</label>
         <input type="email" id="loginEmail" placeholder="michuzi@gmail.com">
     </div>
     <div class="form-group">
-        <label>Password</label>
-        <input type="password" id="loginPassword">
+        <label>🔒 Password</label>
+        <input type="password" id="loginPassword" placeholder="Enter your password">
     </div>
     <button onclick="handleLogin()">Login</button>
     <p style="text-align:center; margin-top:20px;">
         Don't have an account? <a href="#" onclick="showRegister()">Register here</a>
     </p>
     <p style="text-align:center; margin-top:10px; font-size:12px; color:#666;">
-        <strong>Super Admin:</strong> admin@mihayo.com / Admin@123
+        <strong>👑 Super Admin:</strong> admin@mihayo.com / Admin@123
     </p>
 </div>
 
 <!-- Register Page -->
 <div class="container" id="registerPage" style="display:none;">
-    <h2>📝 Create Account</h2>
+    <h2>📝 Create New Account</h2>
     <div id="registerError" class="error-message"></div>
     <div id="registerSuccess" class="success-message"></div>
-    <div class="form-group"><label>Full Name</label><input type="text" id="regFullName" placeholder="John Mihayo"></div>
-    <div class="form-group"><label>Email</label><input type="email" id="regEmail" placeholder="michuzi@gmail.com"></div>
-    <div class="form-group"><label>Phone Number</label><input type="tel" id="regPhone" placeholder="0712345678"></div>
-    <div class="form-group"><label>Password</label><input type="password" id="regPassword" placeholder="Min 6 characters"></div>
-    <div class="form-group"><label>Confirm Password</label><input type="password" id="regConfirmPassword"></div>
+    <div class="form-group">
+        <label>👤 Full Name</label>
+        <input type="text" id="regFullName" placeholder="John Mihayo">
+    </div>
+    <div class="form-group">
+        <label>📧 Email Address</label>
+        <input type="email" id="regEmail" placeholder="michuzi@gmail.com">
+    </div>
+    <div class="form-group">
+        <label>📞 Phone Number</label>
+        <input type="tel" id="regPhone" placeholder="0712345678">
+    </div>
+    <div class="form-group">
+        <label>🔒 Password (min 6 characters)</label>
+        <input type="password" id="regPassword" placeholder="Create a password">
+    </div>
+    <div class="form-group">
+        <label>🔒 Confirm Password</label>
+        <input type="password" id="regConfirmPassword" placeholder="Confirm your password">
+    </div>
     <button onclick="handleRegister()">Register</button>
-    <p style="text-align:center; margin-top:20px;"><a href="#" onclick="showLogin()">Back to Login</a></p>
+    <p style="text-align:center; margin-top:20px;">
+        <a href="#" onclick="showLogin()">← Back to Login</a>
+    </p>
 </div>
 
 <!-- Super Admin Dashboard -->
 <div class="container" id="superDashboard" style="display:none;">
     <div class="navbar">
-        <h2>👑 Super Admin Panel</h2>
-        <div>
-            <span id="adminEmail" style="margin-right:15px;"></span>
-            <button onclick="logout()" style="background:#ff4444; padding:10px 20px; width:auto;">Logout</button>
+        <h2>👑 Super Admin Control Panel</h2>
+        <div class="user-info">
+            <span id="adminEmail"></span>
+            <button onclick="logout()" class="logout-btn">🚪 Logout</button>
         </div>
     </div>
     
-    <h3>📤 Upload Media</h3>
-    <input type="file" id="uploadFile" accept="image/*,video/*">
-    <button onclick="uploadMedia()" style="margin-top:10px;">Upload Media</button>
-    <div id="uploadStatus" style="margin-top:10px; font-size:14px;"></div>
+    <h3>📤 Upload New Media</h3>
+    <div class="form-group">
+        <label>Choose File (Image or Video)</label>
+        <input type="file" id="uploadFile" accept="image/*,video/*">
+    </div>
+    <button onclick="uploadMedia()">Upload Media</button>
+    <div id="uploadProgress" class="upload-progress">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill">0%</div>
+        </div>
+    </div>
+    <div id="uploadStatus" style="margin-top: 10px; font-size: 14px;"></div>
 
-    <h3>📁 Uploaded Media</h3>
-    <div class="media-grid" id="mediaGrid"></div>
+    <h3>📁 All Media Files</h3>
+    <div class="media-grid" id="mediaGrid">
+        <div class="loading">Loading media...</div>
+    </div>
 
-    <h3>💬 User Comments (Need Reply?)</h3>
-    <div id="commentsList"></div>
+    <h3>💬 User Comments & Feedback</h3>
+    <div id="commentsList">
+        <div class="loading">Loading comments...</div>
+    </div>
 </div>
 
 <!-- User Dashboard -->
 <div class="container" id="userDashboard" style="display:none;">
     <div class="navbar">
         <h2>👤 User Dashboard</h2>
-        <div>
-            <span id="userName" style="margin-right:15px;"></span>
-            <button onclick="logout()" style="background:#ff4444; padding:10px 20px; width:auto;">Logout</button>
+        <div class="user-info">
+            <span id="userName"></span>
+            <button onclick="logout()" class="logout-btn">🚪 Logout</button>
         </div>
     </div>
     
     <h3>🎥 Available Media</h3>
-    <div class="media-grid" id="userMediaGrid"></div>
+    <div class="media-grid" id="userMediaGrid">
+        <div class="loading">Loading media...</div>
+    </div>
 
     <h3>💭 Leave a Comment</h3>
-    <textarea id="userComment" rows="4" placeholder="Write your comment here..."></textarea>
+    <div class="form-group">
+        <textarea id="userComment" rows="4" placeholder="Write your comment here..."></textarea>
+    </div>
     <button onclick="submitComment()">Send Comment</button>
 </div>
 
 <script>
-// Firebase Config
+// Firebase Configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyD0rTfNVPAjtPFRQxT5SEhJaLBX40Z8q4g",
-  authDomain: "mihayo-media-platform.firebaseapp.com",
-  projectId: "mihayo-media-platform",
-  storageBucket: "mihayo-media-platform.firebasestorage.app",
-  messagingSenderId: "973572154003",
-  appId: "1:973572154003:web:837f3abb7689c0706ce366"
+    apiKey: "AIzaSyD0rTfNVPAjtPFRQxT5SEhJaLBX40Z8q4g",
+    authDomain: "mihayo-media-platform.firebaseapp.com",
+    projectId: "mihayo-media-platform",
+    storageBucket: "mihayo-media-platform.firebasestorage.app",
+    messagingSenderId: "973572154003",
+    appId: "1:973572154003:web:837f3abb7689c0706ce366"
 };
 
 // Initialize Firebase
@@ -197,30 +444,70 @@ const db = firebase.firestore();
 const storage = firebase.storage();
 const auth = firebase.auth();
 
-// Super Admin credentials (stored in Firebase Auth)
+// Super Admin Credentials
 const SUPER_ADMIN_EMAIL = "admin@mihayo.com";
 const SUPER_ADMIN_PASSWORD = "Admin@123";
 
-// ==================== AUTHENTICATION FUNCTIONS ====================
+// ==================== UI HELPER FUNCTIONS ====================
 
-// Show/hide functions
+function hideAll() {
+    const containers = document.querySelectorAll('.container');
+    containers.forEach(container => {
+        container.style.display = 'none';
+    });
+}
+
 function showRegister() {
-    document.getElementById('loginPage').style.display = 'none';
+    hideAll();
     document.getElementById('registerPage').style.display = 'block';
+    clearMessages();
 }
 
 function showLogin() {
-    document.getElementById('registerPage').style.display = 'none';
+    hideAll();
     document.getElementById('loginPage').style.display = 'block';
     clearMessages();
 }
 
 function clearMessages() {
     const errors = document.querySelectorAll('.error-message, .success-message');
-    errors.forEach(el => el.style.display = 'none');
+    errors.forEach(el => {
+        el.style.display = 'none';
+        el.textContent = '';
+    });
 }
 
-// REGISTER FUNCTION (FIXED!)
+function showError(elementId, message) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        element.textContent = message;
+        element.style.display = 'block';
+        setTimeout(() => {
+            element.style.display = 'none';
+        }, 5000);
+    }
+}
+
+function showSuccess(elementId, message) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        element.textContent = message;
+        element.style.display = 'block';
+        setTimeout(() => {
+            element.style.display = 'none';
+        }, 3000);
+    }
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+// ==================== AUTHENTICATION FUNCTIONS ====================
+
 async function handleRegister() {
     clearMessages();
     
@@ -230,24 +517,24 @@ async function handleRegister() {
     const password = document.getElementById('regPassword').value;
     const confirmPassword = document.getElementById('regConfirmPassword').value;
     
-    // Validation
+    // Validations
     if (!fullName || !email || !phone || !password) {
-        showError('registerError', 'Tafadhali jaza taarifa zote!');
+        showError('registerError', 'Please fill all fields!');
         return;
     }
     
     if (password.length < 6) {
-        showError('registerError', 'Password lazima iwe na herufi 6 au zaidi!');
+        showError('registerError', 'Password must be at least 6 characters!');
         return;
     }
     
     if (password !== confirmPassword) {
-        showError('registerError', 'Passwords hazifanani!');
+        showError('registerError', 'Passwords do not match!');
         return;
     }
     
     try {
-        // Create user with Firebase Auth
+        // Create user in Firebase Auth
         const userCredential = await auth.createUserWithEmailAndPassword(email, password);
         const user = userCredential.user;
         
@@ -256,13 +543,12 @@ async function handleRegister() {
             fullName: fullName,
             email: email,
             phone: phone,
-            role: "user", // Regular user
+            role: "user",
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             uid: user.uid
         });
         
-        // Show success
-        showSuccess('registerSuccess', 'Account created successfully! Please login.');
+        showSuccess('registerSuccess', 'Account created successfully! Redirecting to login...');
         
         // Clear form
         document.getElementById('regFullName').value = '';
@@ -281,13 +567,13 @@ async function handleRegister() {
         let errorMessage = "Registration failed!";
         switch(error.code) {
             case 'auth/email-already-in-use':
-                errorMessage = "Email hii tayari imesajiliwa!";
+                errorMessage = "Email already registered!";
                 break;
             case 'auth/invalid-email':
-                errorMessage = "Email si sahihi!";
+                errorMessage = "Invalid email address!";
                 break;
             case 'auth/weak-password':
-                errorMessage = "Password ni dhaifu!";
+                errorMessage = "Password is too weak!";
                 break;
             default:
                 errorMessage = error.message;
@@ -296,7 +582,6 @@ async function handleRegister() {
     }
 }
 
-// LOGIN FUNCTION (FIXED!)
 async function handleLogin() {
     clearMessages();
     
@@ -304,7 +589,7 @@ async function handleLogin() {
     const password = document.getElementById('loginPassword').value;
     
     if (!email || !password) {
-        showError('loginError', 'Tafadhali weka email na password!');
+        showError('loginError', 'Please enter email and password!');
         return;
     }
     
@@ -319,30 +604,25 @@ async function handleLogin() {
         if (userDoc.exists) {
             const userData = userDoc.data();
             
-            // Check if user is super admin
-            if (email === SUPER_ADMIN_EMAIL && userData.role === 'super_admin') {
-                localStorage.setItem('currentUser', JSON.stringify({
-                    uid: user.uid,
-                    name: userData.fullName,
-                    email: email,
-                    role: 'super_admin'
-                }));
+            // Store user data in localStorage
+            localStorage.setItem('currentUser', JSON.stringify({
+                uid: user.uid,
+                name: userData.fullName,
+                email: user.email,
+                role: userData.role
+            }));
+            
+            if (userData.role === 'super_admin') {
                 showSuperDashboard();
             } else {
-                localStorage.setItem('currentUser', JSON.stringify({
-                    uid: user.uid,
-                    name: userData.fullName,
-                    email: email,
-                    role: 'user'
-                }));
                 showUserDashboard();
             }
         } else {
-            // If no Firestore document, create one
+            // Create user document if doesn't exist
             await db.collection("users").doc(user.uid).set({
                 fullName: email.split('@')[0],
                 email: email,
-                role: 'user',
+                role: "user",
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 uid: user.uid
             });
@@ -351,7 +631,7 @@ async function handleLogin() {
                 uid: user.uid,
                 name: email.split('@')[0],
                 email: email,
-                role: 'user'
+                role: "user"
             }));
             showUserDashboard();
         }
@@ -361,13 +641,13 @@ async function handleLogin() {
         let errorMessage = "Login failed!";
         switch(error.code) {
             case 'auth/user-not-found':
-                errorMessage = "Hakuna account iliyopatikana!";
+                errorMessage = "No account found with this email!";
                 break;
             case 'auth/wrong-password':
-                errorMessage = "Password si sahihi!";
+                errorMessage = "Incorrect password!";
                 break;
             case 'auth/invalid-email':
-                errorMessage = "Email si sahihi!";
+                errorMessage = "Invalid email format!";
                 break;
             default:
                 errorMessage = error.message;
@@ -376,65 +656,97 @@ async function handleLogin() {
     }
 }
 
-// Helper functions for messages
-function showError(elementId, message) {
-    const element = document.getElementById(elementId);
-    element.textContent = message;
-    element.style.display = 'block';
-    setTimeout(() => {
-        element.style.display = 'none';
-    }, 5000);
+async function logout() {
+    try {
+        await auth.signOut();
+        localStorage.removeItem('currentUser');
+        hideAll();
+        showLogin();
+        // Clear login form
+        document.getElementById('loginEmail').value = '';
+        document.getElementById('loginPassword').value = '';
+    } catch (error) {
+        console.error("Logout error:", error);
+    }
 }
 
-function showSuccess(elementId, message) {
-    const element = document.getElementById(elementId);
-    element.textContent = message;
-    element.style.display = 'block';
-    setTimeout(() => {
-        element.style.display = 'none';
-    }, 3000);
-}
+// ==================== UPLOAD MEDIA FUNCTION ====================
 
-// ==================== UPLOAD MEDIA (FIXED) ====================
 async function uploadMedia() {
     const file = document.getElementById('uploadFile').files[0];
     const statusDiv = document.getElementById('uploadStatus');
+    const progressDiv = document.getElementById('uploadProgress');
+    const progressFill = document.getElementById('progressFill');
     
     if (!file) {
-        statusDiv.innerHTML = "⚠️ Tafadhali chagua file!";
+        statusDiv.innerHTML = "⚠️ Please select a file!";
         statusDiv.style.color = "red";
         return;
     }
     
     // Check file size (max 50MB)
     if (file.size > 50 * 1024 * 1024) {
-        statusDiv.innerHTML = "❌ File kubwa sana! Maximum 50MB.";
+        statusDiv.innerHTML = "❌ File too large! Maximum 50MB.";
         statusDiv.style.color = "red";
         return;
     }
     
-    // Get current user
+    // Check if user is super admin
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
     if (currentUser.role !== 'super_admin') {
-        statusDiv.innerHTML = "❌ Huna ruhusa ya kuupload!";
+        statusDiv.innerHTML = "❌ You don't have permission to upload!";
         statusDiv.style.color = "red";
         return;
     }
     
-    statusDiv.innerHTML = "⏳ Inapakia... Tafadhali subiri.";
+    // Show progress bar
+    progressDiv.style.display = 'block';
+    progressFill.style.width = '0%';
+    progressFill.textContent = '0%';
+    statusDiv.innerHTML = "⏳ Uploading... Please wait.";
     statusDiv.style.color = "blue";
     
     try {
-        // Create unique filename
         const timestamp = Date.now();
         const fileName = `${timestamp}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
         const storageRef = storage.ref(`media/${fileName}`);
         
-        // Upload file
-        const snapshot = await storageRef.put(file);
+        // Upload with progress tracking
+        const uploadTask = storageRef.put(file);
+        
+        // Track upload progress
+        uploadTask.on('state_changed',
+            (snapshot) => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                const percent = Math.round(progress);
+                progressFill.style.width = `${percent}%`;
+                progressFill.textContent = `${percent}%`;
+                statusDiv.innerHTML = `⏳ Uploading... ${percent}%`;
+            },
+            (error) => {
+                console.error("Upload error:", error);
+                let errorMessage = "Upload failed: ";
+                switch(error.code) {
+                    case 'storage/unauthorized':
+                        errorMessage += "Permission denied! Check Storage Rules in Firebase Console.";
+                        break;
+                    case 'storage/canceled':
+                        errorMessage += "Upload canceled.";
+                        break;
+                    default:
+                        errorMessage += error.message;
+                }
+                statusDiv.innerHTML = `❌ ${errorMessage}`;
+                statusDiv.style.color = "red";
+                progressDiv.style.display = 'none';
+            }
+        );
+        
+        // Wait for upload to complete
+        const snapshot = await uploadTask;
         const url = await snapshot.ref.getDownloadURL();
         
-        // Save to Firestore
+        // Save media info to Firestore
         await db.collection("media").add({
             url: url,
             type: file.type.startsWith('image') ? 'image' : 'video',
@@ -445,11 +757,15 @@ async function uploadMedia() {
             size: file.size
         });
         
+        // Success
         statusDiv.innerHTML = "✅ Media uploaded successfully!";
         statusDiv.style.color = "green";
+        progressDiv.style.display = 'none';
         document.getElementById('uploadFile').value = '';
         
-        // Clear status after 3 seconds
+        // Refresh media grid
+        loadMedia();
+        
         setTimeout(() => {
             statusDiv.innerHTML = "";
         }, 3000);
@@ -458,91 +774,132 @@ async function uploadMedia() {
         console.error("Upload error:", error);
         statusDiv.innerHTML = `❌ Upload failed: ${error.message}`;
         statusDiv.style.color = "red";
+        progressDiv.style.display = 'none';
     }
 }
 
-// Load Media for Super Admin (with delete)
+// ==================== LOAD MEDIA FUNCTIONS ====================
+
 function loadMedia() {
     const grid = document.getElementById('mediaGrid');
-    grid.innerHTML = "<p>Loading media...</p>";
+    if (!grid) return;
     
-    db.collection("media").orderBy("uploadedAt", "desc").onSnapshot(snap => {
-        grid.innerHTML = '';
-        if (snap.empty) {
-            grid.innerHTML = "<p>No media uploaded yet.</p>";
-            return;
-        }
-        
-        snap.forEach(doc => {
-            const m = doc.data();
-            const div = document.createElement('div');
-            div.className = 'media-card';
-            div.innerHTML = `
-                ${m.type === 'image' ? `<img src="${m.url}" alt="${m.name}">` : `<video src="${m.url}" controls></video>`}
-                <div style="padding: 10px;">
-                    <small>Uploaded by: ${m.uploadedByName || 'Unknown'}</small><br>
-                    <a href="${m.url}" download class="download-btn">⬇ Download</a>
-                    <button onclick="deleteMedia('${doc.id}')" class="delete-btn">🗑 Delete</button>
-                </div>
-            `;
-            grid.appendChild(div);
+    grid.innerHTML = '<div class="loading">📁 Loading media...</div>';
+    
+    db.collection("media")
+        .orderBy("uploadedAt", "desc")
+        .onSnapshot(snapshot => {
+            if (snapshot.empty) {
+                grid.innerHTML = '<div style="text-align:center; padding:40px;">📭 No media uploaded yet.</div>';
+                return;
+            }
+            
+            grid.innerHTML = '';
+            snapshot.forEach(doc => {
+                const media = doc.data();
+                const mediaCard = document.createElement('div');
+                mediaCard.className = 'media-card';
+                
+                // Media content
+                let mediaContent = '';
+                if (media.type === 'image') {
+                    mediaContent = `<img src="${media.url}" alt="${media.name}" loading="lazy">`;
+                } else {
+                    mediaContent = `<video src="${media.url}" controls preload="metadata"></video>`;
+                }
+                
+                mediaCard.innerHTML = `
+                    ${mediaContent}
+                    <div class="media-info">
+                        <small>📄 ${media.name}</small><br>
+                        <small>👤 Uploaded by: ${escapeHtml(media.uploadedByName || 'Unknown')}</small><br>
+                        <small>📅 ${media.uploadedAt ? new Date(media.uploadedAt.toDate()).toLocaleString() : 'Just now'}</small>
+                    </div>
+                    <div class="media-actions">
+                        <a href="${media.url}" download class="download-btn">⬇ Download</a>
+                        <button onclick="deleteMedia('${doc.id}')" class="delete-btn">🗑 Delete</button>
+                    </div>
+                `;
+                grid.appendChild(mediaCard);
+            });
+        }, error => {
+            console.error("Error loading media:", error);
+            grid.innerHTML = '<div class="loading">❌ Error loading media. Check console.</div>';
         });
-    }, error => {
-        console.error("Error loading media:", error);
-        grid.innerHTML = "<p>Error loading media. Check console.</p>";
-    });
 }
 
-async function deleteMedia(id) {
-    if (confirm("Delete this media permanently?")) {
-        try {
-            await db.collection("media").doc(id).delete();
-            alert("✅ Media deleted!");
-        } catch (error) {
-            console.error("Delete error:", error);
-            alert("Failed to delete: " + error.message);
-        }
+function loadUserMedia() {
+    const grid = document.getElementById('userMediaGrid');
+    if (!grid) return;
+    
+    grid.innerHTML = '<div class="loading">📁 Loading media...</div>';
+    
+    db.collection("media")
+        .orderBy("uploadedAt", "desc")
+        .onSnapshot(snapshot => {
+            if (snapshot.empty) {
+                grid.innerHTML = '<div style="text-align:center; padding:40px;">📭 No media available yet.</div>';
+                return;
+            }
+            
+            grid.innerHTML = '';
+            snapshot.forEach(doc => {
+                const media = doc.data();
+                const mediaCard = document.createElement('div');
+                mediaCard.className = 'media-card';
+                
+                let mediaContent = '';
+                if (media.type === 'image') {
+                    mediaContent = `<img src="${media.url}" alt="${media.name}" loading="lazy">`;
+                } else {
+                    mediaContent = `<video src="${media.url}" controls preload="metadata"></video>`;
+                }
+                
+                mediaCard.innerHTML = `
+                    ${mediaContent}
+                    <div class="media-info">
+                        <small>📄 ${media.name}</small><br>
+                        <small>📅 ${media.uploadedAt ? new Date(media.uploadedAt.toDate()).toLocaleString() : 'Just now'}</small>
+                    </div>
+                    <div class="media-actions">
+                        <a href="${media.url}" download class="download-btn">⬇ Download</a>
+                    </div>
+                `;
+                grid.appendChild(mediaCard);
+            });
+        }, error => {
+            console.error("Error loading user media:", error);
+            grid.innerHTML = '<div class="loading">❌ Error loading media.</div>';
+        });
+}
+
+async function deleteMedia(mediaId) {
+    if (!confirm("⚠️ Are you sure you want to delete this media permanently?")) {
+        return;
+    }
+    
+    try {
+        await db.collection("media").doc(mediaId).delete();
+        alert("✅ Media deleted successfully!");
+    } catch (error) {
+        console.error("Delete error:", error);
+        alert("❌ Failed to delete media: " + error.message);
     }
 }
 
-// Load Media for Regular Users (no delete)
-function loadUserMedia() {
-    const grid = document.getElementById('userMediaGrid');
-    grid.innerHTML = "<p>Loading media...</p>";
-    
-    db.collection("media").orderBy("uploadedAt", "desc").onSnapshot(snap => {
-        grid.innerHTML = '';
-        if (snap.empty) {
-            grid.innerHTML = "<p>No media available yet.</p>";
-            return;
-        }
-        
-        snap.forEach(doc => {
-            const m = doc.data();
-            const div = document.createElement('div');
-            div.className = 'media-card';
-            div.innerHTML = `
-                ${m.type === 'image' ? `<img src="${m.url}" alt="${m.name}">` : `<video src="${m.url}" controls></video>`}
-                <div style="padding: 10px;">
-                    <a href="${m.url}" download class="download-btn">⬇ Download</a>
-                </div>
-            `;
-            grid.appendChild(div);
-        });
-    });
-}
+// ==================== COMMENTS FUNCTIONS ====================
 
-// ==================== COMMENTS SYSTEM ====================
 async function submitComment() {
     const text = document.getElementById('userComment').value.trim();
+    
     if (!text) {
-        alert("Tafadhali andika comment!");
+        alert("⚠️ Please write a comment!");
         return;
     }
     
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
     if (!currentUser.uid) {
-        alert("Please login first!");
+        alert("❌ Please login first!");
         return;
     }
     
@@ -560,14 +917,15 @@ async function submitComment() {
         document.getElementById('userComment').value = '';
         alert("✅ Comment sent successfully!");
         
-        // If super admin, refresh comments
-        if (currentUser.role === 'super_admin') {
+        // Refresh comments if admin is viewing
+        const currentUserRole = JSON.parse(localStorage.getItem('currentUser') || '{}').role;
+        if (currentUserRole === 'super_admin') {
             loadComments();
         }
         
     } catch (error) {
         console.error("Comment error:", error);
-        alert("Failed to send comment: " + error.message);
+        alert("❌ Failed to send comment: " + error.message);
     }
 }
 
@@ -575,65 +933,73 @@ function loadComments() {
     const container = document.getElementById('commentsList');
     if (!container) return;
     
-    container.innerHTML = "<p>Loading comments...</p>";
+    container.innerHTML = '<div class="loading">💬 Loading comments...</div>';
     
-    db.collection("comments").orderBy("createdAt", "desc").onSnapshot(snapshot => {
-        container.innerHTML = '';
-        if (snapshot.empty) {
-            container.innerHTML = "<p>No comments yet.</p>";
-            return;
-        }
-        
-        snapshot.forEach(doc => {
-            const c = doc.data();
-            const div = document.createElement('div');
-            div.className = 'comment';
-            div.innerHTML = `
-                <strong>${escapeHtml(c.userName || 'Anonymous')}</strong> 
-                <small>${c.time || 'Just now'}</small><br>
-                <p>${escapeHtml(c.text)}</p>
-                ${c.reply ? `<div style="margin-top:10px; padding:10px; background:#e3f2fd; border-radius:6px;">
-                    <strong>👑 Admin Reply:</strong> ${escapeHtml(c.reply)}<br>
-                    <small>Replied: ${c.replyTime || ''}</small>
-                </div>` : `
-                <button onclick="replyToComment('${doc.id}')" style="margin-top:10px; width:auto; padding:5px 15px; background:#667eea;">
-                    📝 Reply as Admin
-                </button>`}
-            `;
-            container.appendChild(div);
+    db.collection("comments")
+        .orderBy("createdAt", "desc")
+        .onSnapshot(snapshot => {
+            if (snapshot.empty) {
+                container.innerHTML = '<div style="text-align:center; padding:40px;">💭 No comments yet. Be the first to comment!</div>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            snapshot.forEach(doc => {
+                const comment = doc.data();
+                const commentDiv = document.createElement('div');
+                commentDiv.className = 'comment';
+                
+                let replyHtml = '';
+                if (comment.reply) {
+                    replyHtml = `
+                        <div class="reply-section">
+                            <strong>👑 Admin Reply:</strong><br>
+                            ${escapeHtml(comment.reply)}<br>
+                            <small>📅 ${comment.replyTime || 'Recently'}</small>
+                        </div>
+                    `;
+                } else {
+                    // Check if current user is admin
+                    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                    if (currentUser.role === 'super_admin') {
+                        replyHtml = `
+                            <button onclick="replyToComment('${doc.id}')" style="margin-top: 10px; padding: 8px 15px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer;">
+                                💬 Reply as Admin
+                            </button>
+                        `;
+                    }
+                }
+                
+                commentDiv.innerHTML = `
+                    <strong>${escapeHtml(comment.userName || 'Anonymous')}</strong>
+                    <small>📅 ${comment.time || 'Just now'}</small>
+                    <p style="margin-top: 10px;">${escapeHtml(comment.text)}</p>
+                    ${replyHtml}
+                `;
+                container.appendChild(commentDiv);
+            });
         });
-    });
 }
 
 async function replyToComment(commentId) {
-    const reply = prompt("Enter your reply as Super Admin:");
-    if (!reply) return;
+    const reply = prompt("✏️ Enter your reply as Super Admin:");
+    if (!reply || reply.trim() === "") return;
     
     try {
         await db.collection("comments").doc(commentId).update({
-            reply: reply,
+            reply: reply.trim(),
             replyTime: new Date().toLocaleString(),
             replied: true
         });
-        alert("✅ Reply sent!");
+        alert("✅ Reply sent successfully!");
     } catch (error) {
         console.error("Reply error:", error);
-        alert("Failed to reply: " + error.message);
+        alert("❌ Failed to send reply: " + error.message);
     }
 }
 
-// Helper function to escape HTML
-function escapeHtml(str) {
-    if (!str) return '';
-    return str.replace(/[&<>]/g, function(m) {
-        if (m === '&') return '&amp;';
-        if (m === '<') return '&lt;';
-        if (m === '>') return '&gt;';
-        return m;
-    });
-}
-
 // ==================== DASHBOARD DISPLAY FUNCTIONS ====================
+
 function showSuperDashboard() {
     hideAll();
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
@@ -651,40 +1017,23 @@ function showUserDashboard() {
     loadUserMedia();
 }
 
-function hideAll() {
-    const containers = document.querySelectorAll('.container');
-    containers.forEach(el => el.style.display = 'none');
-}
+// ==================== SUPER ADMIN SETUP ====================
 
-async function logout() {
-    try {
-        await auth.signOut();
-        localStorage.removeItem('currentUser');
-        hideAll();
-        document.getElementById('loginPage').style.display = 'block';
-        document.getElementById('loginEmail').value = '';
-        document.getElementById('loginPassword').value = '';
-    } catch (error) {
-        console.error("Logout error:", error);
-    }
-}
-
-// Create Super Admin account on first run (Run this once!)
 async function setupSuperAdmin() {
     try {
-        // Check if super admin exists
+        // Check if super admin exists in Firestore
         const usersRef = db.collection("users");
         const snapshot = await usersRef.where("email", "==", SUPER_ADMIN_EMAIL).get();
         
         if (snapshot.empty) {
-            // Create super admin in Firebase Auth
+            // Try to create super admin in Firebase Auth
             try {
                 const userCredential = await auth.createUserWithEmailAndPassword(SUPER_ADMIN_EMAIL, SUPER_ADMIN_PASSWORD);
                 const adminUser = userCredential.user;
                 
                 // Save super admin to Firestore
                 await db.collection("users").doc(adminUser.uid).set({
-                    fullName: "Super Admin",
+                    fullName: "Super Administrator",
                     email: SUPER_ADMIN_EMAIL,
                     phone: "0000000000",
                     role: "super_admin",
@@ -692,14 +1041,14 @@ async function setupSuperAdmin() {
                     uid: adminUser.uid
                 });
                 
-                console.log("✅ Super Admin account created!");
-                console.log("Email:", SUPER_ADMIN_EMAIL);
-                console.log("Password:", SUPER_ADMIN_PASSWORD);
+                console.log("✅ Super Admin account created successfully!");
+                console.log("📧 Email:", SUPER_ADMIN_EMAIL);
+                console.log("🔒 Password:", SUPER_ADMIN_PASSWORD);
             } catch (error) {
-                if (error.code === 'auth/email-already-in-use') {
-                    console.log("Super admin already exists in Auth");
-                } else {
+                if (error.code !== 'auth/email-already-in-use') {
                     console.error("Error creating super admin:", error);
+                } else {
+                    console.log("ℹ️ Super admin already exists in Auth");
                 }
             }
         } else {
@@ -710,48 +1059,56 @@ async function setupSuperAdmin() {
     }
 }
 
-// Initialize app
-window.onload = async () => {
-    // Setup super admin account
-    await setupSuperAdmin();
-    
-    // Check authentication state
-    auth.onAuthStateChanged(async (user) => {
-        if (user) {
-            // User is signed in
-            const userDoc = await db.collection("users").doc(user.uid).get();
-            if (userDoc.exists) {
-                const userData = userDoc.data();
-                localStorage.setItem('currentUser', JSON.stringify({
-                    uid: user.uid,
-                    name: userData.fullName,
-                    email: user.email,
-                    role: userData.role
-                }));
-                
-                if (userData.role === 'super_admin') {
-                    showSuperDashboard();
-                } else {
-                    showUserDashboard();
-                }
-            }
-        } else {
-            // No user signed in
-            const storedUser = localStorage.getItem('currentUser');
-            if (!storedUser) {
-                hideAll();
-                document.getElementById('loginPage').style.display = 'block';
+// ==================== INITIALIZATION ====================
+
+// Set up auth state listener
+auth.onAuthStateChanged(async (user) => {
+    if (user) {
+        // User is signed in
+        const userDoc = await db.collection("users").doc(user.uid).get();
+        if (userDoc.exists) {
+            const userData = userDoc.data();
+            localStorage.setItem('currentUser', JSON.stringify({
+                uid: user.uid,
+                name: userData.fullName,
+                email: user.email,
+                role: userData.role
+            }));
+            
+            if (userData.role === 'super_admin') {
+                showSuperDashboard();
+            } else {
+                showUserDashboard();
             }
         }
-    });
+    } else {
+        // No user signed in
+        const storedUser = localStorage.getItem('currentUser');
+        if (!storedUser) {
+            hideAll();
+            showLogin();
+        }
+    }
+});
+
+// Initialize app when page loads
+window.addEventListener('DOMContentLoaded', async () => {
+    await setupSuperAdmin();
     
-    // Show login page by default if no user
+    // Check if user is already logged in
     const storedUser = localStorage.getItem('currentUser');
     if (!storedUser) {
         hideAll();
-        document.getElementById('loginPage').style.display = 'block';
+        showLogin();
+    } else {
+        // Try to restore session
+        const user = JSON.parse(storedUser);
+        if (user.role === 'super_admin') {
+            showSuperDashboard();
+        } else {
+            showUserDashboard();
+        }
     }
-};
+});
 </script>
-</body>
-</html>
+</body
