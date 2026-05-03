@@ -179,14 +179,14 @@
 
 <!-- Login Page -->
 <div class="container" id="loginPage">
-    <h2>🎬 Mihayo Media Platform</h2>
+    <h2>Mihayo Media Platform</h2>
     <div id="loginError" class="error-message"></div>
     <div class="form-group">
         <label>📧 Email Address</label>
-        <input type="email" id="loginEmail" placeholder="michuzi@gmail.com">
+        <input type="email" id="loginEmail" placeholder="mwandamboclemence@gmail.com">
     </div>
     <div class="form-group">
-        <label>🔒 Password</label>
+        <label>Password</label>
         <input type="password" id="loginPassword" placeholder="Enter your password">
     </div>
     <button onclick="handleLogin()">Login</button>
@@ -194,20 +194,21 @@
         Don't have an account? <a href="#" onclick="showRegister()">Register here</a>
     </p>
     <p style="text-align:center; margin-top:10px; font-size:12px; color:#666;">
-        <strong>👑 Super Admin:</strong> admin@mihayo.com / Admin@123
+        <strong>Designed by: aronclement93@gmail.com</strong>Contact: 0772236223/0615702706 <br>
+        @2021
     </p>
 </div>
 
 <!-- Register Page -->
 <div class="container" id="registerPage" style="display:none;">
-    <h2>📝 Create New Account</h2>
+    <h2>Create New Account</h2>
     <div id="registerError" class="error-message"></div>
     <div id="registerSuccess" class="success-message"></div>
-    <div class="form-group"><label>👤 Full Name</label><input type="text" id="regFullName" placeholder="John Mihayo"></div>
-    <div class="form-group"><label>📧 Email Address</label><input type="email" id="regEmail" placeholder="michuzi@gmail.com"></div>
-    <div class="form-group"><label>📞 Phone Number</label><input type="tel" id="regPhone" placeholder="0712345678"></div>
-    <div class="form-group"><label>🔒 Password (min 6 characters)</label><input type="password" id="regPassword" placeholder="Create a password"></div>
-    <div class="form-group"><label>🔒 Confirm Password</label><input type="password" id="regConfirmPassword" placeholder="Confirm your password"></div>
+    <div class="form-group"><label>Full Name</label><input type="text" id="regFullName" placeholder="John Mihayo"></div>
+    <div class="form-group"><label>Email Address</label><input type="email" id="regEmail" placeholder="clemencemwandambo@gmail.com"></div>
+    <div class="form-group"><label>Phone Number</label><input type="tel" id="regPhone" placeholder="0712345678"></div>
+    <div class="form-group"><label>Password (min 6 characters)</label><input type="password" id="regPassword" placeholder="miHayo@2021"></div>
+    <div class="form-group"><label>Confirm Password</label><input type="password" id="regConfirmPassword" placeholder="Confirm your password"></div>
     <button onclick="handleRegister()">Register</button>
     <p style="text-align:center; margin-top:20px;"><a href="#" onclick="showLogin()">← Back to Login</a></p>
 </div>
@@ -215,14 +216,14 @@
 <!-- Super Admin Dashboard -->
 <div class="container" id="superDashboard" style="display:none;">
     <div class="navbar">
-        <h2>👑 Super Admin Control Panel</h2>
+        <h2>Super Admin Control Panel</h2>
         <div class="user-info">
             <span id="adminEmail"></span>
-            <button onclick="logout()" class="logout-btn">🚪 Logout</button>
+            <button onclick="logout()" class="logout-btn">Logout</button>
         </div>
     </div>
     
-    <h3>📤 Upload New Media</h3>
+    <h3>Upload New Media</h3>
     <div class="form-group">
         <label>Choose File (Image or Video)</label>
         <input type="file" id="uploadFile" accept="image/*,video/*">
@@ -235,12 +236,12 @@
     </div>
     <div id="uploadStatus" style="margin-top: 10px; font-size: 14px;"></div>
 
-    <h3>📁 All Media Files</h3>
+    <h3>All Media Files</h3>
     <div class="media-grid" id="mediaGrid">
         <div class="loading">Loading media...</div>
     </div>
 
-    <h3>💬 User Comments & Feedback</h3>
+    <h3>User Comments & Feedback</h3>
     <div id="commentsList">
         <div class="loading">Loading comments...</div>
     </div>
@@ -249,19 +250,19 @@
 <!-- User Dashboard -->
 <div class="container" id="userDashboard" style="display:none;">
     <div class="navbar">
-        <h2>👤 User Dashboard</h2>
+        <h2>User Dashboard</h2>
         <div class="user-info">
             <span id="userName"></span>
-            <button onclick="logout()" class="logout-btn">🚪 Logout</button>
+            <button onclick="logout()" class="logout-btn">Logout</button>
         </div>
     </div>
     
-    <h3>🎥 Available Media</h3>
+    <h3>Available Media</h3>
     <div class="media-grid" id="userMediaGrid">
         <div class="loading">Loading media...</div>
     </div>
 
-    <h3>💭 Leave a Comment</h3>
+    <h3>Leave a Comment</h3>
     <div class="form-group">
         <textarea id="userComment" rows="4" placeholder="Write your comment here..."></textarea>
     </div>
@@ -520,20 +521,20 @@ async function uploadMedia() {
     const progressFill = document.getElementById('progressFill');
     
     if (!file) {
-        statusDiv.innerHTML = "⚠️ Please select a file!";
+        statusDiv.innerHTML = "Please select a file!";
         statusDiv.style.color = "red";
         return;
     }
     
     if (file.size > 50 * 1024 * 1024) {
-        statusDiv.innerHTML = "❌ File too large! Maximum 50MB.";
+        statusDiv.innerHTML = "File too large! Maximum 50MB.";
         statusDiv.style.color = "red";
         return;
     }
     
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
     if (currentUser.role !== 'super_admin') {
-        statusDiv.innerHTML = "❌ You don't have permission to upload!";
+        statusDiv.innerHTML = "You don't have permission to upload!";
         statusDiv.style.color = "red";
         return;
     }
@@ -541,7 +542,7 @@ async function uploadMedia() {
     progressDiv.style.display = 'block';
     progressFill.style.width = '0%';
     progressFill.textContent = '0%';
-    statusDiv.innerHTML = "⏳ Uploading... Please wait.";
+    statusDiv.innerHTML = "Uploading... Please wait.";
     statusDiv.style.color = "blue";
     
     try {
@@ -557,7 +558,7 @@ async function uploadMedia() {
                 const percent = Math.round(progress);
                 progressFill.style.width = `${percent}%`;
                 progressFill.textContent = `${percent}%`;
-                statusDiv.innerHTML = `⏳ Uploading... ${percent}%`;
+                statusDiv.innerHTML = Uploading... ${percent}%`;
             },
             (error) => {
                 console.error("Upload error:", error);
@@ -572,7 +573,7 @@ async function uploadMedia() {
                     default:
                         errorMessage += error.message;
                 }
-                statusDiv.innerHTML = `❌ ${errorMessage}`;
+                statusDiv.innerHTML = `${errorMessage}`;
                 statusDiv.style.color = "red";
                 progressDiv.style.display = 'none';
             }
@@ -591,7 +592,7 @@ async function uploadMedia() {
             size: file.size
         });
         
-        statusDiv.innerHTML = "✅ Media uploaded successfully!";
+        statusDiv.innerHTML = "Media uploaded successfully!";
         statusDiv.style.color = "green";
         progressDiv.style.display = 'none';
         document.getElementById('uploadFile').value = '';
@@ -604,7 +605,7 @@ async function uploadMedia() {
         
     } catch (error) {
         console.error("Upload error:", error);
-        statusDiv.innerHTML = `❌ Upload failed: ${error.message}`;
+        statusDiv.innerHTML = `Upload failed: ${error.message}`;
         statusDiv.style.color = "red";
         progressDiv.style.display = 'none';
     }
@@ -616,7 +617,7 @@ function loadMedia() {
     const grid = document.getElementById('mediaGrid');
     if (!grid) return;
     
-    grid.innerHTML = '<div class="loading">📁 Loading media...</div>';
+    grid.innerHTML = '<div class="loading">Loading media...</div>';
     
     // Try to get media collection
     db.collection("media")
@@ -624,7 +625,7 @@ function loadMedia() {
         .get()
         .then((querySnapshot) => {
             if (querySnapshot.empty) {
-                grid.innerHTML = '<div style="text-align:center; padding:40px;">📭 No media uploaded yet. Upload your first media!</div>';
+                grid.innerHTML = '<div style="text-align:center; padding:40px;">No media uploaded yet. Upload your first media!</div>';
                 return;
             }
             
@@ -644,9 +645,9 @@ function loadMedia() {
                 mediaCard.innerHTML = `
                     ${mediaContent}
                     <div class="media-info">
-                        <small>📄 ${escapeHtml(media.name)}</small><br>
-                        <small>👤 Uploaded by: ${escapeHtml(media.uploadedByName || 'Unknown')}</small><br>
-                        <small>📅 ${media.uploadedAt ? new Date(media.uploadedAt.toDate()).toLocaleString() : 'Just now'}</small>
+                        <small>${escapeHtml(media.name)}</small><br>
+                        <small>Uploaded by: ${escapeHtml(media.uploadedByName || 'Unknown')}</small><br>
+                        <small>${media.uploadedAt ? new Date(media.uploadedAt.toDate()).toLocaleString() : 'Just now'}</small>
                     </div>
                     <div class="media-actions">
                         <a href="${media.url}" download class="download-btn">⬇ Download</a>
@@ -658,7 +659,7 @@ function loadMedia() {
         })
         .catch((error) => {
             console.error("Error loading media:", error);
-            grid.innerHTML = `<div class="loading" style="color: red;">❌ Error loading media: ${error.message}<br><br>
+            grid.innerHTML = `<div class="loading" style="color: red;">Error loading media: ${error.message}<br><br>
             <strong>Solution:</strong><br>
             1. Go to Firebase Console → Firestore Database → Rules<br>
             2. Set rules to: allow read, write: if true;<br>
@@ -688,9 +689,9 @@ function loadMedia() {
                     mediaCard.innerHTML = `
                         ${mediaContent}
                         <div class="media-info">
-                            <small>📄 ${escapeHtml(media.name)}</small><br>
-                            <small>👤 ${escapeHtml(media.uploadedByName || 'Unknown')}</small><br>
-                            <small>📅 ${media.uploadedAt ? new Date(media.uploadedAt.toDate()).toLocaleString() : 'Just now'}</small>
+                            <small>${escapeHtml(media.name)}</small><br>
+                            <small>${escapeHtml(media.uploadedByName || 'Unknown')}</small><br>
+                            <small>${media.uploadedAt ? new Date(media.uploadedAt.toDate()).toLocaleString() : 'Just now'}</small>
                         </div>
                         <div class="media-actions">
                             <a href="${media.url}" download class="download-btn">⬇ Download</a>
@@ -709,14 +710,14 @@ function loadUserMedia() {
     const grid = document.getElementById('userMediaGrid');
     if (!grid) return;
     
-    grid.innerHTML = '<div class="loading">📁 Loading media...</div>';
+    grid.innerHTML = '<div class="loading">Loading media...</div>';
     
     db.collection("media")
         .orderBy("uploadedAt", "desc")
         .get()
         .then((querySnapshot) => {
             if (querySnapshot.empty) {
-                grid.innerHTML = '<div style="text-align:center; padding:40px;">📭 No media available yet.</div>';
+                grid.innerHTML = '<div style="text-align:center; padding:40px;">No media available yet.</div>';
                 return;
             }
             
@@ -736,8 +737,8 @@ function loadUserMedia() {
                 mediaCard.innerHTML = `
                     ${mediaContent}
                     <div class="media-info">
-                        <small>📄 ${escapeHtml(media.name)}</small><br>
-                        <small>📅 ${media.uploadedAt ? new Date(media.uploadedAt.toDate()).toLocaleString() : 'Just now'}</small>
+                        <small>${escapeHtml(media.name)}</small><br>
+                        <small>${media.uploadedAt ? new Date(media.uploadedAt.toDate()).toLocaleString() : 'Just now'}</small>
                     </div>
                     <div class="media-actions">
                         <a href="${media.url}" download class="download-btn">⬇ Download</a>
@@ -753,16 +754,16 @@ function loadUserMedia() {
 }
 
 async function deleteMedia(mediaId) {
-    if (!confirm("⚠️ Are you sure you want to delete this media permanently?")) {
+    if (!confirm("Are you sure you want to delete this media permanently?")) {
         return;
     }
     
     try {
         await db.collection("media").doc(mediaId).delete();
-        alert("✅ Media deleted successfully!");
+        alert("Media deleted successfully!");
     } catch (error) {
         console.error("Delete error:", error);
-        alert("❌ Failed to delete media: " + error.message);
+        alert("Failed to delete media: " + error.message);
     }
 }
 
@@ -772,13 +773,13 @@ async function submitComment() {
     const text = document.getElementById('userComment').value.trim();
     
     if (!text) {
-        alert("⚠️ Please write a comment!");
+        alert("Please write a comment!");
         return;
     }
     
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
     if (!currentUser.uid) {
-        alert("❌ Please login first!");
+        alert("Please login first!");
         return;
     }
     
@@ -794,7 +795,7 @@ async function submitComment() {
         });
         
         document.getElementById('userComment').value = '';
-        alert("✅ Comment sent successfully!");
+        alert("Comment sent successfully!");
         
         const currentUserRole = JSON.parse(localStorage.getItem('currentUser') || '{}').role;
         if (currentUserRole === 'super_admin') {
@@ -803,7 +804,7 @@ async function submitComment() {
         
     } catch (error) {
         console.error("Comment error:", error);
-        alert("❌ Failed to send comment: " + error.message);
+        alert("Failed to send comment: " + error.message);
     }
 }
 
@@ -817,7 +818,7 @@ function loadComments() {
         .orderBy("createdAt", "desc")
         .onSnapshot((snapshot) => {
             if (snapshot.empty) {
-                container.innerHTML = '<div style="text-align:center; padding:40px;">💭 No comments yet. Be the first to comment!</div>';
+                container.innerHTML = '<div style="text-align:center; padding:40px;">No comments yet. Be the first to comment!</div>';
                 return;
             }
             
@@ -831,9 +832,9 @@ function loadComments() {
                 if (comment.reply) {
                     replyHtml = `
                         <div class="reply-section">
-                            <strong>👑 Admin Reply:</strong><br>
+                            <strong>Admin Reply:</strong><br>
                             ${escapeHtml(comment.reply)}<br>
-                            <small>📅 ${comment.replyTime || 'Recently'}</small>
+                            <small>${comment.replyTime || 'Recently'}</small>
                         </div>
                     `;
                 } else {
@@ -841,7 +842,7 @@ function loadComments() {
                     if (currentUser.role === 'super_admin') {
                         replyHtml = `
                             <button onclick="replyToComment('${doc.id}')" style="margin-top: 10px; padding: 8px 15px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer;">
-                                💬 Reply as Admin
+                                Reply as Admin
                             </button>
                         `;
                     }
@@ -849,7 +850,7 @@ function loadComments() {
                 
                 commentDiv.innerHTML = `
                     <strong>${escapeHtml(comment.userName || 'Anonymous')}</strong>
-                    <small>📅 ${comment.time || 'Just now'}</small>
+                    <small>${comment.time || 'Just now'}</small>
                     <p style="margin-top: 10px;">${escapeHtml(comment.text)}</p>
                     ${replyHtml}
                 `;
@@ -857,12 +858,12 @@ function loadComments() {
             });
         }, (error) => {
             console.error("Error loading comments:", error);
-            container.innerHTML = `<div class="loading" style="color: red;">❌ Error loading comments: ${error.message}</div>`;
+            container.innerHTML = `<div class="loading" style="color: red;">Error loading comments: ${error.message}</div>`;
         });
 }
 
 async function replyToComment(commentId) {
-    const reply = prompt("✏️ Enter your reply as Super Admin:");
+    const reply = prompt("Enter your reply as Super Admin:");
     if (!reply || reply.trim() === "") return;
     
     try {
@@ -871,10 +872,10 @@ async function replyToComment(commentId) {
             replyTime: new Date().toLocaleString(),
             replied: true
         });
-        alert("✅ Reply sent successfully!");
+        alert("Reply sent successfully!");
     } catch (error) {
         console.error("Reply error:", error);
-        alert("❌ Failed to send reply: " + error.message);
+        alert("Failed to send reply: " + error.message);
     }
 }
 
@@ -883,7 +884,7 @@ async function replyToComment(commentId) {
 function showSuperDashboard() {
     hideAll();
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    document.getElementById('adminEmail').innerHTML = `👑 ${currentUser.email}`;
+    document.getElementById('adminEmail').innerHTML = `${currentUser.email}`;
     document.getElementById('superDashboard').style.display = 'block';
     loadMedia();
     loadComments();
@@ -892,7 +893,7 @@ function showSuperDashboard() {
 function showUserDashboard() {
     hideAll();
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    document.getElementById('userName').innerHTML = `👤 ${currentUser.name}`;
+    document.getElementById('userName').innerHTML = ${currentUser.name}`;
     document.getElementById('userDashboard').style.display = 'block';
     loadUserMedia();
 }
@@ -918,16 +919,16 @@ async function setupSuperAdmin() {
                     uid: adminUser.uid
                 });
                 
-                console.log("✅ Super Admin account created successfully!");
-                console.log("📧 Email:", SUPER_ADMIN_EMAIL);
-                console.log("🔒 Password:", SUPER_ADMIN_PASSWORD);
+                console.log("Super Admin account created successfully!");
+                console.log("Email:", SUPER_ADMIN_EMAIL);
+                console.log("Password:", SUPER_ADMIN_PASSWORD);
             } catch (error) {
                 if (error.code !== 'auth/email-already-in-use') {
                     console.error("Error creating super admin:", error);
                 }
             }
         } else {
-            console.log("✅ Super admin already exists");
+            console.log("Super admin already exists");
         }
     } catch (error) {
         console.error("Setup error:", error);
