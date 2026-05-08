@@ -47,6 +47,45 @@
             }
         }
 
+        /* Loading Animation */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            backdrop-filter: blur(3px);
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            background: white;
+            padding: 10px;
+            border-radius: 50%;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 15px;
+            color: white;
+            font-size: 16px;
+            text-align: center;
+        }
+
         h2 {
             text-align: center;
             margin-bottom: 25px;
@@ -108,6 +147,11 @@
 
         button:active {
             transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         .navbar {
@@ -188,7 +232,7 @@
             padding: 0 15px 15px 15px;
         }
 
-        .download-btn, .delete-btn {
+        .view-btn, .download-btn, .delete-btn {
             padding: 8px 15px;
             border-radius: 6px;
             text-align: center;
@@ -197,6 +241,12 @@
             font-size: 14px;
             cursor: pointer;
             flex: 1;
+            border: none;
+        }
+
+        .view-btn {
+            background: #2196F3;
+            color: white;
         }
 
         .download-btn {
@@ -207,7 +257,6 @@
         .delete-btn {
             background: #ff4444;
             color: white;
-            border: none;
         }
 
         .comment {
@@ -216,6 +265,7 @@
             margin: 15px 0;
             border-radius: 10px;
             border-left: 5px solid #667eea;
+            position: relative;
         }
 
         .reply-section {
@@ -223,6 +273,17 @@
             padding: 15px;
             background: #e3f2fd;
             border-radius: 8px;
+        }
+
+        .comment-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #4CAF50;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
         }
 
         .error-message {
@@ -290,6 +351,14 @@
     </style>
 </head>
 <body>
+
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="loading-overlay">
+    <div style="text-align: center;">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Processing, please wait...</div>
+    </div>
+</div>
 
 <!-- Login Page -->
 <div class="container" id="loginPage">
@@ -360,7 +429,7 @@
         <label>Choose File (Image or Video)</label>
         <input type="file" id="uploadFile" accept="image/*,video/*">
     </div>
-    <button onclick="uploadMedia()">Upload Media</button>
+    <button onclick="uploadMedia()" id="uploadBtn">Upload Media</button>
     <div id="uploadProgress" class="upload-progress">
         <div class="progress-bar">
             <div class="progress-fill" id="progressFill">0%</div>
@@ -398,7 +467,7 @@
     <div class="form-group">
         <textarea id="userComment" rows="4" placeholder="Write your comment here..."></textarea>
     </div>
-    <button onclick="submitComment()">Send Comment</button>
+    <button onclick="submitComment()" id="commentBtn">Send Comment</button>
 </div>
 
 <script>
@@ -421,6 +490,16 @@ const auth = firebase.auth();
 // Super Admin Credentials
 const SUPER_ADMIN_EMAIL = "admin@mihayo.com";
 const SUPER_ADMIN_PASSWORD = "Admin@123";
+
+// ==================== LOADING ANIMATION FUNCTIONS ====================
+
+function showLoading() {
+    document.getElementById('loadingOverlay').style.display = 'flex';
+}
+
+function hideLoading() {
+    document.getElementById('loadingOverlay').style.display = 'none';
+}
 
 // ==================== UI HELPER FUNCTIONS ====================
 
@@ -486,6 +565,7 @@ function escapeHtml(str) {
 // ==================== AUTHENTICATION FUNCTIONS ====================
 
 async function handleRegister() {
+    showLoading();
     clearMessages();
     
     const fullName = document.getElementById('regFullName').value.trim();
@@ -495,16 +575,19 @@ async function handleRegister() {
     const confirmPassword = document.getElementById('regConfirmPassword').value;
     
     if (!fullName || !email || !phone || !password) {
+        hideLoading();
         showError('registerError', 'Please fill all fields!');
         return;
     }
     
     if (password.length < 6) {
+        hideLoading();
         showError('registerError', 'Password must be at least 6 characters!');
         return;
     }
     
     if (password !== confirmPassword) {
+        hideLoading();
         showError('registerError', 'Passwords do not match!');
         return;
     }
@@ -522,6 +605,7 @@ async function handleRegister() {
             uid: user.uid
         });
         
+        hideLoading();
         showSuccess('registerSuccess', 'Account created successfully! Redirecting to login...');
         
         document.getElementById('regFullName').value = '';
@@ -535,6 +619,7 @@ async function handleRegister() {
         }, 2000);
         
     } catch (error) {
+        hideLoading();
         console.error("Registration error:", error);
         let errorMessage = "Registration failed!";
         switch(error.code) {
@@ -555,12 +640,14 @@ async function handleRegister() {
 }
 
 async function handleLogin() {
+    showLoading();
     clearMessages();
     
     const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value;
     
     if (!email || !password) {
+        hideLoading();
         showError('loginError', 'Please enter email and password!');
         return;
     }
@@ -579,6 +666,8 @@ async function handleLogin() {
                 email: user.email,
                 role: userData.role
             }));
+            
+            hideLoading();
             
             if (userData.role === 'super_admin') {
                 showSuperDashboard();
@@ -600,10 +689,13 @@ async function handleLogin() {
                 email: email,
                 role: "user"
             }));
+            
+            hideLoading();
             showUserDashboard();
         }
         
     } catch (error) {
+        hideLoading();
         console.error("Login error:", error);
         let errorMessage = "Login failed!";
         switch(error.code) {
@@ -624,6 +716,7 @@ async function handleLogin() {
 }
 
 async function logout() {
+    showLoading();
     try {
         await auth.signOut();
         localStorage.removeItem('currentUser');
@@ -631,8 +724,52 @@ async function logout() {
         showLogin();
         document.getElementById('loginEmail').value = '';
         document.getElementById('loginPassword').value = '';
+        hideLoading();
     } catch (error) {
+        hideLoading();
         console.error("Logout error:", error);
+    }
+}
+
+// ==================== VIEW MEDIA FUNCTION ====================
+
+function viewMedia(url, type) {
+    if (type === 'image') {
+        // Open image in new tab
+        window.open(url, '_blank');
+    } else {
+        // Open video in new tab
+        window.open(url, '_blank');
+    }
+}
+
+// ==================== DOWNLOAD MEDIA FUNCTION ====================
+
+async function downloadMedia(url, fileName) {
+    showLoading();
+    
+    try {
+        // Fetch the file
+        const response = await fetch(url);
+        const blob = await response.blob();
+        
+        // Create download link
+        const link = document.createElement('a');
+        const objectUrl = window.URL.createObjectURL(blob);
+        link.href = objectUrl;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(objectUrl);
+        
+        hideLoading();
+        alert("Download started successfully!");
+        
+    } catch (error) {
+        hideLoading();
+        console.error("Download error:", error);
+        alert("Download failed: " + error.message);
     }
 }
 
@@ -643,6 +780,7 @@ async function uploadMedia() {
     const statusDiv = document.getElementById('uploadStatus');
     const progressDiv = document.getElementById('uploadProgress');
     const progressFill = document.getElementById('progressFill');
+    const uploadBtn = document.getElementById('uploadBtn');
     
     if (!file) {
         statusDiv.innerHTML = "Please select a file!";
@@ -663,6 +801,7 @@ async function uploadMedia() {
         return;
     }
     
+    uploadBtn.disabled = true;
     progressDiv.style.display = 'block';
     progressFill.style.width = '0%';
     progressFill.textContent = '0%';
@@ -700,6 +839,7 @@ async function uploadMedia() {
                 statusDiv.innerHTML = errorMessage;
                 statusDiv.style.color = "red";
                 progressDiv.style.display = 'none';
+                uploadBtn.disabled = false;
             }
         );
         
@@ -720,6 +860,7 @@ async function uploadMedia() {
         statusDiv.style.color = "green";
         progressDiv.style.display = 'none';
         document.getElementById('uploadFile').value = '';
+        uploadBtn.disabled = false;
         
         loadMedia();
         
@@ -732,6 +873,7 @@ async function uploadMedia() {
         statusDiv.innerHTML = "Upload failed: " + error.message;
         statusDiv.style.color = "red";
         progressDiv.style.display = 'none';
+        uploadBtn.disabled = false;
     }
 }
 
@@ -771,7 +913,8 @@ function loadMedia() {
                         '<small>' + (media.uploadedAt ? new Date(media.uploadedAt.toDate()).toLocaleString() : 'Just now') + '</small>' +
                     '</div>' +
                     '<div class="media-actions">' +
-                        '<a href="' + media.url + '" download class="download-btn">Download</a>' +
+                        '<button onclick="viewMedia(\'' + media.url + '\', \'' + media.type + '\')" class="view-btn">View</button>' +
+                        '<button onclick="downloadMedia(\'' + media.url + '\', \'' + escapeHtml(media.name) + '\')" class="download-btn">Download</button>' +
                         '<button onclick="deleteMedia(\'' + doc.id + '\')" class="delete-btn">Delete</button>' +
                     '</div>';
                 grid.appendChild(mediaCard);
@@ -815,7 +958,8 @@ function loadUserMedia() {
                         '<small>' + (media.uploadedAt ? new Date(media.uploadedAt.toDate()).toLocaleString() : 'Just now') + '</small>' +
                     '</div>' +
                     '<div class="media-actions">' +
-                        '<a href="' + media.url + '" download class="download-btn">Download</a>' +
+                        '<button onclick="viewMedia(\'' + media.url + '\', \'' + media.type + '\')" class="view-btn">View</button>' +
+                        '<button onclick="downloadMedia(\'' + media.url + '\', \'' + escapeHtml(media.name) + '\')" class="download-btn">Download</button>' +
                     '</div>';
                 grid.appendChild(mediaCard);
             });
@@ -830,10 +974,14 @@ async function deleteMedia(mediaId) {
         return;
     }
     
+    showLoading();
+    
     try {
         await db.collection("media").doc(mediaId).delete();
+        hideLoading();
         alert("Media deleted successfully!");
     } catch (error) {
+        hideLoading();
         console.error("Delete error:", error);
         alert("Failed to delete media: " + error.message);
     }
@@ -843,6 +991,7 @@ async function deleteMedia(mediaId) {
 
 async function submitComment() {
     const text = document.getElementById('userComment').value.trim();
+    const commentBtn = document.getElementById('commentBtn');
     
     if (!text) {
         alert("Please write a comment!");
@@ -855,6 +1004,9 @@ async function submitComment() {
         return;
     }
     
+    showLoading();
+    commentBtn.disabled = true;
+    
     try {
         await db.collection("comments").add({
             text: text,
@@ -863,10 +1015,14 @@ async function submitComment() {
             email: currentUser.email,
             time: new Date().toLocaleString(),
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            replied: false
+            replied: false,
+            reply: null,
+            replyTime: null
         });
         
         document.getElementById('userComment').value = '';
+        hideLoading();
+        commentBtn.disabled = false;
         alert("Comment sent successfully!");
         
         const currentUserRole = JSON.parse(localStorage.getItem('currentUser') || '{}').role;
@@ -875,6 +1031,8 @@ async function submitComment() {
         }
         
     } catch (error) {
+        hideLoading();
+        commentBtn.disabled = false;
         console.error("Comment error:", error);
         alert("Failed to send comment: " + error.message);
     }
@@ -900,8 +1058,16 @@ function loadComments() {
                 const commentDiv = document.createElement('div');
                 commentDiv.className = 'comment';
                 
+                // Add badge if admin replied
+                if (comment.reply && comment.reply.trim() !== '') {
+                    const badge = document.createElement('div');
+                    badge.className = 'comment-badge';
+                    badge.textContent = 'Admin Replied';
+                    commentDiv.appendChild(badge);
+                }
+                
                 let replyHtml = '';
-                if (comment.reply) {
+                if (comment.reply && comment.reply.trim() !== '') {
                     replyHtml = '<div class="reply-section">' +
                         '<strong>Admin Reply:</strong><br>' +
                         escapeHtml(comment.reply) + '<br>' +
@@ -914,7 +1080,7 @@ function loadComments() {
                     }
                 }
                 
-                commentDiv.innerHTML = '<strong>' + escapeHtml(comment.userName || 'Anonymous') + '</strong>' +
+                commentDiv.innerHTML += '<strong>' + escapeHtml(comment.userName || 'Anonymous') + '</strong>' +
                     '<small> ' + (comment.time || 'Just now') + '</small>' +
                     '<p style="margin-top: 10px;">' + escapeHtml(comment.text) + '</p>' +
                     replyHtml;
@@ -930,14 +1096,18 @@ async function replyToComment(commentId) {
     const reply = prompt("Enter your reply as Super Admin:");
     if (!reply || reply.trim() === "") return;
     
+    showLoading();
+    
     try {
         await db.collection("comments").doc(commentId).update({
             reply: reply.trim(),
             replyTime: new Date().toLocaleString(),
             replied: true
         });
-        alert("Reply sent successfully!");
+        hideLoading();
+        alert("Reply sent successfully! User will now see your reply.");
     } catch (error) {
+        hideLoading();
         console.error("Reply error:", error);
         alert("Failed to send reply: " + error.message);
     }
