@@ -271,8 +271,13 @@
         .reply-section {
             margin-top: 15px;
             padding: 15px;
-            background: #e3f2fd;
+            background: #e8eaf6;
             border-radius: 8px;
+            border-left: 3px solid #667eea;
+        }
+
+        .reply-section strong {
+            color: #667eea;
         }
 
         .comment-badge {
@@ -280,6 +285,17 @@
             top: 10px;
             right: 10px;
             background: #4CAF50;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+        }
+
+        .no-reply-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff9800;
             color: white;
             padding: 3px 8px;
             border-radius: 12px;
@@ -463,6 +479,11 @@
         <div class="loading">Loading media...</div>
     </div>
 
+    <h3>My Comments & Admin Replies</h3>
+    <div id="userCommentsList">
+        <div class="loading">Loading your comments...</div>
+    </div>
+
     <h3>Leave a Comment</h3>
     <div class="form-group">
         <textarea id="userComment" rows="4" placeholder="Write your comment here..."></textarea>
@@ -560,6 +581,62 @@ function escapeHtml(str) {
         if (m === '>') return '&gt;';
         return m;
     });
+}
+
+// ==================== DOWNLOAD FUNCTION (FIXED) ====================
+
+async function downloadMedia(url, fileName) {
+    showLoading();
+    
+    try {
+        // Fetch the file as blob
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        
+        const blob = await response.blob();
+        
+        // Create download link
+        const link = document.createElement('a');
+        const objectUrl = window.URL.createObjectURL(blob);
+        link.href = objectUrl;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Clean up
+        window.URL.revokeObjectURL(objectUrl);
+        
+        hideLoading();
+        alert("Download started: " + fileName);
+        
+    } catch (error) {
+        hideLoading();
+        console.error("Download error:", error);
+        
+        // Alternative download method using anchor tag
+        try {
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = fileName;
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            alert("Download started: " + fileName);
+        } catch (fallbackError) {
+            alert("Download failed. Please right-click and select 'Save link as'");
+        }
+    }
+}
+
+// ==================== VIEW MEDIA FUNCTION ====================
+
+function viewMedia(url, type) {
+    window.open(url, '_blank');
 }
 
 // ==================== AUTHENTICATION FUNCTIONS ====================
@@ -731,48 +808,6 @@ async function logout() {
     }
 }
 
-// ==================== VIEW MEDIA FUNCTION ====================
-
-function viewMedia(url, type) {
-    if (type === 'image') {
-        // Open image in new tab
-        window.open(url, '_blank');
-    } else {
-        // Open video in new tab
-        window.open(url, '_blank');
-    }
-}
-
-// ==================== DOWNLOAD MEDIA FUNCTION ====================
-
-async function downloadMedia(url, fileName) {
-    showLoading();
-    
-    try {
-        // Fetch the file
-        const response = await fetch(url);
-        const blob = await response.blob();
-        
-        // Create download link
-        const link = document.createElement('a');
-        const objectUrl = window.URL.createObjectURL(blob);
-        link.href = objectUrl;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(objectUrl);
-        
-        hideLoading();
-        alert("Download started successfully!");
-        
-    } catch (error) {
-        hideLoading();
-        console.error("Download error:", error);
-        alert("Download failed: " + error.message);
-    }
-}
-
 // ==================== UPLOAD MEDIA FUNCTION ====================
 
 async function uploadMedia() {
@@ -828,7 +863,7 @@ async function uploadMedia() {
                 let errorMessage = "Upload failed: ";
                 switch(error.code) {
                     case 'storage/unauthorized':
-                        errorMessage += "Permission denied! Go to Firebase Console -> Storage -> Rules and set: allow read, write: if true";
+                        errorMessage += "Permission denied!";
                         break;
                     case 'storage/canceled':
                         errorMessage += "Upload canceled.";
@@ -863,6 +898,7 @@ async function uploadMedia() {
         uploadBtn.disabled = false;
         
         loadMedia();
+        loadUserMedia();
         
         setTimeout(function() {
             statusDiv.innerHTML = "";
@@ -901,7 +937,7 @@ function loadMedia() {
                 
                 let mediaContent = '';
                 if (media.type === 'image') {
-                    mediaContent = '<img src="' + media.url + '" alt="' + media.name + '" loading="lazy" onerror="this.src=\'https://via.placeholder.com/300?text=Image+Not+Found\'">';
+                    mediaContent = '<img src="' + media.url + '" alt="' + media.name + '" loading="lazy">';
                 } else {
                     mediaContent = '<video src="' + media.url + '" controls preload="metadata"></video>';
                 }
@@ -1025,10 +1061,8 @@ async function submitComment() {
         commentBtn.disabled = false;
         alert("Comment sent successfully!");
         
-        const currentUserRole = JSON.parse(localStorage.getItem('currentUser') || '{}').role;
-        if (currentUserRole === 'super_admin') {
-            loadComments();
-        }
+        // Reload user comments
+        loadUserComments();
         
     } catch (error) {
         hideLoading();
@@ -1038,6 +1072,69 @@ async function submitComment() {
     }
 }
 
+// Load comments for user dashboard (shows replies)
+function loadUserComments() {
+    const container = document.getElementById('userCommentsList');
+    if (!container) return;
+    
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    if (!currentUser.uid) return;
+    
+    container.innerHTML = '<div class="loading">Loading your comments...</div>';
+    
+    db.collection("comments")
+        .where("userId", "==", currentUser.uid)
+        .orderBy("createdAt", "desc")
+        .onSnapshot(function(snapshot) {
+            if (snapshot.empty) {
+                container.innerHTML = '<div style="text-align:center; padding:40px;">You haven\'t posted any comments yet.</div>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            snapshot.forEach(function(doc) {
+                const comment = doc.data();
+                const commentDiv = document.createElement('div');
+                commentDiv.className = 'comment';
+                
+                // Add badge based on reply status
+                const badge = document.createElement('div');
+                if (comment.reply && comment.reply.trim() !== '') {
+                    badge.className = 'comment-badge';
+                    badge.textContent = 'Admin Replied';
+                } else {
+                    badge.className = 'no-reply-badge';
+                    badge.textContent = 'Pending Reply';
+                }
+                commentDiv.appendChild(badge);
+                
+                let replyHtml = '';
+                if (comment.reply && comment.reply.trim() !== '') {
+                    replyHtml = '<div class="reply-section">' +
+                        '<strong>Admin Reply:</strong><br>' +
+                        '<p style="margin-top: 8px;">' + escapeHtml(comment.reply) + '</p>' +
+                        '<small>Replied on: ' + (comment.replyTime || 'Recently') + '</small>' +
+                        '</div>';
+                } else {
+                    replyHtml = '<div class="reply-section" style="background: #fff3e0;">' +
+                        '<strong>Status:</strong> Waiting for admin response<br>' +
+                        '<small>Your comment will be reviewed and replied soon.</small>' +
+                        '</div>';
+                }
+                
+                commentDiv.innerHTML += '<strong>My Comment:</strong><br>' +
+                    '<p style="margin-top: 5px;">' + escapeHtml(comment.text) + '</p>' +
+                    '<small>Sent: ' + (comment.time || 'Just now') + '</small>' +
+                    replyHtml;
+                container.appendChild(commentDiv);
+            });
+        }, function(error) {
+            console.error("Error loading user comments:", error);
+            container.innerHTML = '<div class="loading" style="color: red;">Error loading comments: ' + error.message + '</div>';
+        });
+}
+
+// Load all comments for admin dashboard
 function loadComments() {
     const container = document.getElementById('commentsList');
     if (!container) return;
@@ -1058,11 +1155,11 @@ function loadComments() {
                 const commentDiv = document.createElement('div');
                 commentDiv.className = 'comment';
                 
-                // Add badge if admin replied
+                // Add badge for replied comments
                 if (comment.reply && comment.reply.trim() !== '') {
                     const badge = document.createElement('div');
                     badge.className = 'comment-badge';
-                    badge.textContent = 'Admin Replied';
+                    badge.textContent = 'Replied';
                     commentDiv.appendChild(badge);
                 }
                 
@@ -1070,14 +1167,11 @@ function loadComments() {
                 if (comment.reply && comment.reply.trim() !== '') {
                     replyHtml = '<div class="reply-section">' +
                         '<strong>Admin Reply:</strong><br>' +
-                        escapeHtml(comment.reply) + '<br>' +
-                        '<small>' + (comment.replyTime || 'Recently') + '</small>' +
+                        '<p style="margin-top: 8px;">' + escapeHtml(comment.reply) + '</p>' +
+                        '<small>Replied on: ' + (comment.replyTime || 'Recently') + '</small>' +
                         '</div>';
                 } else {
-                    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-                    if (currentUser.role === 'super_admin') {
-                        replyHtml = '<button onclick="replyToComment(\'' + doc.id + '\')" style="margin-top: 10px; padding: 8px 15px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer;">Reply as Admin</button>';
-                    }
+                    replyHtml = '<button onclick="replyToComment(\'' + doc.id + '\')" style="margin-top: 10px; padding: 8px 15px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer;">Reply to this Comment</button>';
                 }
                 
                 commentDiv.innerHTML += '<strong>' + escapeHtml(comment.userName || 'Anonymous') + '</strong>' +
@@ -1093,7 +1187,7 @@ function loadComments() {
 }
 
 async function replyToComment(commentId) {
-    const reply = prompt("Enter your reply as Super Admin:");
+    const reply = prompt("Enter your reply for this user:");
     if (!reply || reply.trim() === "") return;
     
     showLoading();
@@ -1130,6 +1224,7 @@ function showUserDashboard() {
     document.getElementById('userName').innerHTML = currentUser.name;
     document.getElementById('userDashboard').style.display = 'block';
     loadUserMedia();
+    loadUserComments();
 }
 
 // ==================== SUPER ADMIN SETUP ====================
