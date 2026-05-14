@@ -47,39 +47,19 @@
             }
         }
 
-        /* Loading Animation - Centered */
+        /* Loading Animation */
         .loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.7);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            backdrop-filter: blur(5px);
-        }
-
-        .loading-content {
-            text-align: center;
-            background: white;
-            padding: 30px 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: scale(0.8);
-                opacity: 0;
-            }
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
+            backdrop-filter: blur(3px);
         }
 
         .loading-spinner {
@@ -89,7 +69,9 @@
             border-top: 5px solid #667eea;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
+            background: white;
+            padding: 10px;
+            border-radius: 50%;
         }
 
         @keyframes spin {
@@ -98,15 +80,10 @@
         }
 
         .loading-text {
-            color: #333;
+            margin-top: 15px;
+            color: white;
             font-size: 16px;
-            font-weight: 500;
-        }
-
-        .loading-subtext {
-            color: #666;
-            font-size: 13px;
-            margin-top: 8px;
+            text-align: center;
         }
 
         h2 {
@@ -379,49 +356,6 @@
             font-weight: bold;
         }
 
-        .file-list {
-            margin-top: 15px;
-            max-height: 200px;
-            overflow-y: auto;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 10px;
-        }
-
-        .file-item {
-            padding: 8px;
-            margin: 5px 0;
-            background: #f5f5f5;
-            border-radius: 5px;
-            font-size: 13px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .file-item.success {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        .file-item.error {
-            background: #ffebee;
-            color: #c62828;
-        }
-
-        .file-item.uploading {
-            background: #fff3e0;
-            color: #ff9800;
-        }
-
-        .upload-summary {
-            margin-top: 15px;
-            padding: 10px;
-            background: #e3f2fd;
-            border-radius: 8px;
-            display: none;
-        }
-
         @media (max-width: 768px) {
             .container {
                 padding: 20px;
@@ -434,12 +368,11 @@
 </head>
 <body>
 
-<!-- Loading Overlay - Centered -->
+<!-- Loading Overlay -->
 <div id="loadingOverlay" class="loading-overlay">
-    <div class="loading-content">
+    <div style="text-align: center;">
         <div class="loading-spinner"></div>
-        <div class="loading-text" id="loadingText">Processing...</div>
-        <div class="loading-subtext" id="loadingSubtext">Please wait</div>
+        <div class="loading-text">Processing, please wait...</div>
     </div>
 </div>
 
@@ -507,22 +440,18 @@
         </div>
     </div>
     
-    <h3>Upload Multiple Media</h3>
+    <h3>Upload New Media</h3>
     <div class="form-group">
-        <label>Choose Files (Images or Videos - Multiple allowed)</label>
-        <input type="file" id="uploadFiles" accept="image/*,video/*" multiple>
-        <small style="color: #666; display: block; margin-top: 5px;">You can select multiple files (Max 10 files, 50MB each)</small>
+        <label>Choose File (Image or Video)</label>
+        <input type="file" id="uploadFile" accept="image/*,video/*">
     </div>
-    <button onclick="uploadMultipleMedia()" id="uploadBtn">Upload Selected Files</button>
-    
-    <div id="fileListContainer" class="file-list" style="display:none;"></div>
-    <div id="uploadSummary" class="upload-summary"></div>
-    
+    <button onclick="uploadMedia()" id="uploadBtn">Upload Media</button>
     <div id="uploadProgress" class="upload-progress">
         <div class="progress-bar">
             <div class="progress-fill" id="progressFill">0%</div>
         </div>
     </div>
+    <div id="uploadStatus" style="margin-top: 10px; font-size: 14px;"></div>
 
     <h3>All Media Files</h3>
     <div class="media-grid" id="mediaGrid">
@@ -585,9 +514,7 @@ const SUPER_ADMIN_PASSWORD = "Admin@123";
 
 // ==================== LOADING ANIMATION FUNCTIONS ====================
 
-function showLoading(message = "Processing...", submessage = "Please wait") {
-    document.getElementById('loadingText').textContent = message;
-    document.getElementById('loadingSubtext').textContent = submessage;
+function showLoading() {
     document.getElementById('loadingOverlay').style.display = 'flex';
 }
 
@@ -656,74 +583,46 @@ function escapeHtml(str) {
     });
 }
 
-// ==================== IMPROVED DOWNLOAD FUNCTION ====================
+// ==================== DOWNLOAD FUNCTION (FIXED FOR FIREBASE) ====================
 
 async function downloadMedia(url, fileName) {
-    showLoading("Downloading...", `Downloading ${fileName}`);
+    showLoading();
     
     try {
-        // Fetch the file as blob
-        const response = await fetch(url);
+        // Add alt=media parameter to force download instead of preview
+        const downloadUrl = url.includes('?') ? url + '&alt=media' : url + '?alt=media';
         
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        
-        const blob = await response.blob();
-        
-        // Create download link
+        // Create a hidden link element
         const link = document.createElement('a');
-        const objectUrl = window.URL.createObjectURL(blob);
-        link.href = objectUrl;
+        link.href = downloadUrl;
         link.download = fileName;
+        link.style.display = 'none';
         document.body.appendChild(link);
+        
+        // Trigger the download
         link.click();
-        document.body.removeChild(link);
         
-        // Clean up
-        window.URL.revokeObjectURL(objectUrl);
-        
-        hideLoading();
-        showSuccessMessage("Download started successfully!");
+        // Remove the link after a short delay
+        setTimeout(function() {
+            document.body.removeChild(link);
+            hideLoading();
+            alert("Download started: " + fileName);
+        }, 100);
         
     } catch (error) {
         console.error("Download error:", error);
         hideLoading();
         
-        // Alternative download method
+        // Fallback: Try direct download with window.location
         try {
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = fileName;
-            link.target = '_blank';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            showSuccessMessage("Download started!");
+            const downloadUrl = url.includes('?') ? url + '&alt=media' : url + '?alt=media';
+            window.location.href = downloadUrl;
+            alert("Download started: " + fileName);
         } catch (fallbackError) {
-            alert("Download failed. Please right-click and select 'Save link as'");
+            console.error("Fallback error:", fallbackError);
+            alert("Download failed. Please right-click the Download button and select 'Save link as'");
         }
     }
-}
-
-function showSuccessMessage(message) {
-    // Create temporary success message
-    const msgDiv = document.createElement('div');
-    msgDiv.style.position = 'fixed';
-    msgDiv.style.bottom = '20px';
-    msgDiv.style.right = '20px';
-    msgDiv.style.backgroundColor = '#4CAF50';
-    msgDiv.style.color = 'white';
-    msgDiv.style.padding = '12px 20px';
-    msgDiv.style.borderRadius = '8px';
-    msgDiv.style.zIndex = '10000';
-    msgDiv.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
-    msgDiv.textContent = message;
-    document.body.appendChild(msgDiv);
-    
-    setTimeout(function() {
-        msgDiv.remove();
-    }, 3000);
 }
 
 // ==================== VIEW MEDIA FUNCTION ====================
@@ -735,7 +634,7 @@ function viewMedia(url, type) {
 // ==================== AUTHENTICATION FUNCTIONS ====================
 
 async function handleRegister() {
-    showLoading("Creating account...", "Please wait while we create your account");
+    showLoading();
     clearMessages();
     
     const fullName = document.getElementById('regFullName').value.trim();
@@ -810,7 +709,7 @@ async function handleRegister() {
 }
 
 async function handleLogin() {
-    showLoading("Logging in...", "Please wait while we verify your credentials");
+    showLoading();
     clearMessages();
     
     const email = document.getElementById('loginEmail').value.trim();
@@ -886,7 +785,7 @@ async function handleLogin() {
 }
 
 async function logout() {
-    showLoading("Logging out...", "Please wait");
+    showLoading();
     try {
         await auth.signOut();
         localStorage.removeItem('currentUser');
@@ -901,184 +800,109 @@ async function logout() {
     }
 }
 
-// ==================== MULTIPLE UPLOAD MEDIA FUNCTION ====================
+// ==================== UPLOAD MEDIA FUNCTION ====================
 
-async function uploadMultipleMedia() {
-    const files = document.getElementById('uploadFiles').files;
+async function uploadMedia() {
+    const file = document.getElementById('uploadFile').files[0];
     const statusDiv = document.getElementById('uploadStatus');
     const progressDiv = document.getElementById('uploadProgress');
     const progressFill = document.getElementById('progressFill');
     const uploadBtn = document.getElementById('uploadBtn');
-    const fileListContainer = document.getElementById('fileListContainer');
-    const uploadSummary = document.getElementById('uploadSummary');
     
-    if (!files || files.length === 0) {
-        alert("Please select at least one file!");
+    if (!file) {
+        statusDiv.innerHTML = "Please select a file!";
+        statusDiv.style.color = "red";
         return;
     }
     
-    if (files.length > 10) {
-        alert("You can only upload up to 10 files at once!");
+    if (file.size > 50 * 1024 * 1024) {
+        statusDiv.innerHTML = "File too large! Maximum 50MB.";
+        statusDiv.style.color = "red";
         return;
     }
     
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
     if (currentUser.role !== 'super_admin') {
-        alert("You don't have permission to upload!");
+        statusDiv.innerHTML = "You don't have permission to upload!";
+        statusDiv.style.color = "red";
         return;
-    }
-    
-    // Validate all files
-    const validFiles = [];
-    const invalidFiles = [];
-    
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        if (file.size > 50 * 1024 * 1024) {
-            invalidFiles.push({ name: file.name, reason: "File too large (max 50MB)" });
-        } else {
-            validFiles.push(file);
-        }
-    }
-    
-    if (validFiles.length === 0) {
-        alert("No valid files to upload!");
-        return;
-    }
-    
-    if (invalidFiles.length > 0) {
-        alert(`${invalidFiles.length} file(s) were skipped due to size limit. Maximum 50MB per file.`);
-    }
-    
-    // Display file list
-    fileListContainer.style.display = 'block';
-    fileListContainer.innerHTML = '<h4 style="margin: 0 0 10px 0;">Upload Status:</h4>';
-    uploadSummary.style.display = 'none';
-    
-    const fileItems = [];
-    for (let i = 0; i < validFiles.length; i++) {
-        const file = validFiles[i];
-        const fileItem = document.createElement('div');
-        fileItem.className = 'file-item uploading';
-        fileItem.innerHTML = `
-            <span>${escapeHtml(file.name)} (${(file.size / 1024 / 1024).toFixed(2)} MB)</span>
-            <span> Pending...</span>
-        `;
-        fileListContainer.appendChild(fileItem);
-        fileItems.push({ element: fileItem, file: file, status: 'pending' });
     }
     
     uploadBtn.disabled = true;
     progressDiv.style.display = 'block';
+    progressFill.style.width = '0%';
+    progressFill.textContent = '0%';
+    statusDiv.innerHTML = "Uploading... Please wait.";
+    statusDiv.style.color = "blue";
     
-    let successCount = 0;
-    let failCount = 0;
-    const results = [];
-    
-    for (let i = 0; i < fileItems.length; i++) {
-        const item = fileItems[i];
-        const file = item.file;
+    try {
+        const timestamp = Date.now();
+        const fileName = timestamp + '_' + file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+        const storageRef = storage.ref('media/' + fileName);
         
-        // Update status to uploading
-        item.element.className = 'file-item uploading';
-        item.element.innerHTML = `
-            <span> ${escapeHtml(file.name)} (${(file.size / 1024 / 1024).toFixed(2)} MB)</span>
-            <span>Uploading... 0%</span>
-        `;
+        const uploadTask = storageRef.put(file);
         
-        try {
-            const timestamp = Date.now();
-            const fileName = timestamp + '_' + i + '_' + file.name.replace(/[^a-zA-Z0-9.]/g, '_');
-            const storageRef = storage.ref('media/' + fileName);
-            
-            const uploadTask = storageRef.put(file);
-            
-            // Update progress for this file
-            uploadTask.on('state_changed',
-                function(snapshot) {
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    const percent = Math.round(progress);
-                    item.element.innerHTML = `
-                        <span>${escapeHtml(file.name)} (${(file.size / 1024 / 1024).toFixed(2)} MB)</span>
-                        <span>Uploading... ${percent}%</span>
-                    `;
-                    
-                    // Update overall progress
-                    const overallProgress = ((successCount + failCount) + (progress / 100)) / fileItems.length * 100;
-                    progressFill.style.width = overallProgress + '%';
-                    progressFill.textContent = Math.round(overallProgress) + '%';
-                },
-                function(error) {
-                    console.error("Upload error for", file.name, error);
+        uploadTask.on('state_changed',
+            function(snapshot) {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                const percent = Math.round(progress);
+                progressFill.style.width = percent + '%';
+                progressFill.textContent = percent + '%';
+                statusDiv.innerHTML = "Uploading... " + percent + "%";
+            },
+            function(error) {
+                console.error("Upload error:", error);
+                let errorMessage = "Upload failed: ";
+                switch(error.code) {
+                    case 'storage/unauthorized':
+                        errorMessage += "Permission denied!";
+                        break;
+                    case 'storage/canceled':
+                        errorMessage += "Upload canceled.";
+                        break;
+                    default:
+                        errorMessage += error.message;
                 }
-            );
-            
-            const snapshot = await uploadTask;
-            const url = await snapshot.ref.getDownloadURL();
-            
-            await db.collection("media").add({
-                url: url,
-                type: file.type.startsWith('image') ? 'image' : 'video',
-                name: file.name,
-                uploadedBy: currentUser.uid,
-                uploadedByName: currentUser.name,
-                uploadedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                size: file.size
-            });
-            
-            // Mark as success
-            item.element.className = 'file-item success';
-            item.element.innerHTML = `
-                <span>${escapeHtml(file.name)}</span>
-                <span>Uploaded Successfully!</span>
-            `;
-            successCount++;
-            results.push({ file: file.name, status: 'success' });
-            
-        } catch (error) {
-            console.error("Upload error for", file.name, error);
-            item.element.className = 'file-item error';
-            item.element.innerHTML = `
-                <span>${escapeHtml(file.name)}</span>
-                <span>Failed: ${error.message}</span>
-            `;
-            failCount++;
-            results.push({ file: file.name, status: 'failed', error: error.message });
-        }
+                statusDiv.innerHTML = errorMessage;
+                statusDiv.style.color = "red";
+                progressDiv.style.display = 'none';
+                uploadBtn.disabled = false;
+            }
+        );
         
-        // Update overall progress
-        const overallProgress = ((successCount + failCount) / fileItems.length) * 100;
-        progressFill.style.width = overallProgress + '%';
-        progressFill.textContent = Math.round(overallProgress) + '%';
-    }
-    
-    // Show summary
-    progressFill.style.width = '100%';
-    progressFill.textContent = '100%';
-    
-    uploadSummary.style.display = 'block';
-    uploadSummary.innerHTML = `
-        <strong>Upload Complete!</strong><br>
-        Successfully uploaded: ${successCount} file(s)<br>
-        Failed: ${failCount} file(s)
-    `;
-    
-    setTimeout(function() {
+        const snapshot = await uploadTask;
+        const url = await snapshot.ref.getDownloadURL();
+        
+        await db.collection("media").add({
+            url: url,
+            type: file.type.startsWith('image') ? 'image' : 'video',
+            name: file.name,
+            uploadedBy: currentUser.uid,
+            uploadedByName: currentUser.name,
+            uploadedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            size: file.size
+        });
+        
+        statusDiv.innerHTML = "Media uploaded successfully!";
+        statusDiv.style.color = "green";
         progressDiv.style.display = 'none';
-        uploadSummary.style.display = 'none';
+        document.getElementById('uploadFile').value = '';
+        uploadBtn.disabled = false;
+        
+        loadMedia();
+        loadUserMedia();
+        
         setTimeout(function() {
-            fileListContainer.style.display = 'none';
+            statusDiv.innerHTML = "";
         }, 3000);
-    }, 5000);
-    
-    uploadBtn.disabled = false;
-    document.getElementById('uploadFiles').value = '';
-    
-    // Refresh media lists
-    loadMedia();
-    loadUserMedia();
-    
-    showSuccessMessage(`Upload complete! ${successCount} files uploaded successfully.`);
+        
+    } catch (error) {
+        console.error("Upload error:", error);
+        statusDiv.innerHTML = "Upload failed: " + error.message;
+        statusDiv.style.color = "red";
+        progressDiv.style.display = 'none';
+        uploadBtn.disabled = false;
+    }
 }
 
 // ==================== LOAD MEDIA FUNCTIONS ====================
@@ -1168,303 +992,185 @@ function loadUserMedia() {
                 grid.appendChild(mediaCard);
             });
         }, function(error) {
-            console.error("Error loading user media:", error);
+            console.error("Error loading media:", error);
             grid.innerHTML = '<div class="loading" style="color: red;">Error loading media: ' + error.message + '</div>';
         });
 }
 
-async function deleteMedia(mediaId) {
-    if (!confirm("Are you sure you want to delete this media permanently?")) {
-        return;
-    }
-    
-    showLoading("Deleting...", "Removing media from server");
-    
-    try {
-        await db.collection("media").doc(mediaId).delete();
-        hideLoading();
-        showSuccessMessage("Media deleted successfully!");
-    } catch (error) {
-        hideLoading();
-        console.error("Delete error:", error);
-        alert("Failed to delete media: " + error.message);
+function deleteMedia(docId) {
+    if (confirm('Are you sure you want to delete this media?')) {
+        showLoading();
+        db.collection("media").doc(docId).delete().then(function() {
+            hideLoading();
+            alert('Media deleted successfully!');
+            loadMedia();
+            loadUserMedia();
+        }).catch(function(error) {
+            hideLoading();
+            console.error("Delete error:", error);
+            alert('Error deleting media: ' + error.message);
+        });
     }
 }
 
-// ==================== COMMENTS FUNCTIONS ====================
+// ==================== COMMENT FUNCTIONS ====================
 
-async function submitComment() {
-    const text = document.getElementById('userComment').value.trim();
-    const commentBtn = document.getElementById('commentBtn');
+function loadComments() {
+    const list = document.getElementById('commentsList');
+    if (!list) return;
     
-    if (!text) {
-        alert("Please write a comment!");
-        return;
-    }
+    list.innerHTML = '<div class="loading">Loading comments...</div>';
     
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    if (!currentUser.uid) {
-        alert("Please login first!");
-        return;
-    }
-    
-    showLoading("Submitting comment...", "Please wait");
-    commentBtn.disabled = true;
-    
-    try {
-        await db.collection("comments").add({
-            text: text,
-            userId: currentUser.uid,
-            userName: currentUser.name,
-            email: currentUser.email,
-            time: new Date().toLocaleString(),
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            replied: false,
-            reply: null,
-            replyTime: null
+    db.collection("comments")
+        .orderBy("createdAt", "desc")
+        .onSnapshot(function(snapshot) {
+            if (snapshot.empty) {
+                list.innerHTML = '<div style="text-align:center; padding:20px;">No comments yet.</div>';
+                return;
+            }
+            
+            list.innerHTML = '';
+            snapshot.forEach(function(doc) {
+                const comment = doc.data();
+                const commentEl = document.createElement('div');
+                commentEl.className = 'comment';
+                
+                let replyHTML = '';
+                if (comment.adminReply) {
+                    replyHTML = '<div class="reply-section"><strong>Admin Reply:</strong><p>' + escapeHtml(comment.adminReply) + '</p></div>';
+                    commentEl.innerHTML += '<span class="comment-badge">Replied</span>';
+                } else {
+                    commentEl.innerHTML += '<span class="no-reply-badge">Awaiting Reply</span>';
+                }
+                
+                commentEl.innerHTML = 
+                    '<strong>' + escapeHtml(comment.userName) + '</strong><br>' +
+                    '<small>' + (comment.createdAt ? new Date(comment.createdAt.toDate()).toLocaleString() : 'Just now') + '</small><p>' +
+                    escapeHtml(comment.text) + '</p>' +
+                    replyHTML +
+                    (comment.adminReply ? '<span class="comment-badge">Replied</span>' : '<span class="no-reply-badge">Awaiting Reply</span>');
+                
+                list.appendChild(commentEl);
+            });
+        }, function(error) {
+            console.error("Error loading comments:", error);
+            list.innerHTML = '<div class="loading" style="color: red;">Error loading comments</div>';
         });
-        
-        document.getElementById('userComment').value = '';
-        hideLoading();
-        commentBtn.disabled = false;
-        showSuccessMessage("Comment sent successfully!");
-        
-        loadUserComments();
-        
-    } catch (error) {
-        hideLoading();
-        commentBtn.disabled = false;
-        console.error("Comment error:", error);
-        alert("Failed to send comment: " + error.message);
-    }
 }
 
 function loadUserComments() {
-    const container = document.getElementById('userCommentsList');
-    if (!container) return;
-    
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    if (!currentUser.uid) return;
+    const list = document.getElementById('userCommentsList');
+    if (!list) return;
     
-    container.innerHTML = '<div class="loading">Loading your comments...</div>';
+    list.innerHTML = '<div class="loading">Loading your comments...</div>';
     
     db.collection("comments")
         .where("userId", "==", currentUser.uid)
         .orderBy("createdAt", "desc")
         .onSnapshot(function(snapshot) {
             if (snapshot.empty) {
-                container.innerHTML = '<div style="text-align:center; padding:40px;">You haven\'t posted any comments yet.</div>';
+                list.innerHTML = '<div style="text-align:center; padding:20px;">You haven\'t posted any comments yet.</div>';
                 return;
             }
             
-            container.innerHTML = '';
+            list.innerHTML = '';
             snapshot.forEach(function(doc) {
                 const comment = doc.data();
-                const commentDiv = document.createElement('div');
-                commentDiv.className = 'comment';
+                const commentEl = document.createElement('div');
+                commentEl.className = 'comment';
                 
-                const badge = document.createElement('div');
-                if (comment.reply && comment.reply.trim() !== '') {
-                    badge.className = 'comment-badge';
-                    badge.textContent = 'Admin Replied';
+                let replyHTML = '';
+                if (comment.adminReply) {
+                    replyHTML = '<div class="reply-section"><strong>Admin Reply:</strong><p>' + escapeHtml(comment.adminReply) + '</p></div>';
+                    commentEl.innerHTML = '<span class="comment-badge">Replied</span>';
                 } else {
-                    badge.className = 'no-reply-badge';
-                    badge.textContent = 'Pending Reply';
-                }
-                commentDiv.appendChild(badge);
-                
-                let replyHtml = '';
-                if (comment.reply && comment.reply.trim() !== '') {
-                    replyHtml = '<div class="reply-section">' +
-                        '<strong>Admin Reply:</strong><br>' +
-                        '<p style="margin-top: 8px;">' + escapeHtml(comment.reply) + '</p>' +
-                        '<small>Replied on: ' + (comment.replyTime || 'Recently') + '</small>' +
-                        '</div>';
-                } else {
-                    replyHtml = '<div class="reply-section" style="background: #fff3e0;">' +
-                        '<strong>Status:</strong> Waiting for admin response<br>' +
-                        '<small>Your comment will be reviewed and replied soon.</small>' +
-                        '</div>';
+                    commentEl.innerHTML = '<span class="no-reply-badge">Awaiting Reply</span>';
                 }
                 
-                commentDiv.innerHTML += '<strong>My Comment:</strong><br>' +
-                    '<p style="margin-top: 5px;">' + escapeHtml(comment.text) + '</p>' +
-                    '<small>Sent: ' + (comment.time || 'Just now') + '</small>' +
-                    replyHtml;
-                container.appendChild(commentDiv);
-            });
-        }, function(error) {
-            console.error("Error loading user comments:", error);
-            container.innerHTML = '<div class="loading" style="color: red;">Error loading comments: ' + error.message + '</div>';
-        });
-}
-
-function loadComments() {
-    const container = document.getElementById('commentsList');
-    if (!container) return;
-    
-    container.innerHTML = '<div class="loading">Loading comments...</div>';
-    
-    db.collection("comments")
-        .orderBy("createdAt", "desc")
-        .onSnapshot(function(snapshot) {
-            if (snapshot.empty) {
-                container.innerHTML = '<div style="text-align:center; padding:40px;">No comments yet. Be the first to comment!</div>';
-                return;
-            }
-            
-            container.innerHTML = '';
-            snapshot.forEach(function(doc) {
-                const comment = doc.data();
-                const commentDiv = document.createElement('div');
-                commentDiv.className = 'comment';
+                commentEl.innerHTML += 
+                    '<strong>Your Comment</strong><br>' +
+                    '<small>' + (comment.createdAt ? new Date(comment.createdAt.toDate()).toLocaleString() : 'Just now') + '</small><p>' +
+                    escapeHtml(comment.text) + '</p>' +
+                    replyHTML;
                 
-                if (comment.reply && comment.reply.trim() !== '') {
-                    const badge = document.createElement('div');
-                    badge.className = 'comment-badge';
-                    badge.textContent = 'Replied';
-                    commentDiv.appendChild(badge);
-                }
-                
-                let replyHtml = '';
-                if (comment.reply && comment.reply.trim() !== '') {
-                    replyHtml = '<div class="reply-section">' +
-                        '<strong>Admin Reply:</strong><br>' +
-                        '<p style="margin-top: 8px;">' + escapeHtml(comment.reply) + '</p>' +
-                        '<small>Replied on: ' + (comment.replyTime || 'Recently') + '</small>' +
-                        '</div>';
-                } else {
-                    replyHtml = '<button onclick="replyToComment(\'' + doc.id + '\')" style="margin-top: 10px; padding: 8px 15px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer;">Reply to this Comment</button>';
-                }
-                
-                commentDiv.innerHTML += '<strong>' + escapeHtml(comment.userName || 'Anonymous') + '</strong>' +
-                    '<small> ' + (comment.time || 'Just now') + '</small>' +
-                    '<p style="margin-top: 10px;">' + escapeHtml(comment.text) + '</p>' +
-                    replyHtml;
-                container.appendChild(commentDiv);
+                list.appendChild(commentEl);
             });
         }, function(error) {
             console.error("Error loading comments:", error);
-            container.innerHTML = '<div class="loading" style="color: red;">Error loading comments: ' + error.message + '</div>';
+            list.innerHTML = '<div class="loading" style="color: red;">Error loading comments</div>';
         });
 }
 
-async function replyToComment(commentId) {
-    const reply = prompt("Enter your reply for this user:");
-    if (!reply || reply.trim() === "") return;
+async function submitComment() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const commentText = document.getElementById('userComment').value.trim();
     
-    showLoading("Sending reply...", "Please wait");
+    if (!commentText) {
+        alert('Please write a comment!');
+        return;
+    }
+    
+    showLoading();
     
     try {
-        await db.collection("comments").doc(commentId).update({
-            reply: reply.trim(),
-            replyTime: new Date().toLocaleString(),
-            replied: true
+        await db.collection("comments").add({
+            userId: currentUser.uid,
+            userName: currentUser.name,
+            userEmail: currentUser.email,
+            text: commentText,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            adminReply: null
         });
+        
+        document.getElementById('userComment').value = '';
         hideLoading();
-        showSuccessMessage("Reply sent successfully! User will now see your reply.");
+        alert('Comment posted successfully!');
+        loadUserComments();
+        loadComments();
+        
     } catch (error) {
         hideLoading();
-        console.error("Reply error:", error);
-        alert("Failed to send reply: " + error.message);
+        console.error("Comment error:", error);
+        alert('Error posting comment: ' + error.message);
     }
 }
 
-// ==================== DASHBOARD DISPLAY FUNCTIONS ====================
+// ==================== DASHBOARD FUNCTIONS ====================
 
 function showSuperDashboard() {
     hideAll();
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    document.getElementById('adminEmail').innerHTML = currentUser.email;
     document.getElementById('superDashboard').style.display = 'block';
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    document.getElementById('adminEmail').textContent = currentUser.email;
     loadMedia();
     loadComments();
 }
 
 function showUserDashboard() {
     hideAll();
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    document.getElementById('userName').innerHTML = currentUser.name;
     document.getElementById('userDashboard').style.display = 'block';
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    document.getElementById('userName').textContent = currentUser.name;
     loadUserMedia();
     loadUserComments();
 }
 
-// ==================== SUPER ADMIN SETUP ====================
+// ==================== INIT FUNCTION ====================
 
-async function setupSuperAdmin() {
-    try {
-        const usersRef = db.collection("users");
-        const snapshot = await usersRef.where("email", "==", SUPER_ADMIN_EMAIL).get();
-        
-        if (snapshot.empty) {
-            try {
-                const userCredential = await auth.createUserWithEmailAndPassword(SUPER_ADMIN_EMAIL, SUPER_ADMIN_PASSWORD);
-                const adminUser = userCredential.user;
-                
-                await db.collection("users").doc(adminUser.uid).set({
-                    fullName: "Super Administrator",
-                    email: SUPER_ADMIN_EMAIL,
-                    phone: "0000000000",
-                    role: "super_admin",
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    uid: adminUser.uid
-                });
-                
-                console.log("Super Admin account created successfully!");
-                console.log("Email:", SUPER_ADMIN_EMAIL);
-                console.log("Password:", SUPER_ADMIN_PASSWORD);
-            } catch (error) {
-                if (error.code !== 'auth/email-already-in-use') {
-                    console.error("Error creating super admin:", error);
-                }
-            }
+window.addEventListener('DOMContentLoaded', function() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+    if (currentUser) {
+        if (currentUser.role === 'super_admin') {
+            showSuperDashboard();
         } else {
-            console.log("Super admin already exists");
-        }
-    } catch (error) {
-        console.error("Setup error:", error);
-    }
-}
-
-// ==================== INITIALIZATION ====================
-
-auth.onAuthStateChanged(async function(user) {
-    if (user) {
-        const userDoc = await db.collection("users").doc(user.uid).get();
-        if (userDoc.exists) {
-            const userData = userDoc.data();
-            localStorage.setItem('currentUser', JSON.stringify({
-                uid: user.uid,
-                name: userData.fullName,
-                email: user.email,
-                role: userData.role
-            }));
-            
-            if (userData.role === 'super_admin') {
-                showSuperDashboard();
-            } else {
-                showUserDashboard();
-            }
+            showUserDashboard();
         }
     } else {
-        const storedUser = localStorage.getItem('currentUser');
-        if (!storedUser) {
-            hideAll();
-            showLogin();
-        }
-    }
-});
-
-window.addEventListener('DOMContentLoaded', async function() {
-    await setupSuperAdmin();
-    
-    const storedUser = localStorage.getItem('currentUser');
-    if (!storedUser) {
-        hideAll();
         showLogin();
     }
 });
 </script>
+
 </body>
 </html>
