@@ -998,120 +998,129 @@ function loadUserMedia() {
 }
 
 function deleteMedia(docId) {
-    if (confirm('Are you sure you want to delete this media?')) {
-        showLoading();
-        db.collection("media").doc(docId).delete().then(function() {
+    if (!confirm('Are you sure you want to delete this media?')) return;
+    
+    showLoading();
+    db.collection("media").doc(docId).delete()
+        .then(function() {
             hideLoading();
-            alert('Media deleted successfully!');
             loadMedia();
             loadUserMedia();
-        }).catch(function(error) {
+        })
+        .catch(function(error) {
             hideLoading();
-            console.error("Delete error:", error);
             alert('Error deleting media: ' + error.message);
         });
-    }
 }
 
 // ==================== COMMENT FUNCTIONS ====================
 
 function loadComments() {
-    const list = document.getElementById('commentsList');
-    if (!list) return;
+    const commentsList = document.getElementById('commentsList');
+    if (!commentsList) return;
     
-    list.innerHTML = '<div class="loading">Loading comments...</div>';
+    commentsList.innerHTML = '<div class="loading">Loading comments...</div>';
     
     db.collection("comments")
         .orderBy("createdAt", "desc")
         .onSnapshot(function(snapshot) {
             if (snapshot.empty) {
-                list.innerHTML = '<div style="text-align:center; padding:20px;">No comments yet.</div>';
+                commentsList.innerHTML = '<div style="text-align:center; padding:40px;">No comments yet.</div>';
                 return;
             }
             
-            list.innerHTML = '';
+            commentsList.innerHTML = '';
             snapshot.forEach(function(doc) {
                 const comment = doc.data();
-                const commentEl = document.createElement('div');
-                commentEl.className = 'comment';
+                const commentDiv = document.createElement('div');
+                commentDiv.className = 'comment';
                 
-                let replyHTML = '';
-                if (comment.adminReply) {
-                    replyHTML = '<div class="reply-section"><strong>Admin Reply:</strong><p>' + escapeHtml(comment.adminReply) + '</p></div>';
-                    commentEl.innerHTML += '<span class="comment-badge">Replied</span>';
-                } else {
-                    commentEl.innerHTML += '<span class="no-reply-badge">Awaiting Reply</span>';
+                // Check if comment has a reply
+                const hasReply = comment.reply && comment.reply.trim().length > 0;
+                const badge = hasReply ? 
+                    '<span class="comment-badge">✓ Replied</span>' : 
+                    '<span class="no-reply-badge">⏳ Waiting for reply</span>';
+                
+                let replyHtml = '';
+                if (hasReply) {
+                    replyHtml = '<div class="reply-section"><strong>Admin Reply:</strong><p>' + escapeHtml(comment.reply) + '</p></div>';
                 }
                 
-                commentEl.innerHTML = 
-                    '<strong>' + escapeHtml(comment.userName) + '</strong><br>' +
-                    '<small>' + (comment.createdAt ? new Date(comment.createdAt.toDate()).toLocaleString() : 'Just now') + '</small><p>' +
-                    escapeHtml(comment.text) + '</p>' +
-                    replyHTML +
-                    (comment.adminReply ? '<span class="comment-badge">Replied</span>' : '<span class="no-reply-badge">Awaiting Reply</span>');
+                commentDiv.innerHTML = badge +
+                    '<strong>' + escapeHtml(comment.userName) + '</strong> (' + escapeHtml(comment.userEmail) + ')<br>' +
+                    '<small>' + (comment.createdAt ? new Date(comment.createdAt.toDate()).toLocaleString() : 'Just now') + '</small><br><br>' +
+                    '<p>' + escapeHtml(comment.text) + '</p>' +
+                    replyHtml +
+                    '<textarea id="reply_' + doc.id + '" rows="3" placeholder="Write your reply here..." style="width:100%; margin-top:10px;"></textarea>' +
+                    '<button onclick="submitReply(\'' + doc.id + '\')" style="margin-top:10px;">Submit Reply</button>' +
+                    '<button onclick="deleteComment(\'' + doc.id + '\')" style="margin-top:10px; background:#ff4444;">Delete Comment</button>';
                 
-                list.appendChild(commentEl);
+                commentsList.appendChild(commentDiv);
             });
         }, function(error) {
             console.error("Error loading comments:", error);
-            list.innerHTML = '<div class="loading" style="color: red;">Error loading comments</div>';
+            commentsList.innerHTML = '<div class="loading" style="color: red;">Error loading comments: ' + error.message + '</div>';
         });
 }
 
 function loadUserComments() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    const list = document.getElementById('userCommentsList');
-    if (!list) return;
+    const userCommentsList = document.getElementById('userCommentsList');
+    if (!userCommentsList) return;
     
-    list.innerHTML = '<div class="loading">Loading your comments...</div>';
+    userCommentsList.innerHTML = '<div class="loading">Loading your comments...</div>';
+    
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
     
     db.collection("comments")
         .where("userId", "==", currentUser.uid)
         .orderBy("createdAt", "desc")
         .onSnapshot(function(snapshot) {
             if (snapshot.empty) {
-                list.innerHTML = '<div style="text-align:center; padding:20px;">You haven\'t posted any comments yet.</div>';
+                userCommentsList.innerHTML = '<div style="text-align:center; padding:40px;">You haven\'t left any comments yet.</div>';
                 return;
             }
             
-            list.innerHTML = '';
+            userCommentsList.innerHTML = '';
             snapshot.forEach(function(doc) {
                 const comment = doc.data();
-                const commentEl = document.createElement('div');
-                commentEl.className = 'comment';
+                const commentDiv = document.createElement('div');
+                commentDiv.className = 'comment';
                 
-                let replyHTML = '';
-                if (comment.adminReply) {
-                    replyHTML = '<div class="reply-section"><strong>Admin Reply:</strong><p>' + escapeHtml(comment.adminReply) + '</p></div>';
-                    commentEl.innerHTML = '<span class="comment-badge">Replied</span>';
-                } else {
-                    commentEl.innerHTML = '<span class="no-reply-badge">Awaiting Reply</span>';
+                // Check if comment has a reply
+                const hasReply = comment.reply && comment.reply.trim().length > 0;
+                const badge = hasReply ? 
+                    '<span class="comment-badge">✓ Replied</span>' : 
+                    '<span class="no-reply-badge">⏳ Waiting for reply</span>';
+                
+                let replyHtml = '';
+                if (hasReply) {
+                    replyHtml = '<div class="reply-section"><strong>Admin Reply:</strong><p>' + escapeHtml(comment.reply) + '</p></div>';
                 }
                 
-                commentEl.innerHTML += 
-                    '<strong>Your Comment</strong><br>' +
-                    '<small>' + (comment.createdAt ? new Date(comment.createdAt.toDate()).toLocaleString() : 'Just now') + '</small><p>' +
-                    escapeHtml(comment.text) + '</p>' +
-                    replyHTML;
+                commentDiv.innerHTML = badge +
+                    '<strong>Your Comment:</strong><br>' +
+                    '<small>' + (comment.createdAt ? new Date(comment.createdAt.toDate()).toLocaleString() : 'Just now') + '</small><br><br>' +
+                    '<p>' + escapeHtml(comment.text) + '</p>' +
+                    replyHtml;
                 
-                list.appendChild(commentEl);
+                userCommentsList.appendChild(commentDiv);
             });
         }, function(error) {
             console.error("Error loading comments:", error);
-            list.innerHTML = '<div class="loading" style="color: red;">Error loading comments</div>';
+            userCommentsList.innerHTML = '<div class="loading" style="color: red;">Error loading your comments: ' + error.message + '</div>';
         });
 }
 
 async function submitComment() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    showLoading();
     const commentText = document.getElementById('userComment').value.trim();
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
     
     if (!commentText) {
-        alert('Please write a comment!');
+        hideLoading();
+        alert('Please enter a comment!');
         return;
     }
-    
-    showLoading();
     
     try {
         await db.collection("comments").add({
@@ -1119,21 +1128,64 @@ async function submitComment() {
             userName: currentUser.name,
             userEmail: currentUser.email,
             text: commentText,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            adminReply: null
+            reply: '',
+            replyStatus: 'pending',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
         
-        document.getElementById('userComment').value = '';
         hideLoading();
-        alert('Comment posted successfully!');
+        document.getElementById('userComment').value = '';
+        alert('Comment submitted successfully!');
         loadUserComments();
-        loadComments();
-        
     } catch (error) {
         hideLoading();
-        console.error("Comment error:", error);
-        alert('Error posting comment: ' + error.message);
+        console.error("Error submitting comment:", error);
+        alert('Error submitting comment: ' + error.message);
     }
+}
+
+async function submitReply(commentId) {
+    showLoading();
+    const replyText = document.getElementById('reply_' + commentId).value.trim();
+    
+    if (!replyText) {
+        hideLoading();
+        alert('Please enter a reply!');
+        return;
+    }
+    
+    try {
+        await db.collection("comments").doc(commentId).update({
+            reply: replyText,
+            replyStatus: 'replied',
+            replyAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        hideLoading();
+        alert('Reply submitted successfully!');
+        loadComments();
+        loadUserComments();
+    } catch (error) {
+        hideLoading();
+        console.error("Error submitting reply:", error);
+        alert('Error submitting reply: ' + error.message);
+    }
+}
+
+function deleteComment(commentId) {
+    if (!confirm('Are you sure you want to delete this comment?')) return;
+    
+    showLoading();
+    db.collection("comments").doc(commentId).delete()
+        .then(function() {
+            hideLoading();
+            loadComments();
+            loadUserComments();
+        })
+        .catch(function(error) {
+            hideLoading();
+            alert('Error deleting comment: ' + error.message);
+        });
 }
 
 // ==================== DASHBOARD FUNCTIONS ====================
@@ -1141,8 +1193,10 @@ async function submitComment() {
 function showSuperDashboard() {
     hideAll();
     document.getElementById('superDashboard').style.display = 'block';
+    
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
     document.getElementById('adminEmail').textContent = currentUser.email;
+    
     loadMedia();
     loadComments();
 }
@@ -1150,25 +1204,40 @@ function showSuperDashboard() {
 function showUserDashboard() {
     hideAll();
     document.getElementById('userDashboard').style.display = 'block';
+    
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
     document.getElementById('userName').textContent = currentUser.name;
+    
     loadUserMedia();
     loadUserComments();
 }
 
-// ==================== INIT FUNCTION ====================
-
-window.addEventListener('DOMContentLoaded', function() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-    if (currentUser) {
-        if (currentUser.role === 'super_admin') {
-            showSuperDashboard();
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    auth.onAuthStateChanged(function(user) {
+        if (user) {
+            const userDoc = db.collection("users").doc(user.uid).get();
+            userDoc.then(function(doc) {
+                if (doc.exists) {
+                    const userData = doc.data();
+                    localStorage.setItem('currentUser', JSON.stringify({
+                        uid: user.uid,
+                        name: userData.fullName,
+                        email: user.email,
+                        role: userData.role
+                    }));
+                    
+                    if (userData.role === 'super_admin') {
+                        showSuperDashboard();
+                    } else {
+                        showUserDashboard();
+                    }
+                }
+            });
         } else {
-            showUserDashboard();
+            showLogin();
         }
-    } else {
-        showLogin();
-    }
+    });
 });
 </script>
 
