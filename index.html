@@ -20,7 +20,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #b67d14 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -45,43 +45,6 @@
                 opacity: 1;
                 transform: translateY(0);
             }
-        }
-
-        /* Loading Animation - Centered */
-        .loading-overlay {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: auto;
-            height: auto;
-            background: rgba(0,0,0,0.7);
-            display: none;
-            z-index: 9999;
-            padding: 40px;
-            border-radius: 15px;
-            backdrop-filter: blur(3px);
-        }
-
-        .loading-spinner {
-            width: 60px;
-            height: 60px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .loading-text {
-            margin-top: 15px;
-            color: white;
-            font-size: 16px;
-            text-align: center;
         }
 
         h2 {
@@ -145,11 +108,6 @@
 
         button:active {
             transform: translateY(0);
-        }
-
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
         }
 
         .navbar {
@@ -230,7 +188,7 @@
             padding: 0 15px 15px 15px;
         }
 
-        .view-btn, .download-btn, .delete-btn {
+        .download-btn, .delete-btn {
             padding: 8px 15px;
             border-radius: 6px;
             text-align: center;
@@ -239,12 +197,6 @@
             font-size: 14px;
             cursor: pointer;
             flex: 1;
-            border: none;
-        }
-
-        .view-btn {
-            background: #2196F3;
-            color: white;
         }
 
         .download-btn {
@@ -255,6 +207,7 @@
         .delete-btn {
             background: #ff4444;
             color: white;
+            border: none;
         }
 
         .comment {
@@ -263,41 +216,13 @@
             margin: 15px 0;
             border-radius: 10px;
             border-left: 5px solid #667eea;
-            position: relative;
         }
 
         .reply-section {
             margin-top: 15px;
             padding: 15px;
-            background: #e8eaf6;
+            background: #e3f2fd;
             border-radius: 8px;
-            border-left: 3px solid #667eea;
-        }
-
-        .reply-section strong {
-            color: #667eea;
-        }
-
-        .comment-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #4CAF50;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 11px;
-        }
-
-        .no-reply-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #ff9800;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 11px;
         }
 
         .error-message {
@@ -365,14 +290,6 @@
     </style>
 </head>
 <body>
-
-<!-- Loading Overlay -->
-<div id="loadingOverlay" class="loading-overlay">
-    <div style="text-align: center;">
-        <div class="loading-spinner"></div>
-        <div class="loading-text">Processing, please wait...</div>
-    </div>
-</div>
 
 <!-- Login Page -->
 <div class="container" id="loginPage">
@@ -443,7 +360,7 @@
         <label>Choose File (Image or Video)</label>
         <input type="file" id="uploadFile" accept="image/*,video/*">
     </div>
-    <button onclick="uploadMedia()" id="uploadBtn">Upload Media</button>
+    <button onclick="uploadMedia()">Upload Media</button>
     <div id="uploadProgress" class="upload-progress">
         <div class="progress-bar">
             <div class="progress-fill" id="progressFill">0%</div>
@@ -477,25 +394,20 @@
         <div class="loading">Loading media...</div>
     </div>
 
-    <h3>My Comments and Admin Replies</h3>
-    <div id="userCommentsList">
-        <div class="loading">Loading your comments...</div>
-    </div>
-
     <h3>Leave a Comment</h3>
     <div class="form-group">
         <textarea id="userComment" rows="4" placeholder="Write your comment here..."></textarea>
     </div>
-    <button onclick="submitComment()" id="commentBtn">Send Comment</button>
+    <button onclick="submitComment()">Send Comment</button>
 </div>
 
 <script>
-// corrected firebase config snippet
+// Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyD0rTfNVPAjtPFRQxT5SEhJaLBX40Z8q4g",
     authDomain: "mihayo-media-platform.firebaseapp.com",
     projectId: "mihayo-media-platform",
-    storageBucket: "mihayo-media-platform.appspot.com", // <- use the .appspot.com bucket from your console
+    storageBucket: "mihayo-media-platform.firebasestorage.app",
     messagingSenderId: "973572154003",
     appId: "1:973572154003:web:837f3abb7689c0706ce366"
 };
@@ -509,16 +421,6 @@ const auth = firebase.auth();
 // Super Admin Credentials
 const SUPER_ADMIN_EMAIL = "admin@mihayo.com";
 const SUPER_ADMIN_PASSWORD = "Admin@123";
-
-// ==================== LOADING ANIMATION FUNCTIONS ====================
-
-function showLoading() {
-    document.getElementById('loadingOverlay').style.display = 'block';
-}
-
-function hideLoading() {
-    document.getElementById('loadingOverlay').style.display = 'none';
-}
 
 // ==================== UI HELPER FUNCTIONS ====================
 
@@ -581,58 +483,9 @@ function escapeHtml(str) {
     });
 }
 
-// ==================== DOWNLOAD FUNCTION (FIXED FOR FIREBASE) ====================
-
-async function downloadMedia(url, fileName) {
-    showLoading();
-    
-    try {
-        // Add alt=media parameter to force download instead of preview
-        const downloadUrl = url.includes('?') ? url + '&alt=media' : url + '?alt=media';
-        
-        // Create a hidden link element
-        const link = document.createElement('a');
-        link.href = downloadUrl;
-        link.download = fileName;
-        link.style.display = 'none';
-        document.body.appendChild(link);
-        
-        // Trigger the download
-        link.click();
-        
-        // Remove the link after a short delay
-        setTimeout(function() {
-            document.body.removeChild(link);
-            hideLoading();
-            alert("Download started: " + fileName);
-        }, 100);
-        
-    } catch (error) {
-        console.error("Download error:", error);
-        hideLoading();
-        
-        // Fallback: Try direct download with window.location
-        try {
-            const downloadUrl = url.includes('?') ? url + '&alt=media' : url + '?alt=media';
-            window.location.href = downloadUrl;
-            alert("Download started: " + fileName);
-        } catch (fallbackError) {
-            console.error("Fallback error:", fallbackError);
-            alert("Download failed. Please right-click the Download button and select 'Save link as'");
-        }
-    }
-}
-
-// ==================== VIEW MEDIA FUNCTION ====================
-
-function viewMedia(url, type) {
-    window.open(url, '_blank');
-}
-
 // ==================== AUTHENTICATION FUNCTIONS ====================
 
 async function handleRegister() {
-    showLoading();
     clearMessages();
     
     const fullName = document.getElementById('regFullName').value.trim();
@@ -642,19 +495,16 @@ async function handleRegister() {
     const confirmPassword = document.getElementById('regConfirmPassword').value;
     
     if (!fullName || !email || !phone || !password) {
-        hideLoading();
         showError('registerError', 'Please fill all fields!');
         return;
     }
     
     if (password.length < 6) {
-        hideLoading();
         showError('registerError', 'Password must be at least 6 characters!');
         return;
     }
     
     if (password !== confirmPassword) {
-        hideLoading();
         showError('registerError', 'Passwords do not match!');
         return;
     }
@@ -672,7 +522,6 @@ async function handleRegister() {
             uid: user.uid
         });
         
-        hideLoading();
         showSuccess('registerSuccess', 'Account created successfully! Redirecting to login...');
         
         document.getElementById('regFullName').value = '';
@@ -686,7 +535,6 @@ async function handleRegister() {
         }, 2000);
         
     } catch (error) {
-        hideLoading();
         console.error("Registration error:", error);
         let errorMessage = "Registration failed!";
         switch(error.code) {
@@ -707,14 +555,12 @@ async function handleRegister() {
 }
 
 async function handleLogin() {
-    showLoading();
     clearMessages();
     
     const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value;
     
     if (!email || !password) {
-        hideLoading();
         showError('loginError', 'Please enter email and password!');
         return;
     }
@@ -733,8 +579,6 @@ async function handleLogin() {
                 email: user.email,
                 role: userData.role
             }));
-            
-            hideLoading();
             
             if (userData.role === 'super_admin') {
                 showSuperDashboard();
@@ -756,13 +600,10 @@ async function handleLogin() {
                 email: email,
                 role: "user"
             }));
-            
-            hideLoading();
             showUserDashboard();
         }
         
     } catch (error) {
-        hideLoading();
         console.error("Login error:", error);
         let errorMessage = "Login failed!";
         switch(error.code) {
@@ -783,7 +624,6 @@ async function handleLogin() {
 }
 
 async function logout() {
-    showLoading();
     try {
         await auth.signOut();
         localStorage.removeItem('currentUser');
@@ -791,9 +631,7 @@ async function logout() {
         showLogin();
         document.getElementById('loginEmail').value = '';
         document.getElementById('loginPassword').value = '';
-        hideLoading();
     } catch (error) {
-        hideLoading();
         console.error("Logout error:", error);
     }
 }
@@ -805,7 +643,6 @@ async function uploadMedia() {
     const statusDiv = document.getElementById('uploadStatus');
     const progressDiv = document.getElementById('uploadProgress');
     const progressFill = document.getElementById('progressFill');
-    const uploadBtn = document.getElementById('uploadBtn');
     
     if (!file) {
         statusDiv.innerHTML = "Please select a file!";
@@ -826,7 +663,6 @@ async function uploadMedia() {
         return;
     }
     
-    uploadBtn.disabled = true;
     progressDiv.style.display = 'block';
     progressFill.style.width = '0%';
     progressFill.textContent = '0%';
@@ -853,7 +689,7 @@ async function uploadMedia() {
                 let errorMessage = "Upload failed: ";
                 switch(error.code) {
                     case 'storage/unauthorized':
-                        errorMessage += "Permission denied!";
+                        errorMessage += "Permission denied! Go to Firebase Console -> Storage -> Rules and set: allow read, write: if true";
                         break;
                     case 'storage/canceled':
                         errorMessage += "Upload canceled.";
@@ -864,7 +700,6 @@ async function uploadMedia() {
                 statusDiv.innerHTML = errorMessage;
                 statusDiv.style.color = "red";
                 progressDiv.style.display = 'none';
-                uploadBtn.disabled = false;
             }
         );
         
@@ -885,10 +720,8 @@ async function uploadMedia() {
         statusDiv.style.color = "green";
         progressDiv.style.display = 'none';
         document.getElementById('uploadFile').value = '';
-        uploadBtn.disabled = false;
         
         loadMedia();
-        loadUserMedia();
         
         setTimeout(function() {
             statusDiv.innerHTML = "";
@@ -899,7 +732,6 @@ async function uploadMedia() {
         statusDiv.innerHTML = "Upload failed: " + error.message;
         statusDiv.style.color = "red";
         progressDiv.style.display = 'none';
-        uploadBtn.disabled = false;
     }
 }
 
@@ -927,7 +759,7 @@ function loadMedia() {
                 
                 let mediaContent = '';
                 if (media.type === 'image') {
-                    mediaContent = '<img src="' + media.url + '" alt="' + media.name + '" loading="lazy">';
+                    mediaContent = '<img src="' + media.url + '" alt="' + media.name + '" loading="lazy" onerror="this.src=\'https://via.placeholder.com/300?text=Image+Not+Found\'">';
                 } else {
                     mediaContent = '<video src="' + media.url + '" controls preload="metadata"></video>';
                 }
@@ -939,8 +771,7 @@ function loadMedia() {
                         '<small>' + (media.uploadedAt ? new Date(media.uploadedAt.toDate()).toLocaleString() : 'Just now') + '</small>' +
                     '</div>' +
                     '<div class="media-actions">' +
-                        '<button onclick="viewMedia(\'' + media.url + '\', \'' + media.type + '\')" class="view-btn">View</button>' +
-                        '<button onclick="downloadMedia(\'' + media.url + '\', \'' + escapeHtml(media.name) + '\')" class="download-btn">Download</button>' +
+                        '<a href="' + media.url + '" download class="download-btn">Download</a>' +
                         '<button onclick="deleteMedia(\'' + doc.id + '\')" class="delete-btn">Delete</button>' +
                     '</div>';
                 grid.appendChild(mediaCard);
@@ -984,260 +815,228 @@ function loadUserMedia() {
                         '<small>' + (media.uploadedAt ? new Date(media.uploadedAt.toDate()).toLocaleString() : 'Just now') + '</small>' +
                     '</div>' +
                     '<div class="media-actions">' +
-                        '<button onclick="viewMedia(\'' + media.url + '\', \'' + media.type + '\')" class="view-btn">View</button>' +
-                        '<button onclick="downloadMedia(\'' + media.url + '\', \'' + escapeHtml(media.name) + '\')" class="download-btn">Download</button>' +
+                        '<a href="' + media.url + '" download class="download-btn">Download</a>' +
                     '</div>';
                 grid.appendChild(mediaCard);
             });
         }, function(error) {
-            console.error("Error loading media:", error);
+            console.error("Error loading user media:", error);
             grid.innerHTML = '<div class="loading" style="color: red;">Error loading media: ' + error.message + '</div>';
         });
 }
 
-function deleteMedia(docId) {
-    if (!confirm('Are you sure you want to delete this media?')) return;
+async function deleteMedia(mediaId) {
+    if (!confirm("Are you sure you want to delete this media permanently?")) {
+        return;
+    }
     
-    showLoading();
-    db.collection("media").doc(docId).delete()
-        .then(function() {
-            hideLoading();
-            loadMedia();
-            loadUserMedia();
-        })
-        .catch(function(error) {
-            hideLoading();
-            alert('Error deleting media: ' + error.message);
-        });
+    try {
+        await db.collection("media").doc(mediaId).delete();
+        alert("Media deleted successfully!");
+    } catch (error) {
+        console.error("Delete error:", error);
+        alert("Failed to delete media: " + error.message);
+    }
 }
 
-// ==================== COMMENT FUNCTIONS ====================
-
-function loadComments() {
-    const commentsList = document.getElementById('commentsList');
-    if (!commentsList) return;
-    
-    commentsList.innerHTML = '<div class="loading">Loading comments...</div>';
-    
-    db.collection("comments")
-        .orderBy("createdAt", "desc")
-        .onSnapshot(function(snapshot) {
-            if (snapshot.empty) {
-                commentsList.innerHTML = '<div style="text-align:center; padding:40px;">No comments yet.</div>';
-                return;
-            }
-            
-            commentsList.innerHTML = '';
-            snapshot.forEach(function(doc) {
-                const comment = doc.data();
-                const commentDiv = document.createElement('div');
-                commentDiv.className = 'comment';
-                
-                // Check if comment has a reply
-                const hasReply = comment.reply && comment.reply.trim().length > 0;
-                const badge = hasReply ? 
-                    '<span class="comment-badge">Replied</span>' : 
-                    '<span class="no-reply-badge">Waiting for reply</span>';
-                
-                let replyHtml = '';
-                if (hasReply) {
-                    replyHtml = '<div class="reply-section"><strong>Admin Reply:</strong><p>' + escapeHtml(comment.reply) + '</p></div>';
-                }
-                
-                commentDiv.innerHTML = badge +
-                    '<strong>' + escapeHtml(comment.userName) + '</strong> (' + escapeHtml(comment.userEmail) + ')<br>' +
-                    '<small>' + (comment.createdAt ? new Date(comment.createdAt.toDate()).toLocaleString() : 'Just now') + '</small><br><br>' +
-                    '<p>' + escapeHtml(comment.text) + '</p>' +
-                    replyHtml +
-                    '<textarea id="reply_' + doc.id + '" rows="3" placeholder="Write your reply here..." style="width:100%; margin-top:10px;"></textarea>' +
-                    '<button onclick="submitReply(\'' + doc.id + '\')" style="margin-top:10px;">Submit Reply</button>' +
-                    '<button onclick="deleteComment(\'' + doc.id + '\')" style="margin-top:10px; background:#ff4444;">Delete Comment</button>';
-                
-                commentsList.appendChild(commentDiv);
-            });
-        }, function(error) {
-            console.error("Error loading comments:", error);
-            commentsList.innerHTML = '<div class="loading" style="color: red;">Error loading comments: ' + error.message + '</div>';
-        });
-}
-
-function loadUserComments() {
-    const userCommentsList = document.getElementById('userCommentsList');
-    if (!userCommentsList) return;
-    
-    userCommentsList.innerHTML = '<div class="loading">Loading your comments...</div>';
-    
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    
-    db.collection("comments")
-        .where("userId", "==", currentUser.uid)
-        .orderBy("createdAt", "desc")
-        .onSnapshot(function(snapshot) {
-            if (snapshot.empty) {
-                userCommentsList.innerHTML = '<div style="text-align:center; padding:40px;">You have not left any comments yet.</div>';
-                return;
-            }
-            
-            userCommentsList.innerHTML = '';
-            snapshot.forEach(function(doc) {
-                const comment = doc.data();
-                const commentDiv = document.createElement('div');
-                commentDiv.className = 'comment';
-                
-                // Check if comment has a reply
-                const hasReply = comment.reply && comment.reply.trim().length > 0;
-                const badge = hasReply ? 
-                    '<span class="comment-badge">Replied</span>' : 
-                    '<span class="no-reply-badge">Waiting for reply</span>';
-                
-                let replyHtml = '';
-                if (hasReply) {
-                    replyHtml = '<div class="reply-section"><strong>Admin Reply:</strong><p>' + escapeHtml(comment.reply) + '</p></div>';
-                }
-                
-                commentDiv.innerHTML = badge +
-                    '<strong>Your Comment:</strong><br>' +
-                    '<small>' + (comment.createdAt ? new Date(comment.createdAt.toDate()).toLocaleString() : 'Just now') + '</small><br><br>' +
-                    '<p>' + escapeHtml(comment.text) + '</p>' +
-                    replyHtml;
-                
-                userCommentsList.appendChild(commentDiv);
-            });
-        }, function(error) {
-            console.error("Error loading comments:", error);
-            userCommentsList.innerHTML = '<div class="loading" style="color: red;">Error loading your comments: ' + error.message + '</div>';
-        });
-}
+// ==================== COMMENTS FUNCTIONS ====================
 
 async function submitComment() {
-    showLoading();
-    const commentText = document.getElementById('userComment').value.trim();
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const text = document.getElementById('userComment').value.trim();
     
-    if (!commentText) {
-        hideLoading();
-        alert('Please enter a comment!');
+    if (!text) {
+        alert("Please write a comment!");
+        return;
+    }
+    
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    if (!currentUser.uid) {
+        alert("Please login first!");
         return;
     }
     
     try {
         await db.collection("comments").add({
+            text: text,
             userId: currentUser.uid,
             userName: currentUser.name,
-            userEmail: currentUser.email,
-            text: commentText,
-            reply: '',
-            replyStatus: 'pending',
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            email: currentUser.email,
+            time: new Date().toLocaleString(),
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            replied: false
         });
         
-        hideLoading();
         document.getElementById('userComment').value = '';
-        alert('Comment submitted successfully!');
-        loadUserComments();
+        alert("Comment sent successfully!");
+        
+        const currentUserRole = JSON.parse(localStorage.getItem('currentUser') || '{}').role;
+        if (currentUserRole === 'super_admin') {
+            loadComments();
+        }
+        
     } catch (error) {
-        hideLoading();
-        console.error("Error submitting comment:", error);
-        alert('Error submitting comment: ' + error.message);
+        console.error("Comment error:", error);
+        alert("Failed to send comment: " + error.message);
     }
 }
 
-async function submitReply(commentId) {
-    showLoading();
-    const replyText = document.getElementById('reply_' + commentId).value.trim();
+function loadComments() {
+    const container = document.getElementById('commentsList');
+    if (!container) return;
     
-    if (!replyText) {
-        hideLoading();
-        alert('Please enter a reply!');
-        return;
-    }
+    container.innerHTML = '<div class="loading">Loading comments...</div>';
+    
+    db.collection("comments")
+        .orderBy("createdAt", "desc")
+        .onSnapshot(function(snapshot) {
+            if (snapshot.empty) {
+                container.innerHTML = '<div style="text-align:center; padding:40px;">No comments yet. Be the first to comment!</div>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            snapshot.forEach(function(doc) {
+                const comment = doc.data();
+                const commentDiv = document.createElement('div');
+                commentDiv.className = 'comment';
+                
+                let replyHtml = '';
+                if (comment.reply) {
+                    replyHtml = '<div class="reply-section">' +
+                        '<strong>Admin Reply:</strong><br>' +
+                        escapeHtml(comment.reply) + '<br>' +
+                        '<small>' + (comment.replyTime || 'Recently') + '</small>' +
+                        '</div>';
+                } else {
+                    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                    if (currentUser.role === 'super_admin') {
+                        replyHtml = '<button onclick="replyToComment(\'' + doc.id + '\')" style="margin-top: 10px; padding: 8px 15px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer;">Reply as Admin</button>';
+                    }
+                }
+                
+                commentDiv.innerHTML = '<strong>' + escapeHtml(comment.userName || 'Anonymous') + '</strong>' +
+                    '<small> ' + (comment.time || 'Just now') + '</small>' +
+                    '<p style="margin-top: 10px;">' + escapeHtml(comment.text) + '</p>' +
+                    replyHtml;
+                container.appendChild(commentDiv);
+            });
+        }, function(error) {
+            console.error("Error loading comments:", error);
+            container.innerHTML = '<div class="loading" style="color: red;">Error loading comments: ' + error.message + '</div>';
+        });
+}
+
+async function replyToComment(commentId) {
+    const reply = prompt("Enter your reply as Super Admin:");
+    if (!reply || reply.trim() === "") return;
     
     try {
         await db.collection("comments").doc(commentId).update({
-            reply: replyText,
-            replyStatus: 'replied',
-            replyAt: firebase.firestore.FieldValue.serverTimestamp()
+            reply: reply.trim(),
+            replyTime: new Date().toLocaleString(),
+            replied: true
         });
-        
-        hideLoading();
-        alert('Reply submitted successfully!');
-        loadComments();
-        loadUserComments();
+        alert("Reply sent successfully!");
     } catch (error) {
-        hideLoading();
-        console.error("Error submitting reply:", error);
-        alert('Error submitting reply: ' + error.message);
+        console.error("Reply error:", error);
+        alert("Failed to send reply: " + error.message);
     }
 }
 
-function deleteComment(commentId) {
-    if (!confirm('Are you sure you want to delete this comment?')) return;
-    
-    showLoading();
-    db.collection("comments").doc(commentId).delete()
-        .then(function() {
-            hideLoading();
-            loadComments();
-            loadUserComments();
-        })
-        .catch(function(error) {
-            hideLoading();
-            alert('Error deleting comment: ' + error.message);
-        });
-}
-
-// ==================== DASHBOARD FUNCTIONS ====================
+// ==================== DASHBOARD DISPLAY FUNCTIONS ====================
 
 function showSuperDashboard() {
     hideAll();
-    document.getElementById('superDashboard').style.display = 'block';
-    
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    document.getElementById('adminEmail').textContent = currentUser.email;
-    
+    document.getElementById('adminEmail').innerHTML = currentUser.email;
+    document.getElementById('superDashboard').style.display = 'block';
     loadMedia();
     loadComments();
 }
 
 function showUserDashboard() {
     hideAll();
-    document.getElementById('userDashboard').style.display = 'block';
-    
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    document.getElementById('userName').textContent = currentUser.name;
-    
+    document.getElementById('userName').innerHTML = currentUser.name;
+    document.getElementById('userDashboard').style.display = 'block';
     loadUserMedia();
-    loadUserComments();
 }
 
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', function() {
-    auth.onAuthStateChanged(function(user) {
-        if (user) {
-            const userDoc = db.collection("users").doc(user.uid).get();
-            userDoc.then(function(doc) {
-                if (doc.exists) {
-                    const userData = doc.data();
-                    localStorage.setItem('currentUser', JSON.stringify({
-                        uid: user.uid,
-                        name: userData.fullName,
-                        email: user.email,
-                        role: userData.role
-                    }));
-                    
-                    if (userData.role === 'super_admin') {
-                        showSuperDashboard();
-                    } else {
-                        showUserDashboard();
-                    }
+// ==================== SUPER ADMIN SETUP ====================
+
+async function setupSuperAdmin() {
+    try {
+        const usersRef = db.collection("users");
+        const snapshot = await usersRef.where("email", "==", SUPER_ADMIN_EMAIL).get();
+        
+        if (snapshot.empty) {
+            try {
+                const userCredential = await auth.createUserWithEmailAndPassword(SUPER_ADMIN_EMAIL, SUPER_ADMIN_PASSWORD);
+                const adminUser = userCredential.user;
+                
+                await db.collection("users").doc(adminUser.uid).set({
+                    fullName: "Super Administrator",
+                    email: SUPER_ADMIN_EMAIL,
+                    phone: "0000000000",
+                    role: "super_admin",
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    uid: adminUser.uid
+                });
+                
+                console.log("Super Admin account created successfully!");
+                console.log("Email:", SUPER_ADMIN_EMAIL);
+                console.log("Password:", SUPER_ADMIN_PASSWORD);
+            } catch (error) {
+                if (error.code !== 'auth/email-already-in-use') {
+                    console.error("Error creating super admin:", error);
                 }
-            });
+            }
         } else {
+            console.log("Super admin already exists");
+        }
+    } catch (error) {
+        console.error("Setup error:", error);
+    }
+}
+
+// ==================== INITIALIZATION ====================
+
+auth.onAuthStateChanged(async function(user) {
+    if (user) {
+        const userDoc = await db.collection("users").doc(user.uid).get();
+        if (userDoc.exists) {
+            const userData = userDoc.data();
+            localStorage.setItem('currentUser', JSON.stringify({
+                uid: user.uid,
+                name: userData.fullName,
+                email: user.email,
+                role: userData.role
+            }));
+            
+            if (userData.role === 'super_admin') {
+                showSuperDashboard();
+            } else {
+                showUserDashboard();
+            }
+        }
+    } else {
+        const storedUser = localStorage.getItem('currentUser');
+        if (!storedUser) {
+            hideAll();
             showLogin();
         }
-    });
+    }
+});
+
+window.addEventListener('DOMContentLoaded', async function() {
+    await setupSuperAdmin();
+    
+    const storedUser = localStorage.getItem('currentUser');
+    if (!storedUser) {
+        hideAll();
+        showLogin();
+    }
 });
 </script>
-
 </body>
 </html>
