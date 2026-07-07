@@ -25,6 +25,38 @@
             padding: 20px;
         }
 
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.65);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid rgba(255,255,255,0.25);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        .loading-text {
+            margin-top: 16px;
+            color: white;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -291,6 +323,13 @@
 </head>
 <body>
 
+<div id="loadingOverlay" class="loading-overlay">
+    <div>
+        <div class="loading-spinner"></div>
+        <div class="loading-text" id="loadingText">Please wait...</div>
+    </div>
+</div>
+
 <!-- Login Page -->
 <div class="container" id="loginPage">
     <h2>Mihayo Media Platform</h2>
@@ -303,7 +342,7 @@
         <label>Password</label>
         <input type="password" id="loginPassword" placeholder="Enter your password">
     </div>
-    <button onclick="handleLogin()">Login</button>
+    <button id="loginBtn" onclick="handleLogin()">Login</button>
     <p style="text-align:center; margin-top:20px;">
         Don't have an account? <a href="#" onclick="showRegister()">Register here</a>
     </p>
@@ -357,10 +396,12 @@
     
     <h3>Upload New Media</h3>
     <div class="form-group">
-        <label>Choose File (Image or Video)</label>
-        <input type="file" id="uploadFile" accept="image/*,video/*">
+        <label>Choose File(s) (Images or Videos)</label>
+        <input type="file" id="uploadFile" accept="image/*,video/*" multiple>
+        <div id="selectedFilesList" style="margin-top:8px; font-size:14px; color:#666;">No files selected yet.</div>
     </div>
-    <button onclick="uploadMedia()">Upload Media</button>
+    <button id="uploadBtn" onclick="uploadMedia()">Upload Media</button>
+    <button onclick="openStorageRules()" type="button" style="margin-top: 10px; background: #ff9800;">Open Firebase Storage Rules</button>
     <div id="uploadProgress" class="upload-progress">
         <div class="progress-bar">
             <div class="progress-fill" id="progressFill">0%</div>
@@ -388,7 +429,7 @@
             <button onclick="logout()" class="logout-btn">Logout</button>
         </div>
     </div>
-    
+
     <h3>Available Media</h3>
     <div class="media-grid" id="userMediaGrid">
         <div class="loading">Loading media...</div>
@@ -407,7 +448,7 @@ const firebaseConfig = {
     apiKey: "AIzaSyD0rTfNVPAjtPFRQxT5SEhJaLBX40Z8q4g",
     authDomain: "mihayo-media-platform.firebaseapp.com",
     projectId: "mihayo-media-platform",
-    storageBucket: "mihayo-media-platform.firebasestorage.app",
+    storageBucket: "mihayo-media-platform.appspot.com",
     messagingSenderId: "973572154003",
     appId: "1:973572154003:web:837f3abb7689c0706ce366"
 };
@@ -421,6 +462,7 @@ const auth = firebase.auth();
 // Super Admin Credentials
 const SUPER_ADMIN_EMAIL = "admin@mihayo.com";
 const SUPER_ADMIN_PASSWORD = "Admin@123";
+const STORAGE_RULES_URL = "https://console.firebase.google.com/project/mihayo-media-platform/storage/mihayo-media-platform.appspot.com/rules";
 
 // ==================== UI HELPER FUNCTIONS ====================
 
@@ -481,6 +523,47 @@ function escapeHtml(str) {
         if (m === '>') return '&gt;';
         return m;
     });
+}
+
+function showLoading(message = 'Please wait...') {
+    const overlay = document.getElementById('loadingOverlay');
+    const text = document.getElementById('loadingText');
+    if (overlay) overlay.style.display = 'flex';
+    if (text) text.textContent = message;
+}
+
+function hideLoading() {
+    const overlay = document.getElementById('loadingOverlay');
+    if (overlay) overlay.style.display = 'none';
+}
+
+function openStorageRules() {
+    window.open(STORAGE_RULES_URL, '_blank');
+}
+
+function showStorageRuleHelp(statusDiv) {
+    if (!statusDiv) return;
+    statusDiv.innerHTML = '<div style="line-height:1.5;">Upload is blocked by Firebase Storage rules.<br><br>In Firebase Console → Storage → Rules, replace the contents with:</div><pre style="margin-top:8px; padding:10px; background:#f5f5f5; border-radius:6px; overflow:auto; white-space:pre-wrap;">rules_version = \'2\';\nservice firebase.storage {\n  match /b/{bucket}/o {\n    match /{allPaths=**} {\n      allow read: if true;\n      allow write: if request.auth != null;\n    }\n  }\n}</pre><div style="margin-top:8px;">Then click the button below to open the rules page.</div>';
+    statusDiv.style.color = 'red';
+}
+
+function updateSelectedFilesList() {
+    const input = document.getElementById('uploadFile');
+    const preview = document.getElementById('selectedFilesList');
+    if (!input || !preview) return;
+
+    const files = Array.from(input.files || []);
+    if (!files.length) {
+        preview.innerHTML = 'No files selected yet.';
+        return;
+    }
+
+    const fileSummary = files.map(function(file) {
+        const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
+        return file.name + ' (' + sizeInMB + ' MB)';
+    }).join('<br>');
+
+    preview.innerHTML = '<strong>' + files.length + ' file(s) selected:</strong><br>' + fileSummary;
 }
 
 // ==================== AUTHENTICATION FUNCTIONS ====================
@@ -556,7 +639,8 @@ async function handleRegister() {
 
 async function handleLogin() {
     clearMessages();
-    
+
+    const loginBtn = document.getElementById('loginBtn');
     const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value;
     
@@ -564,6 +648,12 @@ async function handleLogin() {
         showError('loginError', 'Please enter email and password!');
         return;
     }
+
+    if (loginBtn) {
+        loginBtn.disabled = true;
+        loginBtn.textContent = 'Please wait...';
+    }
+    showLoading('Signing you in...');
     
     try {
         const userCredential = await auth.signInWithEmailAndPassword(email, password);
@@ -620,6 +710,12 @@ async function handleLogin() {
                 errorMessage = error.message;
         }
         showError('loginError', errorMessage);
+    } finally {
+        if (loginBtn) {
+            loginBtn.disabled = false;
+            loginBtn.textContent = 'Login';
+        }
+        hideLoading();
     }
 }
 
@@ -639,84 +735,88 @@ async function logout() {
 // ==================== UPLOAD MEDIA FUNCTION ====================
 
 async function uploadMedia() {
-    const file = document.getElementById('uploadFile').files[0];
+    const files = Array.from(document.getElementById('uploadFile').files || []);
     const statusDiv = document.getElementById('uploadStatus');
     const progressDiv = document.getElementById('uploadProgress');
     const progressFill = document.getElementById('progressFill');
+    const uploadBtn = document.getElementById('uploadBtn');
     
-    if (!file) {
-        statusDiv.innerHTML = "Please select a file!";
+    if (!files.length) {
+        statusDiv.innerHTML = "Please select at least one file!";
         statusDiv.style.color = "red";
         return;
     }
     
-    if (file.size > 50 * 1024 * 1024) {
-        statusDiv.innerHTML = "File too large! Maximum 50MB.";
+    const tooLarge = files.find(file => file.size > 50 * 1024 * 1024);
+    if (tooLarge) {
+        statusDiv.innerHTML = "One or more files are too large! Maximum 50MB.";
         statusDiv.style.color = "red";
         return;
     }
     
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const firebaseUser = auth.currentUser;
+
+    if (!firebaseUser || !firebaseUser.uid) {
+        statusDiv.innerHTML = 'Please log in again before uploading.';
+        statusDiv.style.color = 'red';
+        return;
+    }
+
     if (currentUser.role !== 'super_admin') {
         statusDiv.innerHTML = "You don't have permission to upload!";
         statusDiv.style.color = "red";
         return;
     }
     
+    uploadBtn.disabled = true;
+    uploadBtn.textContent = 'Uploading...';
     progressDiv.style.display = 'block';
     progressFill.style.width = '0%';
     progressFill.textContent = '0%';
-    statusDiv.innerHTML = "Uploading... Please wait.";
+    statusDiv.innerHTML = `Preparing to upload ${files.length} file(s)...`;
     statusDiv.style.color = "blue";
     
     try {
-        const timestamp = Date.now();
-        const fileName = timestamp + '_' + file.name.replace(/[^a-zA-Z0-9.]/g, '_');
-        const storageRef = storage.ref('media/' + fileName);
+        for (let index = 0; index < files.length; index++) {
+            const file = files[index];
+            const timestamp = Date.now();
+            const fileName = timestamp + '_' + index + '_' + file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+            const storageRef = storage.ref('media/' + fileName);
+            
+            const uploadTask = storageRef.put(file);
+            const snapshot = await new Promise((resolve, reject) => {
+                uploadTask.on('state_changed',
+                    function(snapshot) {
+                        const progress = (((index + 1) - 1 + (snapshot.bytesTransferred / snapshot.totalBytes)) / files.length) * 100;
+                        const percent = Math.round(progress);
+                        progressFill.style.width = percent + '%';
+                        progressFill.textContent = percent + '%';
+                        statusDiv.innerHTML = `Uploading ${index + 1} of ${files.length}: ${file.name}`;
+                    },
+                    function(error) {
+                        console.error("Upload error:", error);
+                        reject(error);
+                    },
+                    function() {
+                        resolve(uploadTask.snapshot);
+                    }
+                );
+            });
+            
+            const url = await snapshot.ref.getDownloadURL();
+            await db.collection("media").add({
+                url: url,
+                type: file.type.startsWith('image') ? 'image' : 'video',
+                name: file.name,
+                uploadedBy: currentUser.uid,
+                uploadedByName: currentUser.name,
+                uploadedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                size: file.size
+            });
+        }
         
-        const uploadTask = storageRef.put(file);
-        
-        uploadTask.on('state_changed',
-            function(snapshot) {
-                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                const percent = Math.round(progress);
-                progressFill.style.width = percent + '%';
-                progressFill.textContent = percent + '%';
-                statusDiv.innerHTML = "Uploading... " + percent + "%";
-            },
-            function(error) {
-                console.error("Upload error:", error);
-                let errorMessage = "Upload failed: ";
-                switch(error.code) {
-                    case 'storage/unauthorized':
-                        errorMessage += "Permission denied! Go to Firebase Console -> Storage -> Rules and set: allow read, write: if true";
-                        break;
-                    case 'storage/canceled':
-                        errorMessage += "Upload canceled.";
-                        break;
-                    default:
-                        errorMessage += error.message;
-                }
-                statusDiv.innerHTML = errorMessage;
-                statusDiv.style.color = "red";
-                progressDiv.style.display = 'none';
-            }
-        );
-        
-        const snapshot = await uploadTask;
-        const url = await snapshot.ref.getDownloadURL();
-        
-        await db.collection("media").add({
-            url: url,
-            type: file.type.startsWith('image') ? 'image' : 'video',
-            name: file.name,
-            uploadedBy: currentUser.uid,
-            uploadedByName: currentUser.name,
-            uploadedAt: firebase.firestore.FieldValue.serverTimestamp(),
-            size: file.size
-        });
-        
-        statusDiv.innerHTML = "Media uploaded successfully!";
+        statusDiv.innerHTML = `All ${files.length} media file(s) uploaded successfully!`;
         statusDiv.style.color = "green";
         progressDiv.style.display = 'none';
         document.getElementById('uploadFile').value = '';
@@ -729,9 +829,19 @@ async function uploadMedia() {
         
     } catch (error) {
         console.error("Upload error:", error);
-        statusDiv.innerHTML = "Upload failed: " + error.message;
-        statusDiv.style.color = "red";
-        progressDiv.style.display = 'none';
+        if (error.code === 'storage/unauthorized') {
+            showStorageRuleHelp(statusDiv);
+            progressDiv.style.display = 'none';
+        } else {
+            statusDiv.innerHTML = "Upload failed: " + error.message;
+            statusDiv.style.color = "red";
+            progressDiv.style.display = 'none';
+        }
+    } finally {
+        if (uploadBtn) {
+            uploadBtn.disabled = false;
+            uploadBtn.textContent = 'Upload Media';
+        }
     }
 }
 
@@ -1029,6 +1139,12 @@ auth.onAuthStateChanged(async function(user) {
 });
 
 window.addEventListener('DOMContentLoaded', async function() {
+    const uploadFileInput = document.getElementById('uploadFile');
+    if (uploadFileInput) {
+        uploadFileInput.addEventListener('change', updateSelectedFilesList);
+    }
+
+    updateSelectedFilesList();
     await setupSuperAdmin();
     
     const storedUser = localStorage.getItem('currentUser');
