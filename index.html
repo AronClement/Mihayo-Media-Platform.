@@ -1008,7 +1008,11 @@ function loadMedia() {
             });
         }, function(error) {
             console.error("Error loading media:", error);
-            grid.innerHTML = '<div class="loading" style="color: red;">Error loading media: ' + error.message + '</div>';
+            if (error.code === 'permission-denied' || error.message.includes('insufficient permissions')) {
+                showFirestoreRuleHelp(grid, 'media');
+            } else {
+                grid.innerHTML = '<div class="loading" style="color: red;">Error loading media: ' + error.message + '</div>';
+            }
         });
 }
 
@@ -1051,14 +1055,18 @@ function loadUserMedia() {
             });
         }, function(error) {
             console.error("Error loading user media:", error);
-            grid.innerHTML = '<div class="loading" style="color: red;">Error loading media: ' + error.message + '</div>';
+            if (error.code === 'permission-denied' || error.message.includes('insufficient permissions')) {
+                showFirestoreRuleHelp(grid, 'media');
+            } else {
+                grid.innerHTML = '<div class="loading" style="color: red;">Error loading media: ' + error.message + '</div>';
+            }
         });
 }
 
 async function downloadMedia(url, fileName) {
         showLoading('Preparing download...');
         try {
-            const response = await fetch(url);
+            const response = await fetch(url, { mode: 'cors' });
             if (!response.ok) throw new Error('Failed to fetch file for download.');
             const blob = await response.blob();
             const link = document.createElement('a');
@@ -1069,8 +1077,14 @@ async function downloadMedia(url, fileName) {
             document.body.removeChild(link);
             URL.revokeObjectURL(link.href);
         } catch (error) {
-            console.error('Download error:', error);
-            alert('Unable to download file: ' + error.message);
+            console.warn('Download fetch failed, falling back to direct URL open:', error);
+            const fallbackLink = document.createElement('a');
+            fallbackLink.href = url;
+            fallbackLink.target = '_blank';
+            fallbackLink.rel = 'noopener noreferrer';
+            document.body.appendChild(fallbackLink);
+            fallbackLink.click();
+            document.body.removeChild(fallbackLink);
         } finally {
             hideLoading();
         }
@@ -1181,7 +1195,11 @@ function loadComments() {
             });
         }, function(error) {
             console.error("Error loading comments:", error);
-            container.innerHTML = '<div class="loading" style="color: red;">Error loading comments: ' + error.message + '</div>';
+            if (error.code === 'permission-denied' || error.message.includes('insufficient permissions')) {
+                showFirestoreRuleHelp(container, 'comments');
+            } else {
+                container.innerHTML = '<div class="loading" style="color: red;">Error loading comments: ' + error.message + '</div>';
+            }
         });
 }
 
@@ -1291,7 +1309,11 @@ function loadUserComments() {
             });
         }, function(error) {
             console.error('Error loading user comments:', error);
-            container.innerHTML = '<div class="loading" style="color: red;">Error loading your comments: ' + error.message + '</div>';
+            if (error.code === 'permission-denied' || error.message.includes('insufficient permissions')) {
+                showFirestoreRuleHelp(container, 'comments');
+            } else {
+                container.innerHTML = '<div class="loading" style="color: red;">Error loading your comments: ' + error.message + '</div>';
+            }
         });
 }
 
