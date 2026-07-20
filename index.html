@@ -448,7 +448,7 @@ const firebaseConfig = {
     apiKey: "AIzaSyD0rTfNVPAjtPFRQxT5SEhJaLBX40Z8q4g",
     authDomain: "mihayo-media-platform.firebaseapp.com",
     projectId: "mihayo-media-platform",
-    storageBucket: "mihayo-media-platform.appspot.com",
+    storageBucket: "mihayo-media-platform.firebasestorage.app",
     messagingSenderId: "973572154003",
     appId: "1:973572154003:web:837f3abb7689c0706ce366"
 };
@@ -785,10 +785,11 @@ async function uploadMedia() {
             const storageRef = storage.ref('media/' + fileName);
             
             const uploadTask = storageRef.put(file);
+            let finalSnapshot = null;
             const snapshot = await new Promise((resolve, reject) => {
                 uploadTask.on('state_changed',
-                    function(snapshot) {
-                        const progress = (((index + 1) - 1 + (snapshot.bytesTransferred / snapshot.totalBytes)) / files.length) * 100;
+                    function(progressSnapshot) {
+                        const progress = (((index + 1) - 1 + (progressSnapshot.bytesTransferred / progressSnapshot.totalBytes)) / files.length) * 100;
                         const percent = Math.round(progress);
                         progressFill.style.width = percent + '%';
                         progressFill.textContent = percent + '%';
@@ -799,11 +800,14 @@ async function uploadMedia() {
                         reject(error);
                     },
                     function() {
-                        resolve(uploadTask.snapshot);
+                        finalSnapshot = uploadTask.snapshot;
+                        console.log("Upload complete for:", file.name, "Snapshot:", finalSnapshot);
+                        resolve(finalSnapshot);
                     }
                 );
             });
             
+            console.log("Final snapshot ref:", snapshot?.ref);
             const url = await snapshot.ref.getDownloadURL();
             await db.collection("media").add({
                 url: url,
